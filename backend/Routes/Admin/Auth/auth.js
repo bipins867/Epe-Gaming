@@ -1,5 +1,8 @@
 const express = require("express");
 
+const authController=require('../../../Controller/Admin/Auth/auth')
+const activityController=require('../../../Controller/Admin/Auth/adminActivity')
+
 
 const router = express.Router();
 

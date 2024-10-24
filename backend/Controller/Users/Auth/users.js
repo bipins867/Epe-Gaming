@@ -10,10 +10,10 @@ const {
 } = require("../../../Utils/MailService");
 const { Op } = require("sequelize");
 const { v4: uuidv4 } = require("uuid");
-const Referrals = require("../../../Models/PiggyBox/referrals");
-const ReferredUser = require("../../../Models/PiggyBox/referredUsers");
 const sequelize = require("../../../database");
 const { createUserActivity } = require("../../../Utils/activityUtils");
+const Referrals = require("../../../Models/Wallet/referrals");
+const ReferredUser = require("../../../Models/Wallet/referredUsers");
 
 function generateRandomCustomerId() {
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // Only letters

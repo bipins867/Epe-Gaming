@@ -3,7 +3,7 @@ const express=require('express')
 
 
 const authRouter=require('./Auth/auth');
-const userAndRoleRouter=requrie('./UserAndRole/userAndRole')
+const userAndRoleRouter=require('./UserAndRole/userAndRole')
 
 const router=express.Router();
 

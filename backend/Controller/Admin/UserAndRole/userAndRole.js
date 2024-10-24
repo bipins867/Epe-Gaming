@@ -1,4 +1,4 @@
-const adminAndRole = require("../../../Models/User/adminAndRole");
+
 const Admin = require("../../../Models/User/admins");
 const Role = require("../../../Models/User/role");
 const sequelize = require("../../../database");

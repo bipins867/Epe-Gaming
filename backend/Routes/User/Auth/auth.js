@@ -1,10 +1,22 @@
 const express = require("express");
+const {
+  initialLoginUserAuthentication,
+  initialSignuUserAuthentication,
+  initialResetPasswordUserAuthentication,
+} = require("../../../Middleware/auth");
+const { validateLogin, validateSignUp, validateChangePassword, checkValidationErrors } = require("../../../Middleware/validator");
+const { middlewareSendOtp, middlewareVerifyOtp } = require("../../../Middleware/otpAuthentication");
+const userAuthenticationController=require('../../../Controller/Users/Auth/users')
+
+
+
+
+//----------Changes take time ---
 
 const router = express.Router();
 
 router.post(
   "/login",
-  userLoginLimiter,
   initialLoginUserAuthentication,
   middlewareSendOtp,
   middlewareVerifyOtp,
@@ -12,7 +24,6 @@ router.post(
 );
 router.post(
   "/signUp",
-  userSignUpLimiter,
   validateSignUp,
   checkValidationErrors,
   initialSignuUserAuthentication,
@@ -23,7 +34,6 @@ router.post(
 
 router.post(
   "/changeUserPassword",
-  userAuthLimiter,
   initialResetPasswordUserAuthentication,
   middlewareSendOtp,
   middlewareVerifyOtp,
@@ -32,26 +42,7 @@ router.post(
   userAuthenticationController.changeUserPassword
 );
 
-router.post(
-  "/getUserInfo",
-  userAuthLimiter,
-  initialForgetCustomerIdUserAuthentication,
-  middlewareSendOtp,
-  middlewareVerifyOtp,
-  userAuthenticationController.getUserInfo
-);
-
-router.post(
-  "/activateAccount",
-  userAuthLimiter,
-  middlewareSendOtp,
-  middlewareVerifyOtp,
-  userAuthenticationController.activateUserAccount
-);
-
-
-
-router.post("/resendOtp",userResendOtpimiter, userAuthenticationController.userResendOtp);
+router.post("/resendOtp", userAuthenticationController.userResendOtp);
 
 //Here changes are made to upside only ---
 
