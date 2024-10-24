@@ -14,6 +14,9 @@ const sequelize = require("../../../database");
 const { createUserActivity } = require("../../../Utils/activityUtils");
 const Referrals = require("../../../Models/Wallet/referrals");
 const ReferredUser = require("../../../Models/Wallet/referredUsers");
+const Wallet = require("../../../Models/Wallet/wallet");
+const BankDetails = require("../../../Models/Wallet/bankDetails");
+const Kyc = require("../../../Models/Wallet/kyc");
 
 function generateRandomCustomerId() {
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // Only letters
@@ -104,7 +107,19 @@ exports.userSignUp = async (req, res, next) => {
       { transaction }
     );
 
-   
+    await Wallet.create(
+      {
+        deposit: 0,
+        cashBonus: 0,
+        netWinning: 0,
+        UserId: newUser.id,
+      },
+      { transaction }
+    );
+
+    await BankDetails.create({}, { transaction });
+
+    await Kyc.create({}, { transaction });
 
     await createUserActivity(
       req,
@@ -334,5 +349,3 @@ exports.userResendOtp = async (req, res, next) => {
       .json({ message: "Internal server error. Please try again later." });
   }
 };
-
-

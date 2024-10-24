@@ -18,7 +18,7 @@ const Kyc = sequelize.define(
 
     panNumber: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true,
       unique: true,
       validate: {
         len: [10, 10], // Assuming PAN number is 10 characters
