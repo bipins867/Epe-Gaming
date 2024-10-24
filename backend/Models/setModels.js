@@ -20,7 +20,9 @@ const Events = require("./EventAndGames/events");
 const Games = require("./EventAndGames/games");
 
 const UserGames = require("./AndModels/userGames");
-const EventUserGames = require("./AndModels/eventUserGames");
+const Teams = require("./EventAndGames/teams");
+const TeamUserGames = require("./AndModels/teamUserGames");
+
 
 //Now Association starts here ---
 
@@ -72,5 +74,9 @@ Role.belongsToMany(Admin, { through: AdminAndRole, foreignKey: "RoleId" });
 User.belongsToMany(Games, { through: UserGames });
 Games.belongsToMany(User, { through: UserGames });
 
-Events.belongsToMany(UserGames, { through: EventUserGames });
-UserGames.belongsToMany(Events, { through: EventUserGames });
+Events.hasMany(Teams)
+Teams.belongsTo(Events)
+
+
+UserGames.belongsToMany(Teams, { through: TeamUserGames });
+Teams.belongsToMany(UserGames, { through: TeamUserGames });

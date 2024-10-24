@@ -9,11 +9,13 @@ const UserGames = sequelize.define('UserGames', {
   },
   playerId: {
     type: DataTypes.INTEGER, // Assuming playerId corresponds to User id
-    allowNull: false,
+    allowNull: true,
+    
   },
   playerName: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
+    
   },
   leaderBoardRank: {
     type: DataTypes.INTEGER,
