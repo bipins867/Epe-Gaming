@@ -19,6 +19,11 @@ const Games = sequelize.define('Games', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  isDeactivated:{
+    type:DataTypes.BOOLEAN,
+    allowNull:false,
+    defaultValue:false
+  }
 }, {
   tableName: 'games', // Specify the table name in camelCase
   timestamps: true, // Enable createdAt/updatedAt timestamps

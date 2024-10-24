@@ -17,27 +17,10 @@ const ReferredUser = require("../../../Models/Wallet/referredUsers");
 const Wallet = require("../../../Models/Wallet/wallet");
 const BankDetails = require("../../../Models/Wallet/bankDetails");
 const Kyc = require("../../../Models/Wallet/kyc");
+const { generateRandomId } = require("../../../Utils/utils");
 
-function generateRandomCustomerId() {
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // Only letters
-  const numbers = "0123456789"; // Only digits
 
-  let letterPart = "";
-  let numberPart = "";
 
-  // Generate the 5-letter part
-  for (let i = 0; i < 5; i++) {
-    letterPart += letters.charAt(Math.floor(Math.random() * letters.length));
-  }
-
-  // Generate the 5-digit part
-  for (let i = 0; i < 5; i++) {
-    numberPart += numbers.charAt(Math.floor(Math.random() * numbers.length));
-  }
-
-  // Combine both parts
-  return letterPart + numberPart;
-}
 
 exports.userSignUp = async (req, res, next) => {
   let transaction; // Start the transaction
@@ -48,7 +31,7 @@ exports.userSignUp = async (req, res, next) => {
 
     // Find the last candidateId and increment by 1
 
-    const newCustomerId = generateRandomCustomerId();
+    const newCustomerId = generateRandomId();
     transaction = await sequelize.transaction();
     // Check if byReferallId exists and is valid
     if (byReferallId && byReferallId.trim() !== "") {

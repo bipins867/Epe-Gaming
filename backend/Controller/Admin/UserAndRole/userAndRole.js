@@ -3,12 +3,10 @@ const Admin = require("../../../Models/User/admins");
 const Role = require("../../../Models/User/role");
 const sequelize = require("../../../database");
 
-const {
-  generateRandomUsername,
-  generateRandomRoleId,
-} = require("../../../Utils/utils");
+
 const bcrypt = require("bcrypt");
 const { createAdminActivity } = require("../../../Utils/activityUtils");
+const { generateRandomId } = require("../../../Utils/utils");
 
 exports.createSSAdmin = async (req, res, next) => {
   try {
@@ -21,7 +19,7 @@ exports.createSSAdmin = async (req, res, next) => {
     }
 
     // Generate random username
-    const userName = generateRandomUsername();
+    const userName = generateRandomId();
 
     // Extract password from request body
     const { password, name, email } = req.body;
@@ -61,7 +59,7 @@ exports.createSAdmin = async (req, res, next) => {
     }
 
     // Generate random username
-    const userName = generateRandomUsername();
+    const userName = generateRandomId();
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -121,7 +119,7 @@ exports.createAdmin = async (req, res, next) => {
     }
 
     // Generate random username
-    const userName = generateRandomUsername();
+    const userName = generateRandomId();
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -432,7 +430,7 @@ exports.createRoles = async (req, res, next) => {
         continue;
       }
       // Generate a unique roleId for each role
-      const roleId = generateRandomRoleId();
+      const roleId = generateRandomId(3);
 
       // Create the new role
       const newRole = await Role.create({

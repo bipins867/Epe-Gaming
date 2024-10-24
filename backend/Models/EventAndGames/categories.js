@@ -21,6 +21,11 @@ const Categories = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
+    isDeactivated:{
+      type:DataTypes.BOOLEAN,
+      allowNull:false,
+      defaultValue:false
+    }
   },
   {
     tableName: "categories", // Specify the table name in camelCase

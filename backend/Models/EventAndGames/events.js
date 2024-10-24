@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, Sequelize } = require('sequelize');
 const sequelize = require('../../database'); // Adjust the path based on your project structure
 
 const Events = sequelize.define('Events', {
@@ -6,6 +6,15 @@ const Events = sequelize.define('Events', {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
+  },
+  isPublic:{
+    type:DataTypes.BOOLEAN,
+    allowNull:false,
+    defaultValue:true
+  },
+  entryFee:{
+    type:Sequelize.FLOAT,
+    allowNull:false
   },
   eventId: {
     type: DataTypes.STRING,
@@ -27,12 +36,17 @@ const Events = sequelize.define('Events', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  noOfPlayers:{
+    type:DataTypes.INTEGER,
+    allowNull:false,
+    defaultValue:100
+  },
   matchType: {
     type: DataTypes.STRING,
     allowNull: true,
   },
   squadType: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
     allowNull: true,
   },
   prizePool_1: {
@@ -72,6 +86,11 @@ const Events = sequelize.define('Events', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  isDeactivated:{
+    type:DataTypes.BOOLEAN,
+    allowNull:false,
+    defaultValue:false
+  }
 }, {
   tableName: 'events', // Specify the table name in camelCase
   timestamps: true, // Enable createdAt/updatedAt timestamps
