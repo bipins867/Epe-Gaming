@@ -13,7 +13,7 @@ const Kyc = sequelize.define(
     status: {
       type: Sequelize.STRING,
       allowNull: false,
-      default: "Pending",
+      defaultValue: "pending",
     },
 
     panNumber: {
@@ -30,10 +30,6 @@ const Kyc = sequelize.define(
     },
     adminMessage: {
       type: Sequelize.STRING,
-    },
-    customerId: {
-      type: Sequelize.STRING,
-      allowNull: false,
     },
   },
   {

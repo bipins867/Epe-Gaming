@@ -216,11 +216,13 @@ exports.deactivateGames = async (req, res, next) => {
 };
 
 exports.getActiveGames = async (req, res, next) => {
+  const {CategoryId}=req.body;
   try {
     // Fetch all games where isDeactivated is false
     const activeGames = await Games.findAll({
       where: {
         isDeactivated: false,
+        CategoryId:CategoryId
       },
     });
 

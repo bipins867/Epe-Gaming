@@ -11,11 +11,19 @@ const Wallet = sequelize.define('Wallet', {
     type: DataTypes.FLOAT, // Use FLOAT for decimal values
     allowNull: false,
   },
+  unclearedDeposit: {
+    type: DataTypes.FLOAT, // Use FLOAT for decimal values
+    allowNull: false,
+  },
   cashBonus: {
     type: DataTypes.FLOAT, // Use FLOAT for decimal values
     allowNull: false,
   },
   netWinning: {
+    type: DataTypes.FLOAT, // Use FLOAT for decimal values
+    allowNull: false,
+  },
+  unclearedNetWinning: {
     type: DataTypes.FLOAT, // Use FLOAT for decimal values
     allowNull: false,
   },

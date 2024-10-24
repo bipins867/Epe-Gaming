@@ -1,4 +1,4 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes, Sequelize } = require("sequelize");
 const sequelize = require('../../database');  // Make sure to replace with your actual sequelize instance
 
 const RequestWithdrawal = sequelize.define(
@@ -13,6 +13,10 @@ const RequestWithdrawal = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
+    },
+    type:{
+      type:Sequelize.STRING,
+      allowNull:false,
     },
     requestDate: {
       type: DataTypes.DATE,

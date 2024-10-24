@@ -17,18 +17,18 @@ const router = express.Router();
 
 router.post(
   "/login",
-  initialLoginUserAuthentication,
-  middlewareSendOtp,
-  middlewareVerifyOtp,
+  // initialLoginUserAuthentication,
+  // middlewareSendOtp,
+  // middlewareVerifyOtp,
   userAuthenticationController.userLogin
 );
 router.post(
   "/signUp",
-  validateSignUp,
-  checkValidationErrors,
-  initialSignuUserAuthentication,
-  middlewareSendOtp,
-  middlewareVerifyOtp,
+  // validateSignUp,
+  // checkValidationErrors,
+  // initialSignuUserAuthentication,
+  // middlewareSendOtp,
+  // middlewareVerifyOtp,
   userAuthenticationController.userSignUp
 );
 

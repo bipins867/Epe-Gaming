@@ -19,18 +19,18 @@ const BankDetails = require("../../../Models/Wallet/bankDetails");
 const Kyc = require("../../../Models/Wallet/kyc");
 const { generateRandomId } = require("../../../Utils/utils");
 
-
-
-
 exports.userSignUp = async (req, res, next) => {
   let transaction; // Start the transaction
 
   try {
-    const { name, email, phone, password, employeeId, byReferallId } =
-      req.payload;
+    const { name, email, phone, password, byReferallId } = req.body;
 
     // Find the last candidateId and increment by 1
 
+    const user=await User.findOne({where:{phone}})
+    if(user){
+      return  res.status(403).json({message:"User already exists!"})
+    }
     const newCustomerId = generateRandomId();
     transaction = await sequelize.transaction();
     // Check if byReferallId exists and is valid
@@ -73,7 +73,6 @@ exports.userSignUp = async (req, res, next) => {
         email: email || null, // Email optional
         phone,
         password: hashedPassword,
-        employeeId: employeeId || "", // Set employeeId as empty string if null
         byReferallId: byReferallId || null, // Store referral ID if present
       },
       { transaction }
@@ -95,14 +94,19 @@ exports.userSignUp = async (req, res, next) => {
         deposit: 0,
         cashBonus: 0,
         netWinning: 0,
+        unclearedDeposit: 0,
+        unclearedNetWinning: 0,
         UserId: newUser.id,
       },
       { transaction }
     );
 
-    await BankDetails.create({}, { transaction });
+    await BankDetails.create({ UserId: newUser.id }, { transaction });
 
-    await Kyc.create({}, { transaction });
+    await Kyc.create(
+      { customerId: newUser.customerId, UserId: newUser.id },
+      { transaction }
+    );
 
     await createUserActivity(
       req,
@@ -119,9 +123,7 @@ exports.userSignUp = async (req, res, next) => {
 
     return res.status(201).json({
       message: "SignUp Successful",
-      userId: newUser.id,
-      referralId: newReferral.referralId, // Return the referral ID
-      piggyBoxId: newPiggybox.id, // Return the piggybox ID
+      customerId:newUser.customerId,
     });
   } catch (err) {
     // If any error occurs, rollback the transaction
