@@ -51,6 +51,11 @@ const Events = sequelize.define('Events', {
     type: DataTypes.FLOAT,
     allowNull: true,
   },
+  
+  regCloseTime: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
   startTime: {
     type: DataTypes.DATE,
     allowNull: false,
