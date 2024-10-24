@@ -19,10 +19,10 @@ exports.createSSAdmin = async (req, res, next) => {
     }
 
     // Generate random username
-    const userName = generateRandomId();
+    //const userName = "XDMJT36652"//generateRandomId();
 
     // Extract password from request body
-    const { password, name, email } = req.body;
+    const { password,userName, name, email } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
     // Create the new SSA admin
     const newSSAAdmin = await Admin.create({

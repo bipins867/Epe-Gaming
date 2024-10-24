@@ -12,6 +12,7 @@ const Categories = sequelize.define(
     tittle: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique:true,
     },
     description: {
       type: DataTypes.TEXT,

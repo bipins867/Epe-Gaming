@@ -32,7 +32,7 @@ router.use('/testWebsite', async (req, res, next) => {
     let htmlResponse = `
       <html>
       <head>
-        <title>Client Info and Date</title>
+        <tittle>Client Info and Date</tittle>
         <style>
           body {
             font-family: Arial, sans-serif;

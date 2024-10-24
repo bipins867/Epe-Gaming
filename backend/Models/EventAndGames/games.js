@@ -7,9 +7,10 @@ const Games = sequelize.define('Games', {
     primaryKey: true,
     autoIncrement: true,
   },
-  title: {
+  tittle: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique:true,
   },
   description: {
     type: DataTypes.TEXT,

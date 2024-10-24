@@ -1,21 +1,22 @@
+const Categories = require("../../../Models/EventAndGames/categories");
 const Games = require("../../../Models/EventAndGames/games");
 const { createAdminActivity } = require("../../../Utils/activityUtils");
 const sequelize = require("../../../database");
 
 exports.createGames = async (req, res, next) => {
-  const { title, description } = req.body;
+  const { tittle, description, categorieId } = req.body;
   const admin = req.admin;
 
-  // Validation for title and description
+  // Validation for tittle and description
   if (
-    !title ||
-    typeof title !== "string" ||
-    title.length < 3 ||
-    title.length > 100
+    !tittle ||
+    typeof tittle !== "string" ||
+    tittle.length < 3 ||
+    tittle.length > 100
   ) {
     return res.status(400).json({
       success: false,
-      message: "Title must be a string between 3 and 100 characters.",
+      message: "tittle must be a string between 3 and 100 characters.",
     });
   }
 
@@ -31,13 +32,24 @@ exports.createGames = async (req, res, next) => {
     });
   }
 
-  const transaction = await sequelize.transaction();
+  let transaction;
   try {
-    // Create the new game
+    // Find the associated category by ID
+    const category = await Categories.findByPk(categorieId);
+
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
+    }
+    transaction = await sequelize.transaction();
+    // Create the new game and associate it with the found category
     const newGame = await Games.create(
       {
-        title,
+        tittle,
         description,
+        CategoryId: category.id, // Ensure the game is associated with the category
       },
       { transaction }
     );
@@ -47,7 +59,7 @@ exports.createGames = async (req, res, next) => {
       req,
       admin,
       "games",
-      "Created a new game",
+      `Created a new game in category: ${category.name}`, // Log with category name
       null,
       transaction
     );
@@ -61,7 +73,10 @@ exports.createGames = async (req, res, next) => {
     });
   } catch (error) {
     // Rollback transaction in case of error
-    await transaction.rollback();
+    if (transaction) {
+      await transaction.rollback();
+    }
+    console.log(error);
     return res.status(500).json({
       success: false,
       message: "Failed to create game",
@@ -71,26 +86,26 @@ exports.createGames = async (req, res, next) => {
 };
 
 exports.editGames = async (req, res, next) => {
-  const { id } = req.params;
-  const { title, description } = req.body;
+  
+  const { tittle,id, description } = req.body;
   const admin = req.admin;
 
-  // Ensure at least one field (title or description) is provided for update
-  if (!title && !description) {
+  // Ensure at least one field (tittle or description) is provided for update
+  if (!tittle && !description) {
     return res.status(400).json({
       success: false,
-      message: "Please provide a title or description to update.",
+      message: "Please provide a tittle or description to update.",
     });
   }
 
-  // Validation for title
+  // Validation for tittle
   if (
-    title &&
-    (typeof title !== "string" || title.length < 3 || title.length > 100)
+    tittle &&
+    (typeof tittle !== "string" || tittle.length < 3 || tittle.length > 100)
   ) {
     return res.status(400).json({
       success: false,
-      message: "Title must be a string between 3 and 100 characters.",
+      message: "tittle must be a string between 3 and 100 characters.",
     });
   }
 
@@ -119,7 +134,7 @@ exports.editGames = async (req, res, next) => {
     }
 
     // Update the game
-    if (title) game.title = title;
+    if (tittle) game.tittle = tittle;
     if (description) game.description = description;
     await game.save({ transaction });
 
@@ -143,6 +158,7 @@ exports.editGames = async (req, res, next) => {
   } catch (error) {
     // Rollback transaction in case of error
     await transaction.rollback();
+    console.log(error);
     return res.status(500).json({
       success: false,
       message: "Failed to update game",
@@ -152,7 +168,7 @@ exports.editGames = async (req, res, next) => {
 };
 
 exports.deactivateGames = async (req, res, next) => {
-  const { id } = req.params;
+  const { id } = req.body;
   const admin = req.admin;
 
   const transaction = await sequelize.transaction();
@@ -190,6 +206,7 @@ exports.deactivateGames = async (req, res, next) => {
   } catch (error) {
     // Rollback transaction in case of error
     await transaction.rollback();
+    console.log(error)
     return res.status(500).json({
       success: false,
       message: "Failed to deactivate game",
@@ -208,21 +225,18 @@ exports.getActiveGames = async (req, res, next) => {
     });
 
     // Respond with the list of active games
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Active games retrieved successfully",
-        data: activeGames,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Active games retrieved successfully",
+      data: activeGames,
+    });
   } catch (error) {
     // Handle any errors
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Failed to retrieve active games",
-        error: error.message,
-      });
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to retrieve active games",
+      error: error.message,
+    });
   }
 };

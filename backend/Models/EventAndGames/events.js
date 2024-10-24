@@ -22,7 +22,7 @@ const Events = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    title: {
+    tittle: {
       type: DataTypes.STRING,
       allowNull: false,
     },

@@ -3,21 +3,21 @@ const { createAdminActivity } = require("../../../Utils/activityUtils");
 const sequelize = require("../../../database");
 
 exports.createCategories = async (req, res, next) => {
-  const { title, description } = req.body;
+  const { tittle, description } = req.body;
   const admin = req.admin;
 
-  // Validation for title and description
+  // Validation for tittle and description
   if (
-    !title ||
-    typeof title !== "string" ||
-    title.length < 3 ||
-    title.length > 100
+    !tittle ||
+    typeof tittle !== "string" ||
+    tittle.length < 3 ||
+    tittle.length > 100
   ) {
     return res
       .status(400)
       .json({
         success: false,
-        message: "Title must be a string between 3 and 100 characters.",
+        message: "Tittle must be a string between 3 and 100 characters.",
       });
   }
 
@@ -40,7 +40,7 @@ exports.createCategories = async (req, res, next) => {
     // Create the new category
     const newCategory = await Categories.create(
       {
-        title,
+        tittle,
         description,
       },
       { transaction }
@@ -68,6 +68,7 @@ exports.createCategories = async (req, res, next) => {
   } catch (error) {
     // Rollback transaction in case of error
     await transaction.rollback();
+    console.log(error);
     return res
       .status(500)
       .json({
@@ -79,29 +80,29 @@ exports.createCategories = async (req, res, next) => {
 };
 
 exports.editCategories = async (req, res, next) => {
-  const { title, description, id } = req.body;
+  const { tittle, description, id } = req.body;
   const admin = req.admin;
 
-  // Ensure at least one field (title or description) is provided for update
-  if (!title && !description) {
+  // Ensure at least one field (tittle or description) is provided for update
+  if (!tittle && !description) {
     return res
       .status(400)
       .json({
         success: false,
-        message: "Please provide a title or description to update.",
+        message: "Please provide a tittle or description to update.",
       });
   }
 
-  // Validation for title
+  // Validation for tittle
   if (
-    title &&
-    (typeof title !== "string" || title.length < 3 || title.length > 100)
+    tittle &&
+    (typeof tittle !== "string" || tittle.length < 3 || tittle.length > 100)
   ) {
     return res
       .status(400)
       .json({
         success: false,
-        message: "Title must be a string between 3 and 100 characters.",
+        message: "Tittle must be a string between 3 and 100 characters.",
       });
   }
 
@@ -132,7 +133,7 @@ exports.editCategories = async (req, res, next) => {
     }
 
     // Update the category
-    if (title) category.title = title;
+    if (tittle) category.tittle = tittle;
     if (description) category.description = description;
     await category.save({ transaction });
 
@@ -158,6 +159,7 @@ exports.editCategories = async (req, res, next) => {
   } catch (error) {
     // Rollback transaction in case of error
     await transaction.rollback();
+    console.log(error)
     return res
       .status(500)
       .json({
@@ -209,6 +211,7 @@ exports.deactivateCategories = async (req, res, next) => {
   } catch (error) {
     // Rollback transaction in case of error
     await transaction.rollback();
+    console.log(error);
     return res
       .status(500)
       .json({
@@ -238,6 +241,7 @@ exports.getActiveCategories = async (req, res, next) => {
       });
   } catch (error) {
     // Handle any errors
+    console.log(error);
     return res
       .status(500)
       .json({
