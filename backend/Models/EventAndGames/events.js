@@ -72,7 +72,11 @@ const Events = sequelize.define(
       type: DataTypes.FLOAT,
       allowNull: true,
     },
-
+    regStartTime:{
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW,
+    },
     regCloseTime: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -92,6 +96,11 @@ const Events = sequelize.define(
     status: {
       type: DataTypes.STRING,
       allowNull: true,
+    },
+    isRunning: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     },
     isDeactivated: {
       type: DataTypes.BOOLEAN,
