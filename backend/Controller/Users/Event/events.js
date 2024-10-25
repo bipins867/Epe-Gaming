@@ -10,8 +10,8 @@ const { deductAmountForEventJoin } = require("../../../Utils/wallet");
 
 exports.getEventList = async (req, res, next) => {
   try {
-    const { GameId } = req.params; // Assuming the GameId is passed as a URL parameter
-    const { eventType, status } = req.body; // These are passed in the request body
+    // Assuming the GameId is passed as a URL parameter
+    const { eventType, status, GameId } = req.body; // These are passed in the request body
 
     // Validate required inputs
     if (!GameId) {
@@ -76,7 +76,7 @@ exports.searchEvent = async (req, res, next) => {
     const event = await Events.findOne({
       where: {
         GameId, // Match the provided GameId
-        id: eventId, // Match the provided eventId
+        eventId, // Match the provided eventId
       },
     });
 
@@ -107,7 +107,6 @@ exports.getUserGamesInfo = async (req, res, next) => {
   try {
     const userId = req.user.id; // Assuming UserId is available in req.user
     const { GameId } = req.body;
-
     // Validate input
     if (!GameId) {
       return res.status(400).json({ error: "GameId is required" });
@@ -164,25 +163,29 @@ exports.updateUserGamesInfo = async (req, res, next) => {
     }
 
     // Find the user game entry by playerId
-    const userGameInfo = await UserGames.findOne({
+    let userGameInfo = await UserGames.findOne({
       where: { UserId: userId, GameId },
     });
 
-    if (!userGameInfo) {
-      return res.status(404).json({ error: "User game info not found" });
-    }
-
     t = await sequelize.transaction();
-
-    // Update user game information
-    await userGameInfo.update(
-      {
+    
+    if (!userGameInfo) {
+     userGameInfo= await UserGames.create({
         playerName,
         playerId,
-      },
-      { transaction: t }
-    );
-
+        UserId: userId,
+        GameId,
+      });
+    } else {
+      // Update user game information
+      await userGameInfo.update(
+        {
+          playerName,
+          playerId,
+        },
+        { transaction: t }
+      );
+    }
     // Log user activity
     await createUserActivity(
       req,
@@ -225,6 +228,30 @@ exports.joinEventPublicTeam = async (req, res, next) => {
 
     t = await sequelize.transaction();
 
+
+
+
+    let amountMap;
+    if (req.event.entryFee > 0) {
+      try {
+        amountMap=await deductAmountForEventJoin(req.user, event.entryFee, t);
+      } catch (error) {
+        t.rollback();
+        console.log(error);
+        return res.status(403).json({
+          
+          success: false,
+          message: error.toString(),
+        });
+      }
+    }
+
+    if(!amountMap){
+      amountMap.deposit=0;
+      amountMap.netWinning=0;
+      amountMap.cashBonus=0;
+    }
+
     let teamUserCount = 0;
     let newTeam;
 
@@ -237,8 +264,9 @@ exports.joinEventPublicTeam = async (req, res, next) => {
         await TeamUserGames.create(
           {
             TeamId: lastTeam.id,
-            UserGamesId: userGames.id,
+            UserGameId: userGames.id,
             isLeader: false, // Adjust based on business logic
+            ...amountMap
           },
           { transaction: t }
         );
@@ -247,7 +275,7 @@ exports.joinEventPublicTeam = async (req, res, next) => {
         newTeam = await Teams.create(
           {
             EventId: event.id,
-            teamNumber: lastTeam.teamNumber + 1,
+            teamNumber: parseInt(lastTeam.teamNumber )+ 1,
             teamId: generateRandomId(),
             isPublic: true,
             isJoinnersPaid: false,
@@ -259,8 +287,9 @@ exports.joinEventPublicTeam = async (req, res, next) => {
         await TeamUserGames.create(
           {
             TeamId: newTeam.id,
-            UserGamesId: userGames.id,
+            UserGameId: userGames.id,
             isLeader: false, // Adjust based on business logic
+            ...amountMap
           },
           { transaction: t }
         );
@@ -282,24 +311,15 @@ exports.joinEventPublicTeam = async (req, res, next) => {
       await TeamUserGames.create(
         {
           TeamId: newTeam.id,
-          UserGamesId: userGames.id,
+          UserGameId: userGames.id,
           isLeader: false, // Adjust based on business logic
+          ...amountMap
         },
         { transaction: t }
       );
     }
 
-    if (req.event.entryFee > 0) {
-      try {
-        await deductAmountForEventJoin(req.user, event.entryFee, t);
-      } catch (error) {
-        t.rollback();
-        return res.status(403).json({
-          success: false,
-          message: error,
-        });
-      }
-    }
+    
     await createUserActivity(
       req,
       req.user,
@@ -336,13 +356,30 @@ exports.joinEventSoloTeam = async (req, res, next) => {
     let lastTeam = req.lastTeam;
     const userGames = req.userGames;
 
+    let {isTeamPublic,isJoinnersPaid,isAmountDistributed}=req.body;
+
+    if(isTeamPublic===undefined || isAmountDistributed===undefined || isJoinnersPaid===undefined){
+      return res.status(400).json({error:"isTeamPublic,isJoinnersPaid,isAmountDistributed are must be provided in body!"})
+    }
+
     t = await sequelize.transaction();
 
     let teamUserCount = 1;
     let newTeam;
 
     if (lastTeam) {
-      teamUserCount = lastTeam.teamNumber + 1;
+      teamUserCount = parseInt(lastTeam.teamNumber) + 1;
+    }
+
+    
+    let totalAmount;
+
+    if(isJoinnersPaid){
+      totalAmount=event.entryFee*event.squadType;
+    }
+    else{
+      totalAmount=event.entryFee;
+      isAmountDistributed=true;
     }
 
     // If no teams exist, create the first team and add the user to it
@@ -351,33 +388,54 @@ exports.joinEventSoloTeam = async (req, res, next) => {
         EventId: event.id,
         teamNumber: teamUserCount,
         teamId: generateRandomId(),
-        isPublic: isPublic, // Passed from req.body
+        isPublic: isTeamPublic, // Passed from req.body
         isJoinnersPaid: isJoinnersPaid, // Passed from req.body
         isAmountDistributed: isAmountDistributed, // Passed from req.body
       },
       { transaction: t }
     );
 
-    await TeamUserGames.create(
-      {
-        TeamId: newTeam.id,
-        UserGamesId: userGames.id,
-        isLeader: true, // Adjust based on your logic
-      },
-      { transaction: t }
-    );
+    
+
+    let amountMap;
+
 
     // Step 7: Deduct the totalAmount from the user's wallet
     if (req.event.entryFee > 0) {
       try {
-        await deductAmountForEventJoin(req.user, totalAmount, t);
+        amountMap=await deductAmountForEventJoin(req.user, totalAmount, t);
       } catch (error) {
         await t.rollback();
+        console.log(error);
         return res.status(403).json({
           success: false,
           message: error.message || "Failed to deduct amount.",
         });
       }
+    }
+
+    if(amountMap){
+      await TeamUserGames.create(
+        {
+          TeamId: newTeam.id,
+          UserGameId: userGames.id,
+          isLeader: true, // Adjust based on your logic
+          deposit:amountMap.deposit,
+          cashBonus:amountMap.cashBonus,
+          netWinning:amountMap.netWinning
+        },
+        { transaction: t }
+      );
+    }
+    else{
+      await TeamUserGames.create(
+        {
+          TeamId: newTeam.id,
+          UserGameId: userGames.id,
+          isLeader: true, // Adjust based on your logic
+        },
+        { transaction: t }
+      );
     }
 
     // Step 8: Log the user's activity (event join)
@@ -417,29 +475,21 @@ exports.joinEventPrivateTeam = async (req, res, next) => {
     //const wallet=req.wallet;
     const lastTeam = req.lastTeam;
     const userGames = req.userGames;
-    const team = req.team;
+    const newTeam = req.team;
 
     // Step 7: Transaction handling to join the team and deduct the amount (if applicable)
     t = await sequelize.transaction();
 
-    // Add the user to the private team
-    await TeamUserGames.create(
-      {
-        TeamId: team.id,
-        UserGamesId: userGames.id,
-        isLeader: false, // Adjust based on your logic
-      },
-      { transaction: t }
-    );
+    
     let totalAmount = 0;
-    if (!req.team.isJoinnersPaid) {
+    if (!newTeam.isJoinnersPaid) {
       totalAmount = event.entryFee;
     }
-
+    let amountMap;
     // Deduct the totalAmount from the user's wallet if greater than 0
     if (totalAmount > 0) {
       try {
-        await deductAmountForEventJoin(req.user, totalAmount, t);
+        amountMap=await deductAmountForEventJoin(req.user, totalAmount, t);
       } catch (error) {
         await t.rollback();
         return res.status(403).json({
@@ -448,13 +498,35 @@ exports.joinEventPrivateTeam = async (req, res, next) => {
         });
       }
     }
-
+    if(amountMap){
+      await TeamUserGames.create(
+        {
+          TeamId: newTeam.id,
+          UserGameId: userGames.id,
+          isLeader: true, // Adjust based on your logic
+          deposit:amountMap.deposit,
+          cashBonus:amountMap.cashBonus,
+          netWinning:amountMap.netWinning
+        },
+        { transaction: t }
+      );
+    }
+    else{
+      await TeamUserGames.create(
+        {
+          TeamId: newTeam.id,
+          UserGameId: userGames.id,
+          isLeader: true, // Adjust based on your logic
+        },
+        { transaction: t }
+      );
+    }
     // Step 8: Log the user's activity (event join)
     await createUserActivity(
       req,
       req.user,
       "EventJoin",
-      `Joined private team (ID: ${teamId}) for event: ${event.eventId}`,
+      `Joined private team (ID: ${newTeam.teamId}) for event: ${event.eventId}`,
       t
     );
 
@@ -574,6 +646,7 @@ exports.createChallengeEvent = async (req, res, next) => {
       {
         teamId: generateRandomId(), // Generate a random team ID
         EventId: event.id,
+        teamNumber:1,
         isPublicTeam,
         isJoinnersPaid,
         isAmountDistributed,
@@ -585,7 +658,7 @@ exports.createChallengeEvent = async (req, res, next) => {
     await TeamUserGames.create(
       {
         TeamId: team.id,
-        UserGamesId: userGames.id,
+        UserGameId: userGames.id,
         isLeader: true, // The creator is the leader of the team
       },
       { transaction: t }

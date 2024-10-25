@@ -13,6 +13,21 @@ const TeamUserGames = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    deposit: {
+      type: DataTypes.FLOAT, // Use FLOAT for decimal values
+      allowNull: false,
+      defaultValue:0
+    },
+    cashBonus: {
+      type: DataTypes.FLOAT, // Use FLOAT for decimal values
+      allowNull: false,
+      defaultValue:0
+    },
+    netWinning: {
+      type: DataTypes.FLOAT, // Use FLOAT for decimal values
+      allowNull: false,
+      defaultValue:0
+    },
   },
   {
     tableName: "teamUserGames",

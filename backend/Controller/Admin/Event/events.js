@@ -23,7 +23,7 @@ exports.createEvent = async (req, res, next) => {
       perKill,
       regCloseTime,
       startTime,
-      status = "upcoming", // Default value for status
+      status = "open", // Default value for status
       entryFee,
       gameId,
     } = req.body;

@@ -53,11 +53,21 @@ exports.eventStatusVerifier = async (req, res, next) => {
   try {
     const event = req.event;
 
+    // Check if the event status is open
     if (event.status !== "open") {
-      return res
-        .status(402)
-        .json({ message: "Event is not open for registration!" });
+      return res.status(402).json({
+        message: "Event is not open for registration!",
+      });
     }
+
+    // Check if registration close time has passed
+    const currentTime = new Date();
+    if (currentTime > new Date(event.regCloseTime)) {
+      return res.status(403).json({
+        message: "Registration is closed!",
+      });
+    }
+
     next();
   } catch (error) {
     console.error("Internal server error !-", error);
@@ -80,13 +90,15 @@ exports.checkEventAlreadyJoinedVerifier = async (req, res, next) => {
     }
 
     // Step 2: Check if user has already joined any of the teams for the event
+    
     const userInAnyTeam = await TeamUserGames.findOne({
       where: {
         TeamId: teams.map((team) => team.id), // Check across all team IDs in the event
-        UserGamesId: userId, // Use the UserGamesId associated with the user
+        UserGameId: req.userGames.id, // Use the UserGamesId associated with the user
       },
     });
-
+    
+    
     // Step 3: If user is found in any team, throw an error
     if (userInAnyTeam) {
       return res
@@ -108,9 +120,12 @@ exports.checkEventAlreadyJoinedVerifier = async (req, res, next) => {
 exports.userWalletFundsVerfier = async (req, res, next) => {
   try {
     const event = req.event;
-    const { isTotalPaid } = req.body;
+    const { isTotalPaid ,teamId} = req.body;
 
-    if (!isTotalPaid) {
+
+    
+
+    if (isTotalPaid === undefined) {
       return res
         .status(404)
         .json({ message: "isTotalPaid condition not found!" });
@@ -131,6 +146,32 @@ exports.userWalletFundsVerfier = async (req, res, next) => {
     } else {
       totalAmount = event.entryFee;
     }
+
+
+    if (teamId) {
+      const team = await Teams.findOne({
+        where: { TeamId: teamId, EventId: event.id },
+      });
+
+      if (!team) {
+        return res
+          .status(404)
+          .json({ error: "Team Id not found for this event." });
+      }
+      req.team = team;
+      // Step 4: Get associated TeamUserGames and count
+      req.teamUserCount = await TeamUserGames.count({
+        where: { TeamId: team.id },
+      });
+
+      if(team.isJoinnersPaid){
+        totalAmount=0
+      }
+      else{
+        totalAmount=event.entryFee;
+      }
+    }
+
 
     const availableFunds =
       wallet.deposit + wallet.netWinning + 0.1 * wallet.cashBonus;
@@ -153,30 +194,9 @@ exports.userWalletFundsVerfier = async (req, res, next) => {
 exports.userTeamCounter = async (req, res, next) => {
   try {
     const event = req.event;
-    const { isTotalPaid, teamId } = req.body;
-
-    if (!isTotalPaid) {
-      return res
-        .status(404)
-        .json({ message: "isTotalPaid condition not found!" });
-    }
-
-    if (teamId) {
-      const team = await Teams.findOne({
-        where: { TeamId: teamId, EventId: event.id },
-      });
-
-      if (!team) {
-        return res
-          .status(404)
-          .json({ error: "Team Id not found for this event." });
-      }
-      req.team = team;
-      // Step 4: Get associated TeamUserGames and count
-      req.teamUserCount = await TeamUserGames.count({
-        where: { TeamId: team.id },
-      });
-    }
+    
+    
+    
     let currentTeamSize = 0,
       currentTeamCapacity = 0;
 
@@ -215,11 +235,7 @@ exports.userTeamSizeVerfier = async (req, res, next) => {
     const event = req.event;
     const { isTotalPaid, teamId } = req.body;
 
-    if (!isTotalPaid) {
-      return res
-        .status(404)
-        .json({ message: "isTotalPaid condition not found!" });
-    }
+   
 
     if (teamId) {
       const team = req.team;
@@ -271,7 +287,3 @@ exports.userTeamSizeVerfier = async (req, res, next) => {
     });
   }
 };
-
-
-
-

@@ -8,10 +8,12 @@ const {
   userTeamCounter,
   userTeamSizeVerfier,
 } = require("../../../Middleware/EventAndGames/eventAndGames");
+const { userAuthentication } = require("../../../Middleware/auth");
 
 const router = express.Router();
 
 router.use(
+  userAuthentication,
   userGamesVerifier,
   eventVerifier,
   eventStatusVerifier,

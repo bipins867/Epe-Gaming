@@ -95,6 +95,7 @@ exports.userSignUp = async (req, res, next) => {
         cashBonus: 0,
         netWinning: 0,
         unclearedDeposit: 0,
+        unclearedCashBonus:0,
         unclearedNetWinning: 0,
         UserId: newUser.id,
       },

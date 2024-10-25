@@ -1,13 +1,13 @@
 const TransactionHistory = require("../Models/Wallet/transactionHistory");
 const Wallet = require("../Models/Wallet/wallet");
 
-exports.deductAmountForEventJoin = async (user,  amount, transaction) => {
+exports.deductAmountForEventJoin = async (user, amount, transaction) => {
   // Fetch the user's wallet
   const wallet = await Wallet.findOne({
     where: { UserId: user.id },
   });
 
-  
+  const amountMap = { cashBonus: 0, deposit: 0, netWinning: 0 };
 
   const cashBonus = parseFloat(wallet.cashBonus);
   const netWinning = parseFloat(wallet.netWinning);
@@ -22,23 +22,39 @@ exports.deductAmountForEventJoin = async (user,  amount, transaction) => {
     wallet.unclearedCashBonus += parseFloat(amount);
     amountUsed = parseFloat(amount);
     wallet.cashBonus -= amountUsed;
+
+    amountMap.cashBonus = amountUsed;
   } else {
     // Deduct from netWinning
-    const remainingAmount = amount - 0.1 * cashBonus;
-    if (remainingAmount <= netWinning) {
-      wallet.unclearedNetWinning += remainingAmount;
-      amountUsed += remainingAmount;
-      wallet.netWinning -= remainingAmount;
+    let remainingAmount = amount - 0.1 * cashBonus;
+    amountMap.cashBonus = 0.1 * cashBonus;
+    wallet.unclearedCashBonus += parseFloat(0.1*cashBonus);
+    if (netWinning > 0) {
+      let unclearedNetWinning = 0;
+      if (netWinning >= remainingAmount) {
+        unclearedNetWinning = remainingAmount;
+      } else {
+        unclearedNetWinning = netWinning;
+      }
+      amountMap.netWinning = unclearedNetWinning;
+
+      wallet.unclearedNetWinning += unclearedNetWinning;
+      remainingAmount -= unclearedNetWinning;
+      wallet.netWinning -= unclearedNetWinning;
     }
 
-    // If still not fulfilled, deduct from deposit
-    const finalRemaining = remainingAmount - netWinning;
+    if (remainingAmount > 0) {
 
-    if (finalRemaining <= deposit) {
-      wallet.deposit -= finalRemaining;
-      amountUsed += finalRemaining;
-    } else {
-      throw new Error("Insufficient funds");
+      if(deposit>=remainingAmount){
+      
+        const unclearedDeposit=remainingAmount;
+        amountMap.deposit=unclearedDeposit;
+
+        wallet.unclearedDeposit+=unclearedDeposit;
+        wallet.deposit-=unclearedDeposit;
+      } else {
+        throw new Error("Insufficient funds");
+      }
     }
   }
 
@@ -58,5 +74,5 @@ exports.deductAmountForEventJoin = async (user,  amount, transaction) => {
     { transaction }
   );
 
-  return true;
+  return amountMap;
 };
