@@ -26,7 +26,7 @@ const Teams = sequelize.define('Teams', {
   },
   isAmountDistributed: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false, // Set to false by default
+    defaultValue: true, // Set to false by default
   },
 }, {
   tableName: 'teams', // The table name in your database

@@ -96,6 +96,7 @@ const Events = sequelize.define(
     status: {
       type: DataTypes.STRING,
       allowNull: true,
+      defaultValue:"open"
     },
     isRunning: {
       type: DataTypes.BOOLEAN,

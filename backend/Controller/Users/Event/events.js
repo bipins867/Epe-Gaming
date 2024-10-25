@@ -218,45 +218,10 @@ exports.joinEventPublicTeam = async (req, res, next) => {
 
   try {
     const userId = req.user.id;
-    const { eventId, GameId } = req.body;
-
-    // Check if UserGames exists (by GameId and userId)
-    const userGames = await UserGames.findOne({
-      where: { UserId: userId, GameId: GameId },
-    });
-
-    if (!userGames || !userGames.playerId || !userGames.playerName) {
-      return res
-        .status(400)
-        .json({ error: "User has not set up player information." });
-    }
-
-    // Fetch the event by eventId
-    const event = await Events.findOne({ where: { eventId } });
-    if (!event) {
-      return res.status(404).json({ error: "Event not found." });
-    }
-
-    // Fetch the user's wallet
-    const wallet = await Wallet.findOne({
-      where: { UserId: user.id },
-    });
-
-    if (!wallet) {
-      return res.status(404).json({ error: "Wallet not found." });
-    }
-
-    if (
-      event.entryFee >
-      wallet.deposit + wallet.netWinning + 0.1 * wallet.cashBonus
-    ) {
-      return res.status(402).json({ error: "Insufficent Funds!" });
-    }
-    // Proceed if there are Teams associated with the event
-    let lastTeam = await Teams.findOne({
-      where: { EventId: event.id },
-      order: [["teamNumber", "DESC"]],
-    });
+    const event = req.event;
+    //const wallet=req.wallet;
+    const lastTeam = req.lastTeam;
+    const userGames = req.userGames;
 
     t = await sequelize.transaction();
 
@@ -265,9 +230,7 @@ exports.joinEventPublicTeam = async (req, res, next) => {
 
     if (lastTeam) {
       // Get associated TeamUserGames and count
-      teamUserCount = await TeamUserGames.count({
-        where: { TeamId: lastTeam.id },
-      });
+      teamUserCount = req.currentTeamCapacity;
 
       // If last team has space, add to this team
       if (teamUserCount < event.squadType) {
@@ -280,38 +243,27 @@ exports.joinEventPublicTeam = async (req, res, next) => {
           { transaction: t }
         );
       } else {
-        // If seat is full, check if more teams can be created based on event.squadType and noOfPlayers
-        const totalTeams = await Teams.count({ where: { EventId: event.id } });
-        const currentCapacity = totalTeams * event.squadType;
+        // Create a new team and add the user to this team
+        newTeam = await Teams.create(
+          {
+            EventId: event.id,
+            teamNumber: lastTeam.teamNumber + 1,
+            teamId: generateRandomId(),
+            isPublic: true,
+            isJoinnersPaid: false,
+            isAmountDistributed: true,
+          },
+          { transaction: t }
+        );
 
-        if (currentCapacity < event.noOfPlayers) {
-          // Create a new team and add the user to this team
-          newTeam = await Teams.create(
-            {
-              EventId: event.id,
-              teamNumber: lastTeam.teamNumber + 1,
-              teamId: generateRandomId(),
-              isPublic: true,
-              isJoinnersPaid: false,
-              isAmountDistributed: true,
-            },
-            { transaction: t }
-          );
-
-          await TeamUserGames.create(
-            {
-              TeamId: newTeam.id,
-              UserGamesId: userGames.id,
-              isLeader: false, // Adjust based on business logic
-            },
-            { transaction: t }
-          );
-        } else {
-          return res.status(400).json({
-            error:
-              "No more teams can be created as the event has reached its capacity.",
-          });
-        }
+        await TeamUserGames.create(
+          {
+            TeamId: newTeam.id,
+            UserGamesId: userGames.id,
+            isLeader: false, // Adjust based on business logic
+          },
+          { transaction: t }
+        );
       }
     } else {
       // If no teams exist, create the first team and add the user to it
@@ -337,14 +289,16 @@ exports.joinEventPublicTeam = async (req, res, next) => {
       );
     }
 
-    try {
-      await deductAmountForEventJoin(req.user, event.entryFee, t);
-    } catch (error) {
-      t.rollback();
-      return res.status(403).json({
-        success: false,
-        message: error,
-      });
+    if (req.event.entryFee > 0) {
+      try {
+        await deductAmountForEventJoin(req.user, event.entryFee, t);
+      } catch (error) {
+        t.rollback();
+        return res.status(403).json({
+          success: false,
+          message: error,
+        });
+      }
     }
     await createUserActivity(
       req,
@@ -377,92 +331,53 @@ exports.joinEventSoloTeam = async (req, res, next) => {
 
   try {
     const userId = req.user.id;
-    const { eventId, GameId, isPublic, isJoinnersPaid, isAmountDistributed } = req.body;
-
-    // Step 1: Check if UserGames exists (by GameId and userId)
-    const userGames = await UserGames.findOne({
-      where: { UserId: userId, GameId: GameId },
-    });
-
-    if (!userGames || !userGames.playerId || !userGames.playerName) {
-      return res
-        .status(400)
-        .json({ error: "User has not set up player information." });
-    }
-
-    // Step 2: Fetch the event by eventId
-    const event = await Events.findOne({ where: { id: eventId } });
-    if (!event) {
-      return res.status(404).json({ error: "Event not found." });
-    }
-
-    // Step 3: Calculate total amount (entryFee * squadType)
-    const totalAmount = event.entryFee * event.squadType;
-
-    // Step 4: Fetch the user's wallet
-    const wallet = await Wallet.findOne({
-      where: { UserId: userId },
-    });
-
-    if (!wallet) {
-      return res.status(404).json({ error: "Wallet not found." });
-    }
-
-    // Step 5: Check if the user has enough funds to join the event
-    const availableFunds =
-      wallet.deposit + wallet.netWinning + 0.1 * wallet.cashBonus;
-
-    if (totalAmount > availableFunds) {
-      return res.status(402).json({ error: "Insufficient Funds!" });
-    }
-
-    // Step 6: Fetch the last team based on eventId and teamNumber (descending order)
-    let lastTeam = await Teams.findOne({
-      where: { EventId: event.id },
-      order: [["teamNumber", "DESC"]],
-    });
+    const event = req.event;
+    //const wallet=req.wallet;
+    let lastTeam = req.lastTeam;
+    const userGames = req.userGames;
 
     t = await sequelize.transaction();
 
     let teamUserCount = 1;
     let newTeam;
 
-    if(lastTeam){
-      teamUserCount=lastTeam.teamNumber+1;
+    if (lastTeam) {
+      teamUserCount = lastTeam.teamNumber + 1;
     }
-    
-      // If no teams exist, create the first team and add the user to it
-      newTeam = await Teams.create(
-        {
-          EventId: event.id,
-          teamNumber: teamUserCount,
-          teamId: generateRandomId(),
-          isPublic: isPublic, // Passed from req.body
-          isJoinnersPaid: isJoinnersPaid, // Passed from req.body
-          isAmountDistributed: isAmountDistributed, // Passed from req.body
-        },
-        { transaction: t }
-      );
 
-      await TeamUserGames.create(
-        {
-          TeamId: newTeam.id,
-          UserGamesId: userGames.id,
-          isLeader: true, // Adjust based on your logic
-        },
-        { transaction: t }
-      );
-    
-      
+    // If no teams exist, create the first team and add the user to it
+    newTeam = await Teams.create(
+      {
+        EventId: event.id,
+        teamNumber: teamUserCount,
+        teamId: generateRandomId(),
+        isPublic: isPublic, // Passed from req.body
+        isJoinnersPaid: isJoinnersPaid, // Passed from req.body
+        isAmountDistributed: isAmountDistributed, // Passed from req.body
+      },
+      { transaction: t }
+    );
+
+    await TeamUserGames.create(
+      {
+        TeamId: newTeam.id,
+        UserGamesId: userGames.id,
+        isLeader: true, // Adjust based on your logic
+      },
+      { transaction: t }
+    );
+
     // Step 7: Deduct the totalAmount from the user's wallet
-    try {
-      await deductAmountForEventJoin(req.user, totalAmount, t);
-    } catch (error) {
-      await t.rollback();
-      return res.status(403).json({
-        success: false,
-        message: error.message || "Failed to deduct amount.",
-      });
+    if (req.event.entryFee > 0) {
+      try {
+        await deductAmountForEventJoin(req.user, totalAmount, t);
+      } catch (error) {
+        await t.rollback();
+        return res.status(403).json({
+          success: false,
+          message: error.message || "Failed to deduct amount.",
+        });
+      }
     }
 
     // Step 8: Log the user's activity (event join)
@@ -498,63 +413,13 @@ exports.joinEventPrivateTeam = async (req, res, next) => {
 
   try {
     const userId = req.user.id;
-    const { eventId, teamId ,GameId} = req.body;
+    const event = req.event;
+    //const wallet=req.wallet;
+    const lastTeam = req.lastTeam;
+    const userGames = req.userGames;
+    const team = req.team;
 
-    // Step 1: Check if UserGames exists (by GameId and userId)
-    const userGames = await UserGames.findOne({
-      where: { UserId: userId,GameId },
-    });
-
-    if (!userGames || !userGames.playerId || !userGames.playerName) {
-      return res
-        .status(400)
-        .json({ error: "User has not set up player information." });
-    }
-
-    // Step 2: Fetch the event by eventId
-    const event = await Events.findOne({ where: { eventId } });
-    if (!event) {
-      return res.status(404).json({ error: "Event not found." });
-    }
-
-    // Step 3: Fetch the team by teamId
-    const team = await Teams.findOne({
-      where: { teamId: teamId, EventId: event.id },
-    });
-
-    if (!team) {
-      return res.status(404).json({ error: "Team not found for this event." });
-    }
-
-    // Step 4: Get associated TeamUserGames and count
-    const teamUserCount = await TeamUserGames.count({
-      where: { TeamId: team.id },
-    });
-
-    // Check if the team has space
-    if (teamUserCount >= event.squadType) {
-      return res.status(400).json({ error: "Slot is full for this team." });
-    }
-
-    // Step 5: Fetch the user's wallet
-    const wallet = await Wallet.findOne({
-      where: { UserId: userId },
-    });
-
-    if (!wallet) {
-      return res.status(404).json({ error: "Wallet not found." });
-    }
-
-    // Step 6: Check if the user has enough funds to join the event
-    const totalAmount = event.entryFee;
-    const availableFunds =
-      wallet.deposit + wallet.netWinning + 0.1 * wallet.cashBonus;
-
-    if (totalAmount > availableFunds) {
-      return res.status(402).json({ error: "Insufficient Funds!" });
-    }
-
-    // Step 7: Transaction handling to join the team and deduct the amount
+    // Step 7: Transaction handling to join the team and deduct the amount (if applicable)
     t = await sequelize.transaction();
 
     // Add the user to the private team
@@ -566,16 +431,22 @@ exports.joinEventPrivateTeam = async (req, res, next) => {
       },
       { transaction: t }
     );
+    let totalAmount = 0;
+    if (!req.team.isJoinnersPaid) {
+      totalAmount = event.entryFee;
+    }
 
-    // Deduct the totalAmount from the user's wallet
-    try {
-      await deductAmountForEventJoin(req.user, totalAmount, t);
-    } catch (error) {
-      await t.rollback();
-      return res.status(403).json({
-        success: false,
-        message: error.message || "Failed to deduct amount.",
-      });
+    // Deduct the totalAmount from the user's wallet if greater than 0
+    if (totalAmount > 0) {
+      try {
+        await deductAmountForEventJoin(req.user, totalAmount, t);
+      } catch (error) {
+        await t.rollback();
+        return res.status(403).json({
+          success: false,
+          message: error.message || "Failed to deduct amount.",
+        });
+      }
     }
 
     // Step 8: Log the user's activity (event join)
@@ -602,6 +473,162 @@ exports.joinEventPrivateTeam = async (req, res, next) => {
     res.status(500).json({
       success: false,
       message: "An error occurred while joining the private team",
+    });
+  }
+};
+
+//==================================
+
+exports.createChallengeEvent = async (req, res, next) => {
+  let t;
+  try {
+    const userId = req.user.id;
+
+    // Destructure incoming request body
+    const {
+      tittle,
+      description,
+      map,
+      noOfPlayers,
+      squadType,
+      regCloseTime,
+      startTime,
+      gameId,
+      entryFee,
+      isPublic,
+      isPublicTeam,
+      isJoinnersPaid,
+      isAmountDistributed,
+    } = req.body;
+
+    // Set default values for matchType, eventType, and other default fields
+    const eventType = "challenge";
+    const matchType = "unranked";
+    const perKill = 0; // Since it is fixed
+    const prizePool_1_calculated = 2 * entryFee;
+
+    // Step 1: Check if UserGames exists (by gameId and userId)
+    const userGames = await UserGames.findOne({
+      where: { UserId: userId, GameId: gameId },
+    });
+
+    if (!userGames || !userGames.playerId || !userGames.playerName) {
+      return res
+        .status(400)
+        .json({ error: "User has not set up player information." });
+    }
+
+    // Step 2: Fetch user's wallet
+    const wallet = await Wallet.findOne({
+      where: { UserId: userId },
+    });
+
+    if (!wallet) {
+      return res.status(404).json({ error: "Wallet not found." });
+    }
+
+    // Step 3: Validate user's funds based on isAmountDistributed
+    let totalAmount;
+    if (!isJoinnersPaid) {
+      totalAmount = entryFee * squadType; // Total amount for distributed fees
+    } else {
+      totalAmount = entryFee; // Standard entry fee
+    }
+
+    // Calculate available funds from wallet
+    const availableFunds =
+      wallet.deposit + wallet.netWinning + 0.1 * wallet.cashBonus;
+
+    // Check if the user has enough funds
+    if (totalAmount > availableFunds) {
+      return res
+        .status(402)
+        .json({ error: "Insufficient funds to create the challenge event." });
+    }
+
+    // Step 4: Begin transaction
+    t = await sequelize.transaction();
+
+    // Step 5: Create the event
+    const event = await Events.create(
+      {
+        tittle,
+        description,
+        eventType,
+        map,
+        matchType,
+        noOfPlayers,
+        squadType,
+        entryFee,
+        prizePool_1: prizePool_1_calculated,
+        perKill,
+        regCloseTime,
+        startTime,
+        isPublic,
+      },
+      { transaction: t }
+    );
+
+    // Step 6: Create the team for the event
+    const team = await Teams.create(
+      {
+        teamId: generateRandomId(), // Generate a random team ID
+        EventId: event.id,
+        isPublicTeam,
+        isJoinnersPaid,
+        isAmountDistributed,
+      },
+      { transaction: t }
+    );
+
+    // Step 7: Create TeamUserGames entry, marking the creator as the leader
+    await TeamUserGames.create(
+      {
+        TeamId: team.id,
+        UserGamesId: userGames.id,
+        isLeader: true, // The creator is the leader of the team
+      },
+      { transaction: t }
+    );
+
+    // Step 8: Deduct the required amount from the user's wallet
+    try {
+      await deductAmountForEventJoin(req.user, totalAmount, t);
+    } catch (error) {
+      await t.rollback();
+      return res.status(403).json({
+        success: false,
+        message:
+          error.message || "Failed to deduct amount for the event creation.",
+      });
+    }
+
+    // Step 9: Log user activity (event creation)
+    await createUserActivity(
+      req,
+      req.user,
+      "EventCreation",
+      `Created challenge event (ID: ${event.id}) and team (ID: ${team.id})`,
+      t
+    );
+
+    // Step 10: Commit the transaction if everything is successful
+    await t.commit();
+
+    res.status(201).json({
+      success: true,
+      message: "Challenge event created successfully.",
+      event,
+      team,
+    });
+  } catch (error) {
+    if (t) {
+      await t.rollback();
+    }
+    console.error("Error in creating challenge event:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while creating the challenge event.",
     });
   }
 };
