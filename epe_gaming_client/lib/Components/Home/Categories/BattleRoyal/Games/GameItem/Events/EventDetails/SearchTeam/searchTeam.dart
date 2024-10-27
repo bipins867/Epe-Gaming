@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class SearchTeamPage extends StatefulWidget {
+  const SearchTeamPage({super.key});
+
   @override
   _SearchTeamPageState createState() => _SearchTeamPageState();
 }

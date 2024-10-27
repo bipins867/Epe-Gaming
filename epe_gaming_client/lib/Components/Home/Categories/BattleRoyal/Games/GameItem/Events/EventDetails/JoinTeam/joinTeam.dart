@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 class JoinTeamPage extends StatelessWidget {
   final double totalWalletBalance = 1000.00; // Example balance
-  final double entryFee = 100.00; // Example entry fee
+  final double entryFee = 100.00;
+
+  const JoinTeamPage({super.key}); // Example entry fee
 
   @override
   Widget build(BuildContext context) {

@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 
 class EventDetailsPage extends StatelessWidget {
   const EventDetailsPage({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   void _copyToClipboard(BuildContext context, String text) {
     Clipboard.setData(ClipboardData(text: text));
