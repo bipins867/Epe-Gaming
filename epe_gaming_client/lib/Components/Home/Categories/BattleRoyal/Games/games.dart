@@ -1,3 +1,4 @@
+import 'package:epe_gaming_client/Components/Home/Categories/BattleRoyal/Games/GameItem/gameItem.dart';
 import 'package:flutter/material.dart';
 
 class Games extends StatelessWidget {
@@ -10,7 +11,12 @@ class Games extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       children: [
-        _buildGameCard('BGMI', 'assets/BattleRoyal/BGMI/bgmi.jpg'),
+        _buildGameCard('BGMI', 'assets/BattleRoyal/BGMI/bgmi.jpg',
+            callbackFunc: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const GameItem()),
+          );
+        }),
         _buildGameCard('Free Fire', 'assets/BattleRoyal/FreeFire/freefire.jpg'),
         _buildGameCard('Call of Duty', 'assets/BattleRoyal/COD/cod.jpg'),
       ],
