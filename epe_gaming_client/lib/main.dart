@@ -1,4 +1,4 @@
-import 'package:epe_gaming_client/Components/base.dart';
+import 'package:epe_gaming_client/Components/LoadingScreen/loadingScreen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: BaseScreen(),
+      home: LoadingScreenPage(),
       title: "EPE Gaming",
       debugShowCheckedModeBanner: false,
     );

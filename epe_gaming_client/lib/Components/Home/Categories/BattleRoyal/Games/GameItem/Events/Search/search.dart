@@ -10,7 +10,7 @@ class SearchEvent extends StatefulWidget {
 
 class _SearchEventState extends State<SearchEvent> {
   final TextEditingController _searchController = TextEditingController();
-  final List<String> _events = []; // This will hold the event data
+  // final List<String> _events = []; // This will hold the event data
   List<String> _filteredEvents = []; // This will hold the filtered results
 
   void _searchEvents() {
