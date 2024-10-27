@@ -27,6 +27,8 @@ class TeamInfoPage extends StatelessWidget {
     // Add more teams as needed
   ];
 
+  TeamInfoPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Padding(

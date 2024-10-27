@@ -4,6 +4,8 @@ import 'package:epe_gaming_client/Components/Home/Categories/BattleRoyal/Games/G
 import 'package:flutter/material.dart';
 
 class EventDetailsPage extends StatelessWidget {
+  const EventDetailsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
