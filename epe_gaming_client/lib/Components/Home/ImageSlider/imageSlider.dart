@@ -19,16 +19,18 @@ class _ImageSliderState extends State<ImageSlider> {
   }
 
   void _autoScroll() {
-    if (_currentIndex < 3) {
-      _currentIndex++;
-    } else {
-      _currentIndex = 0;
+    if (_pageController.hasClients) {
+      if (_currentIndex < 3) {
+        _currentIndex++;
+      } else {
+        _currentIndex = 0;
+      }
+      _pageController.animateToPage(
+        _currentIndex,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeIn,
+      );
     }
-    _pageController.animateToPage(
-      _currentIndex,
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeIn,
-    );
     // Schedule next auto-scroll
     Future.delayed(Duration(seconds: 2), _autoScroll);
   }

@@ -34,6 +34,7 @@ dependencies:
   
   carousel_slider: ^5.0.0
   marquee: ^2.3.0
+  share_plus: ^10.1.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -50,7 +51,12 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  #flutter_launcher_icons: ^0.14.1
 
+# flutter_icons:
+#   android: true
+#   ios: true
+#   image_path: "assets/Home/logo.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -71,6 +77,7 @@ flutter:
     - assets/BattleRoyal/BGMI/
     - assets/BattleRoyal/COD/
     - assets/BattleRoyal/FreeFire/
+    - assets/Home/
     
   #   - images/a_dot_ham.jpeg
 

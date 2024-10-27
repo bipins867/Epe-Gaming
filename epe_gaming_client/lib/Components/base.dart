@@ -1,3 +1,5 @@
+import 'package:epe_gaming_client/Components/Home/Notifications/notifications.dart';
+import 'package:epe_gaming_client/Components/Home/Wallet/wallet.dart';
 import 'package:epe_gaming_client/Components/Home/home.dart';
 import 'package:epe_gaming_client/Components/Profile/profile.dart';
 import 'package:flutter/material.dart';
@@ -30,13 +32,20 @@ class _BaseScreenState extends State<BaseScreen> {
               title: const Text("EPE Gaming"),
               actions: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => NotificationsPage()),
+                    );
+                  },
                   icon: const Icon(Icons.notifications),
                 ),
                 IconButton(
                   icon: const Icon(Icons.wallet),
                   onPressed: () {
-                    // Action here
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => WalletPage()),
+                    );
                   },
                 ),
               ],
