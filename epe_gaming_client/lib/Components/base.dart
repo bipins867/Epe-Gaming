@@ -3,6 +3,8 @@ import 'package:epe_gaming_client/Components/Profile/profile.dart';
 import 'package:flutter/material.dart';
 
 class BaseScreen extends StatefulWidget {
+  const BaseScreen({super.key});
+
   @override
   _BaseScreenState createState() => _BaseScreenState();
 }
@@ -32,7 +34,7 @@ class _BaseScreenState extends State<BaseScreen> {
                   icon: const Icon(Icons.notifications),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.settings),
+                  icon: const Icon(Icons.wallet),
                   onPressed: () {
                     // Action here
                   },
