@@ -170,7 +170,8 @@ exports.userLogin = async (req, res, next) => {
         // Log successful login attempt in UserActivity
         await createUserActivity(req, user, "auth", "Login Successfull!");
         return res.status(200).json({
-          status: "Login Successful",
+          
+          message: "Login Successful",
           token,
           userId: user.id,
         });
