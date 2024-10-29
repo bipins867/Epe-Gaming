@@ -19,7 +19,12 @@ class AppConfig {
 
     // Initialize SharedPreferences
     preferences = await SharedPreferences.getInstance();
-    baseUrl = '$remoteAddr/';
+    if (kDebugMode) {
+      baseUrl = '${dotenv.env['LOCAL_ADDRESS']}/';
+    } else {
+      baseUrl = '${dotenv.env['REMOTE_ADDRESS']}/';
+    }
+
     customLogger = CustomLogger();
 
     String? token = getLocalStorageItem('authToken');
