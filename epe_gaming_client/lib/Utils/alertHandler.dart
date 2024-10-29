@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 void showErrorAlertDialog(BuildContext context, String message,
-    {String type = "Error"}) {
+    {String type = "Error!", VoidCallback? callbackFunction}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -15,6 +15,9 @@ void showErrorAlertDialog(BuildContext context, String message,
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Closes the dialog
+              if (callbackFunction != null) {
+                callbackFunction();
+              }
             },
             child: Text("OK"),
           ),
@@ -25,7 +28,7 @@ void showErrorAlertDialog(BuildContext context, String message,
 }
 
 void showInfoAlertDialog(BuildContext context, String message,
-    {String type = "Info"}) {
+    {String type = "Info!", VoidCallback? callbackFunction}) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -36,6 +39,9 @@ void showInfoAlertDialog(BuildContext context, String message,
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Closes the dialog
+              if (callbackFunction != null) {
+                callbackFunction();
+              }
             },
             child: Text("OK"),
           ),

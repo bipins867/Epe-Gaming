@@ -8,6 +8,7 @@ web-version/.env
 
 # Ignore for epe_gaming_client (Flutter)
 epe_gaming_client/.dart_tool/
+epe_gaming_client/.env
 epe_gaming_client/build/
 epe_gaming_client/.packages
 epe_gaming_client/.flutter-plugins

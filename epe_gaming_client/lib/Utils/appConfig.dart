@@ -22,14 +22,18 @@ class AppConfig {
   // Async initialization function
   Future<void> initializeAppInformation() async {
     // Load environment-dependent address
-    remoteAddr = dotenv.env['ENV'] == 'testing'
-        ? dotenv.env['LOCAL_ADDRESS']!
-        : dotenv.env['REMOTE_ADDRESS']!;
+    remoteAddr = dotenv.env['REMOTE_ADDRESS']!;
 
     // Initialize SharedPreferences
     preferences = await SharedPreferences.getInstance();
     baseUrl = '$remoteAddr/';
     customLogger = CustomLogger();
+
+    String? token = getLocalStorageItem('token');
+
+    if (token != null) {
+      authToken = token;
+    }
   }
 
   // Set and get methods for SharedPreferences
