@@ -1,4 +1,3 @@
-import 'package:epe_gaming_client/Components/base.dart';
 import 'package:flutter/material.dart';
 
 class LoadingScreenPage extends StatefulWidget {
@@ -12,16 +11,17 @@ class _LoadingScreenPageState extends State<LoadingScreenPage> {
   @override
   void initState() {
     super.initState();
-    _changeScreen();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _changeScreen();
+    });
   }
 
   _changeScreen() {
     Future.delayed(
       const Duration(seconds: 2),
       () {
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => const BaseScreen(),
-        ));
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/login', (Route<dynamic> route) => false);
       },
     );
   }
