@@ -1,11 +1,23 @@
 .tournament-highlights {
-    background-color: #2a2a2a;
-  }
-  
-  .highlights-image {
-    width: 100%;
-    max-width: 600px;
-    margin: 20px 0;
-    border-radius: 10px;
-  }
-  
+  text-align: center;
+  margin: 20px 0;
+}
+
+.highlights-video-grid {
+  display: grid; /* Use CSS Grid */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid */
+  gap: 20px; /* Space between grid items */
+  max-width: 1200px; /* Optional: set a max width */
+  margin: 0 auto; /* Center the grid */
+}
+
+.video-item {
+  overflow: hidden; /* Hide overflow */
+  border-radius: 10px; /* Optional: rounded corners */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Optional: shadow effect */
+}
+
+.highlights-video {
+  width: 100%; /* Make the video responsive */
+  height: auto; /* Maintain aspect ratio */
+}
