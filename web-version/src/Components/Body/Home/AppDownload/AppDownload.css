@@ -1,0 +1,28 @@
+.app-download {
+    background-color: #252525;
+  }
+  
+  .download-image {
+    width: 100%;
+    max-width: 500px;
+    margin: 20px 0;
+  }
+  
+  .download-buttons {
+    margin-top: 20px;
+  }
+  
+  .download-btn {
+    background-color: #ffcc00;
+    color: #000;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border: none;
+    font-size: 1em;
+    cursor: pointer;
+  }
+  
+  .download-btn:hover {
+    background-color: #f5a623;
+  }
+  
