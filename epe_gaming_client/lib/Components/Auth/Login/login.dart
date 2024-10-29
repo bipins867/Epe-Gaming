@@ -26,15 +26,18 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void loginHandler() async {
+    if (_mobileController.text == '') {
+      return showInfoAlertDialog(context, "Please enter the mobile Number!",
+          type: "Required!");
+    }
+    if (_passwordController.text == '') {
+      return showInfoAlertDialog(context, "Please enter the password!",
+          type: "Required!");
+    }
     // Show loading indicator
     setState(() {
       _isLoading = true;
     });
-
-    // customLogger!.logDebug("Debug Message");
-    // customLogger!.logError("Error Message");
-    // customLogger!.logInfo("This is Info");
-    // customLogger!.logWarning("This is warning!");
 
     // Example API requestfgdgdg
     try {

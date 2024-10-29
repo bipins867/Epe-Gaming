@@ -122,7 +122,7 @@ exports.userSignUp = async (req, res, next) => {
 
     //sendRegistrationTemplate(phone, newCustomerId);
 
-    return res.status(201).json({
+    return res.status(200).json({
       message: "SignUp Successful",
       customerId:newUser.customerId,
     });
