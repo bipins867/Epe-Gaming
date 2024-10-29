@@ -3,6 +3,7 @@ const {
   initialLoginUserAuthentication,
   initialSignuUserAuthentication,
   initialResetPasswordUserAuthentication,
+  userAuthentication,
 } = require("../../../Middleware/auth");
 const { validateLogin, validateSignUp, validateChangePassword, checkValidationErrors } = require("../../../Middleware/validator");
 const { middlewareSendOtp, middlewareVerifyOtp } = require("../../../Middleware/otpAuthentication");
@@ -33,10 +34,11 @@ router.post(
 );
 
 router.post(
-  "/changeUserPassword",
-  initialResetPasswordUserAuthentication,
-  middlewareSendOtp,
-  middlewareVerifyOtp,
+  "/changePassword",
+  userAuthentication,
+  // initialResetPasswordUserAuthentication,
+  // middlewareSendOtp,
+  // middlewareVerifyOtp,
   validateChangePassword,
   checkValidationErrors,
   userAuthenticationController.changeUserPassword
