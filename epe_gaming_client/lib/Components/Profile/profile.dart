@@ -7,14 +7,14 @@ class Profile extends StatelessWidget {
   const Profile({super.key});
   @override
   Widget build(BuildContext context) {
-    return const SafeArea(
+    return SafeArea(
       child: Scaffold(
         body: Column(
           children: [
             // Part 1: Top Card with Avatar and User Info
-            HeaderProfile(),
+            const HeaderProfile(),
             // Part 2: Statistics Row over Part 1 and Part 3
-            Info(),
+            const Info(),
             // Part 3: List of Options
             NavigationItems()
           ],

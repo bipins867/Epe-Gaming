@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (response['statusCode'] == 200) {
-        appConfig!.setLocalStorageItem('token', response['body']['token']);
+        AppConfig.setLocalStorageItem('authToken', response['body']['token']);
         Navigator.of(context).pushNamedAndRemoveUntil(
           '/', // Navigates to the base route
           (Route<dynamic> route) =>
