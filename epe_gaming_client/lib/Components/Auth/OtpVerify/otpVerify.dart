@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'package:epe_gaming_client/Components/base.dart';
 import 'package:flutter/material.dart';
 
 class OtpVerifyPage extends StatefulWidget {
+  const OtpVerifyPage({super.key});
+
   @override
   _OtpVerifyPageState createState() => _OtpVerifyPageState();
 }
