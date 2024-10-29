@@ -1,12 +1,17 @@
 import { Route, Routes } from "react-router-dom";
 import { Categories } from "./Categories/Categories";
 import { Games } from "./Games/Games";
-
+import { AboutUs } from "./AboutUs/AboutUs";
+import { AppDownload } from "./AppDownload/AppDownload";
+import { TournamentHighlights } from "./TournamentHighlights/TournamentHighlights";
+import { VideoGallery } from "./VideoGallery/VideoGallery";
 export const Home = () => {
     return (
       <>
-        <h2>Home</h2>
-
+      <AppDownload/>
+      <AboutUs/>
+      <TournamentHighlights/>
+      <VideoGallery/>
         <div>
             <Routes>
             <Route path="categories" element={<Categories/>}/>
