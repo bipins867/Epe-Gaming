@@ -14,7 +14,6 @@ const Transaction = require("./Wallet/transaction");
 const TransactionHistory = require("./Wallet/transactionHistory");
 const Wallet = require("./Wallet/wallet");
 
-
 const Categories = require("./EventAndGames/categories");
 const Events = require("./EventAndGames/events");
 const Games = require("./EventAndGames/games");
@@ -23,6 +22,13 @@ const UserGames = require("./AndModels/userGames");
 const Teams = require("./EventAndGames/teams");
 const TeamUserGames = require("./AndModels/teamUserGames");
 
+const Notification = require("./Notifications/notifications");
+const UserNotification = require("./AndModels/userNotifications");
+
+
+const Image = require("./Images/images");
+const Announcement = require("./Announcement/announcement");
+const AuthToken = require("./User/authToken");
 
 //Now Association starts here ---
 
@@ -56,8 +62,6 @@ Transaction.belongsTo(User);
 Referrals.hasMany(ReferredUser);
 ReferredUser.belongsTo(Referrals);
 
-
-
 //-------------
 
 Categories.hasMany(Games);
@@ -74,9 +78,22 @@ Role.belongsToMany(Admin, { through: AdminAndRole, foreignKey: "RoleId" });
 User.belongsToMany(Games, { through: UserGames });
 Games.belongsToMany(User, { through: UserGames });
 
-Events.hasMany(Teams)
-Teams.belongsTo(Events)
-
+Events.hasMany(Teams);
+Teams.belongsTo(Events);
 
 UserGames.belongsToMany(Teams, { through: TeamUserGames });
 Teams.belongsToMany(UserGames, { through: TeamUserGames });
+
+
+User.belongsToMany(Notification, { through: UserNotification });
+Notification.belongsToMany(User, { through: UserNotification });
+
+
+User.hasMany(Image)
+Image.belongsTo(User)
+
+Games.hasMany(Image)
+Image.belongsTo(Games)
+
+User.hasMany(AuthToken)
+AuthToken.belongsTo(User)

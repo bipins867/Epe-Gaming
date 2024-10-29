@@ -28,6 +28,11 @@ const TeamUserGames = sequelize.define(
       allowNull: false,
       defaultValue:0
     },
+    kills:{
+      type:DataTypes.INTEGER,
+      allowNull:false,
+      defaultValue:0
+    }
   },
   {
     tableName: "teamUserGames",

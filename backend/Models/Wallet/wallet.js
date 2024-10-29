@@ -32,6 +32,11 @@ const Wallet = sequelize.define('Wallet', {
     type: DataTypes.FLOAT, // Use FLOAT for decimal values
     allowNull: false,
   },
+  totalWinnings:{
+    type:DataTypes.FLOAT,
+    allowNull:false,
+    defaultValue:0
+  }
 }, {
   tableName: 'wallets', // Specify the table name in camelCase
   timestamps: true, // Enable createdAt/updatedAt timestamps

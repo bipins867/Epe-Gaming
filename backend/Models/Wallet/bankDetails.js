@@ -28,6 +28,11 @@ const BankDetails = sequelize.define(
     upiId: {
       type: DataTypes.STRING,
       allowNull: true,
+    }, 
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "pending",
     },
   },
   {

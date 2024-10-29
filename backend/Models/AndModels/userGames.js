@@ -21,6 +21,16 @@ const UserGames = sequelize.define('UserGames', {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
+  matchPlayed:{
+    type:DataTypes.INTEGER,
+    allowNull:false,
+    defaultValue:0
+  },
+  totalKills:{
+    type:DataTypes.INTEGER,
+    allowNull:false,
+    defaultValue:0
+  }
 }, {
   tableName: 'userGames', // Specify the table name in camelCase
   timestamps: true, // Enable createdAt/updatedAt timestamps

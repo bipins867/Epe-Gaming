@@ -17,7 +17,9 @@ const ReferredUser = require("../../../Models/Wallet/referredUsers");
 const Wallet = require("../../../Models/Wallet/wallet");
 const BankDetails = require("../../../Models/Wallet/bankDetails");
 const Kyc = require("../../../Models/Wallet/kyc");
-const { generateRandomId } = require("../../../Utils/utils");
+const { generateRandomId, hashToken } = require("../../../Utils/utils");
+const AuthToken = require("../../../Models/User/authToken");
+
 
 exports.userSignUp = async (req, res, next) => {
   let transaction; // Start the transaction
@@ -140,58 +142,61 @@ exports.userSignUp = async (req, res, next) => {
 
 exports.userLogin = async (req, res, next) => {
   const { phone, password } = req.body;
+  let t; // Transaction variable
 
   try {
-    // Find the user by phone number
+    // Step 1: Start a transaction
+    
+    // Step 2: Find the user by phone number
     const user = await User.findOne({ where: { phone } });
 
     if (!user) {
       return res.status(404).json({ error: "User doesn't exist" });
     }
 
-    // Compare the provided password with the stored password hash
-    bcrypt.compare(password, user.password, async (err, isMatch) => {
-      if (err) {
-        return res
-          .status(500)
-          .json({ error: "Internal server error. Please try again later." });
-      }
+    // Step 3: Compare the provided password with the stored password hash
+    const isMatch = await bcrypt.compare(password, user.password);
 
-      const expiresIn = process.env.NODE_ENV === "testing" ? "2d" : "5m";
+    if (!isMatch) {
+      // Log unsuccessful login attempt due to incorrect password in UserActivity
+      await createUserActivity(req, user, "auth", "Login failed: Incorrect password !");
+      return res.status(401).json({ error: "Invalid Password" });
+    }
 
-      if (isMatch) {
-        // Generate a JWT token
-        const token = jwt.sign(
-          { name: user.name, id: user.id },
-          process.env.JWT_SECRET_KEY,
-          { expiresIn: expiresIn }
-        );
+    // Step 4: Generate a JWT token
+    const expiresIn = process.env.NODE_ENV === "testing" ? "2d" : "5m";
+    const token = jwt.sign({ name: user.name, id: user.id }, process.env.JWT_SECRET_KEY, { expiresIn });
 
-        // Log successful login attempt in UserActivity
-        await createUserActivity(req, user, "auth", "Login Successfull!");
-        return res.status(200).json({
-          
-          message: "Login Successful",
-          token,
-          userId: user.id,
-        });
-      } else {
-        // Log unsuccessful login attempt due to incorrect password in UserActivity
-        await createUserActivity(
-          req,
-          user,
-          "auth",
-          "Login failed: Incorrect password !"
-        );
 
-        return res.status(401).json({ error: "Invalid Password" });
-      }
+    t = await sequelize.transaction();
+
+    const hashedToken=hashToken(token);
+    // Step 5: Save the token to the AuthToken table
+    await AuthToken.create({
+      token:hashedToken,
+      type: 'authToken',
+      UserId:user.id
+    }, { transaction: t }); // Use the transaction here
+
+    // Step 6: Log successful login attempt in UserActivity
+    await createUserActivity(req, user, "auth", "Login Successful!", t); // Pass the transaction
+
+    // Step 7: Commit the transaction
+    await t.commit();
+
+    // Step 8: Return the response
+    return res.status(200).json({
+      message: "Login Successful",
+      token,
+      userId: user.id,
     });
+
   } catch (err) {
-    console.log(err);
-    return res
-      .status(500)
-      .json({ error: "Internal server error. Please try again later." });
+    // Rollback the transaction if it exists
+    if (t) await t.rollback();
+
+    console.error("Error during login:", err);
+    return res.status(500).json({ error: "Internal server error. Please try again later." });
   }
 };
 
@@ -231,61 +236,53 @@ exports.getUserInfo = async (req, res, next) => {
   }
 };
 
-exports.changeUserPassword = async (req, res, next) => {
-  const { phone } = req.payload;
-  const { password } = req.body;
 
+exports.changeUserPassword = async (req, res, next) => {
+  const { oldPassword, newPassword } = req.body;
   let transaction;
 
   try {
     // Find the user by phone number
-    const user = await User.findOne({
-      where: { phone },
-    });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found!" });
+    const user = req.user;
+    // Verify the old password
+    const isOldPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
+    if (!isOldPasswordCorrect) {
+      return res.status(400).json({ message: "Old password is incorrect." });
     }
 
-    if (!password) {
-      return res.status(400).send({ message: "Invalid Password!" });
+    if (!newPassword) {
+      return res.status(400).json({ message: "Invalid new password!" });
     }
+
     // Hash the new password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Update the user's password
-    user.password = hashedPassword; // Assuming 'password' is a field in your User model
+    user.password = hashedPassword;
 
+    // Start a transaction for saving changes
     transaction = await sequelize.transaction();
+    await user.save({ transaction });
 
-    await user.save({ transaction }); // Save the updated user record
+    // Log user activity (optional)
+    await createUserActivity(req, user, "auth", "Change password successful!", transaction);
 
-    await createUserActivity(
-      req,
-      user,
-      "auth",
-      "Change password successfull!",
-      transaction
-    );
+    // Commit the transaction
+    await transaction.commit();
 
-    transaction.commit();
-    // Optionally, you can return a success message
+    // Return success response
     return res.status(200).json({ message: "Password changed successfully." });
   } catch (err) {
     console.error("Error during password change:", err);
     if (transaction) {
       await transaction.rollback();
     }
-    // Handle specific error cases
-    if (err instanceof jwt.JsonWebTokenError) {
-      return res.status(400).json({ message: "Invalid or expired token." });
-    }
 
-    return res
-      .status(500)
-      .json({ message: "Internal server error. Please try again later." });
+    
+    return res.status(500).json({ message: "Internal server error. Please try again later." });
   }
 };
+
 
 exports.userResendOtp = async (req, res, next) => {
   const { otpAuthenticationToken, otpType } = req.body;

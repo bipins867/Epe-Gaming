@@ -40,15 +40,17 @@ const validateSignUp = [
 ];
 
 const validateChangePassword = [
-  body("password")
+  body("oldPassword")
+    .isLength({ min: 1 }).withMessage("Please enter valid old password"),
+  body("newPassword")
     .isLength({ min: 8 })
-    .withMessage("Password must be at least 8 characters long")
+    .withMessage("New Password must be at least 8 characters long")
     .matches(/[A-Za-z]/)
-    .withMessage("Password must contain at least one letter")
+    .withMessage("New Password must contain at least one letter")
     .matches(/\d/)
-    .withMessage("Password must contain at least one number")
+    .withMessage("New Password must contain at least one number")
     .matches(/[!@#$%^&*(),.?":{}|<>]/)
-    .withMessage("Password must contain at least one special character"),
+    .withMessage("New Password must contain at least one special character"),
 ];
 
 // Function to check validation errors and format response
