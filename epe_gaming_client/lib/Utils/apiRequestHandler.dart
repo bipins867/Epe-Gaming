@@ -61,12 +61,12 @@ typedef ErrorCallback = void Function(dynamic error);
 
 // Function to retrieve token from local storage
 String? getTokenHeaders() {
-  return AppConfig().getLocalStorageItem('token');
+  return AppConfig.getLocalStorageItem('token');
 }
 
 // GET request without token
 Future<Map<String, dynamic>> getRequest(String url) async {
-  url = AppConfig().baseUrl + url;
+  url = AppConfig.baseUrl + url;
 
   dynamic response = await http.get(Uri.parse(url));
 
@@ -78,7 +78,7 @@ Future<Map<String, dynamic>> getRequest(String url) async {
 // POST request without token
 Future<Map<String, dynamic>> postRequest(
     String url, Map<String, dynamic>? body) async {
-  url = AppConfig().baseUrl + url;
+  url = AppConfig.baseUrl + url;
 
   dynamic response = await http.post(
     Uri.parse(url),
@@ -93,7 +93,7 @@ Future<Map<String, dynamic>> postRequest(
 
 // GET request with token in headers
 Future<Map<String, dynamic>> getRequestWithToken(String url) async {
-  url = AppConfig().baseUrl + url;
+  url = AppConfig.baseUrl + url;
 
   String? token = getTokenHeaders();
 
@@ -113,7 +113,7 @@ Future<Map<String, dynamic>> getRequestWithToken(String url) async {
 // POST request with token in headers
 Future<Map<String, dynamic>> postRequestWithToken(
     String url, Map<String, dynamic>? body) async {
-  url = AppConfig().baseUrl + url;
+  url = AppConfig.baseUrl + url;
 
   String? token = getTokenHeaders();
 

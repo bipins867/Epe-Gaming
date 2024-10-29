@@ -1,3 +1,4 @@
+import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 
 class LoadingScreenPage extends StatefulWidget {
@@ -17,11 +18,17 @@ class _LoadingScreenPageState extends State<LoadingScreenPage> {
   }
 
   _changeScreen() {
+    String path = '/login';
+
+    if (AppConfig.authToken != null) {
+      path = '/';
+    }
+
     Future.delayed(
       const Duration(seconds: 2),
       () {
         Navigator.pushNamedAndRemoveUntil(
-            context, '/login', (Route<dynamic> route) => false);
+            context, path, (Route<dynamic> route) => false);
       },
     );
   }

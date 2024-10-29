@@ -4,23 +4,16 @@ import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppConfig {
-  static final AppConfig _instance = AppConfig._internal();
+  // Static instance variables
+  static late String remoteAddr;
+  static late String? authToken;
+  static late String baseUrl;
 
-  // Singleton factory constructor
-  factory AppConfig() => _instance;
+  static SharedPreferences? preferences;
+  static CustomLogger? customLogger;
 
-  // Private internal constructor
-  AppConfig._internal();
-
-  late String remoteAddr;
-  late String authToken;
-  late String baseUrl;
-
-  SharedPreferences? preferences;
-  CustomLogger? customLogger;
-
-  // Async initialization function
-  Future<void> initializeAppInformation() async {
+  // Static async initialization function
+  static Future<void> initializeAppInformation() async {
     // Load environment-dependent address
     remoteAddr = dotenv.env['REMOTE_ADDRESS']!;
 
@@ -29,20 +22,30 @@ class AppConfig {
     baseUrl = '$remoteAddr/';
     customLogger = CustomLogger();
 
-    String? token = getLocalStorageItem('token');
+    String? token = getLocalStorageItem('authToken');
 
-    if (token != null) {
-      authToken = token;
-    }
+    authToken = token;
   }
 
-  // Set and get methods for SharedPreferences
-  Future<void> setLocalStorageItem(String key, String val) async {
+  // Static methods for SharedPreferences
+  static Future<void> setLocalStorageItem(String key, String val) async {
     await preferences!.setString(key, val);
   }
 
-  String? getLocalStorageItem(String key) {
+  static String? getLocalStorageItem(String key) {
     return preferences!.getString(key);
+  }
+
+  static void removeLocalStorageItem(String key) {
+    preferences!.remove(key);
+  }
+
+  static String? getAuthToken() {
+    if (authToken != null) {
+      return authToken;
+    } else {
+      return null;
+    }
   }
 }
 

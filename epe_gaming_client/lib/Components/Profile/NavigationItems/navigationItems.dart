@@ -5,6 +5,7 @@ import 'package:epe_gaming_client/Components/Profile/NavigationItems/BankDetails
 import 'package:epe_gaming_client/Components/Profile/NavigationItems/Kyc/kyc.dart';
 import 'package:epe_gaming_client/Components/Profile/NavigationItems/Legality/legality.dart';
 import 'package:epe_gaming_client/Components/Profile/NavigationItems/MyProfile/myProfile.dart';
+import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -109,9 +110,9 @@ class NavigationItems extends StatelessWidget {
             "Logout",
             const Icon(Icons.logout, color: Colors.black),
             onClickFun: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => KYCPage()),
-              );
+              AppConfig.removeLocalStorageItem('authToken');
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/login', (Route<dynamic> route) => false);
             },
           ),
         ],

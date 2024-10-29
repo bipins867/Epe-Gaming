@@ -7,7 +7,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env'); // Load environment variables
-  await AppConfig().initializeAppInformation(); // Initialize AppConfig
+  await AppConfig.initializeAppInformation(); // Initialize AppConfig
+
   runApp(MyApp());
 }
 
