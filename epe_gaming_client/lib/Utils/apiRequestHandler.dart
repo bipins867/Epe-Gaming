@@ -61,7 +61,7 @@ typedef ErrorCallback = void Function(dynamic error);
 
 // Function to retrieve token from local storage
 String? getTokenHeaders() {
-  return AppConfig.getLocalStorageItem('token');
+  return AppConfig.getLocalStorageItem('authToken');
 }
 
 // GET request without token

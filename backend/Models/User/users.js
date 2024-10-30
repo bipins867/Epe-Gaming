@@ -1,6 +1,8 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../../database"); // Adjust the path to your database configuration
 
+
+
 const User = sequelize.define(
   "User",
   {
@@ -55,6 +57,11 @@ const User = sequelize.define(
       type: Sequelize.STRING,
       allowNull: false,
     },
+    profileUrl:{
+      type:Sequelize.STRING,
+      allowNull:true,
+      
+    }
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt fields

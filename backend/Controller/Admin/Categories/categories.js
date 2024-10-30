@@ -1,23 +1,28 @@
 const Categories = require("../../../Models/EventAndGames/categories");
 const { createAdminActivity } = require("../../../Utils/activityUtils");
+const { saveFile } = require("../../../Utils/fileHandler");
 const sequelize = require("../../../database");
+const { baseDir } = require("../../../importantInfo");
+const path=require('path')
+const { v4: uuidv4 } = require("uuid");
 
 exports.createCategories = async (req, res, next) => {
-  const { tittle, description } = req.body;
+  const { title, description } = req.body;
   const admin = req.admin;
+  const imageFile = req.files ? req.files[req.fileName] : null; // Assuming multer is used
 
-  // Validation for tittle and description
+  // Validation for title and description
   if (
-    !tittle ||
-    typeof tittle !== "string" ||
-    tittle.length < 3 ||
-    tittle.length > 100
+    !title ||
+    typeof title !== "string" ||
+    title.length < 3 ||
+    title.length > 100
   ) {
     return res
       .status(400)
       .json({
         success: false,
-        message: "Tittle must be a string between 3 and 100 characters.",
+        message: "Title must be a string between 3 and 100 characters.",
       });
   }
 
@@ -35,13 +40,24 @@ exports.createCategories = async (req, res, next) => {
       });
   }
 
-  const transaction = await sequelize.transaction();
+  let transaction;
   try {
-    // Create the new category
+    transaction = await sequelize.transaction();
+
+    // Handle the image file if provided
+    let urlImage = null;
+    if (imageFile) {
+      const filePath = path.join(baseDir,'CustomFiles', 'CategoryImages');
+      const fileName = uuidv4();
+      urlImage = saveFile(imageFile, filePath, fileName); // Save the file and get the URL
+    }
+
+    // Create the new category with the image URL
     const newCategory = await Categories.create(
       {
-        tittle,
+        title,
         description,
+        urlImage,
       },
       { transaction }
     );
@@ -51,7 +67,7 @@ exports.createCategories = async (req, res, next) => {
       req,
       admin,
       "categories",
-      "Created a new category",
+      `Created a new category with title: ${title}`,
       null,
       transaction
     );
@@ -67,8 +83,8 @@ exports.createCategories = async (req, res, next) => {
       });
   } catch (error) {
     // Rollback transaction in case of error
-    await transaction.rollback();
-    console.log(error);
+    if (transaction) await transaction.rollback();
+    console.error("Error creating category:", error);
     return res
       .status(500)
       .json({

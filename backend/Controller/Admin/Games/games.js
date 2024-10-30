@@ -2,6 +2,10 @@ const Categories = require("../../../Models/EventAndGames/categories");
 const Games = require("../../../Models/EventAndGames/games");
 const { createAdminActivity } = require("../../../Utils/activityUtils");
 const sequelize = require("../../../database");
+const { baseDir } = require("../../../importantInfo");
+const path=require('path')
+const { v4: uuidv4 } = require("uuid");
+const { saveFile } = require("../../../Utils/fileHandler");
 
 exports.createGames = async (req, res, next) => {
   const { tittle, description, categorieId } = req.body;
@@ -16,7 +20,7 @@ exports.createGames = async (req, res, next) => {
   ) {
     return res.status(400).json({
       success: false,
-      message: "tittle must be a string between 3 and 100 characters.",
+      message: "Tittle must be a string between 3 and 100 characters.",
     });
   }
 
@@ -32,7 +36,9 @@ exports.createGames = async (req, res, next) => {
     });
   }
 
+  const imageFile = req.files[req.fileName]; // Assuming multer stores files here
   let transaction;
+
   try {
     // Find the associated category by ID
     const category = await Categories.findByPk(categorieId);
@@ -43,13 +49,21 @@ exports.createGames = async (req, res, next) => {
         message: "Category not found",
       });
     }
+
+    // Prepare file path for saving
+    const filePath = path.join(baseDir, 'CustomFiles', 'GameImages');
+    const fileName = uuidv4();
+    const url = saveFile(imageFile, filePath, fileName); // Save the file and get the URL
+
     transaction = await sequelize.transaction();
-    // Create the new game and associate it with the found category
+
+    // Create the new game and associate it with the found category, including the urlImage
     const newGame = await Games.create(
       {
         tittle,
         description,
         CategoryId: category.id, // Ensure the game is associated with the category
+        urlImage: url, // Save the URL of the uploaded image
       },
       { transaction }
     );
@@ -59,7 +73,7 @@ exports.createGames = async (req, res, next) => {
       req,
       admin,
       "games",
-      `Created a new game in category: ${category.name}`, // Log with category name
+      `Created a new game in category: ${category.tittle}`, // Log with category title
       null,
       transaction
     );

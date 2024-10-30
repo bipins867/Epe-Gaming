@@ -25,6 +25,8 @@ app.use(
   })
 );
 
+
+
 app.use(bodyParser.json({ extends: false }));
 
 const activityLogger = (req, res, next) => {
