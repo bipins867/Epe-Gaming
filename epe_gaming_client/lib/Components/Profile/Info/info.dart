@@ -1,52 +1,59 @@
 import 'package:flutter/material.dart';
 
 class Info extends StatelessWidget {
-  const Info({super.key});
+  final Map<String, dynamic>? statusInfo;
+
+  const Info({super.key, required this.statusInfo});
 
   @override
   Widget build(BuildContext context) {
+    // Get data from statusInfo or use "N/A" if null
+    String matchesPlayed = statusInfo?['matchesPlayed']?.toString() ?? '0';
+    String totalKills = statusInfo?['totalKills']?.toString() ?? '0';
+    String totalWinnings = statusInfo?['totalWinning']?.toString() ?? '0';
+
     return Card(
-      margin: EdgeInsets.symmetric(horizontal: 16),
-      elevation: 6, // Added elevation to create a shadow effect
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      elevation: 6, // Adds a shadow effect
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      child: const Padding(
-        padding: EdgeInsets.all(12),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // Match Played
+            // Matches Played
             Column(
               children: [
-                Text(
+                const Text(
                   "Match Played",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 4),
-                Text("150"),
+                const SizedBox(height: 4),
+                Text(matchesPlayed),
               ],
             ),
-            // Total Kill
+            // Total Kills
             Column(
               children: [
-                Text(
+                const Text(
                   "Total Kill",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 4),
-                Text("250"),
+                const SizedBox(height: 4),
+                Text(totalKills),
               ],
             ),
             // Winnings
             Column(
               children: [
-                Text(
+                const Text(
                   "Winnings",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 4),
-                Text("\$500"),
+                const SizedBox(height: 4),
+                Text("🪙$totalWinnings"),
               ],
             ),
           ],

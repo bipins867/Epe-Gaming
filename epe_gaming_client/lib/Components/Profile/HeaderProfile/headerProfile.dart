@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 
 class HeaderProfile extends StatelessWidget {
-  const HeaderProfile({super.key});
+  final Map<String, dynamic>? profileInfo;
+
+  const HeaderProfile({super.key, required this.profileInfo});
 
   @override
   Widget build(BuildContext context) {
+    // Extract the relevant information from profileInfo
+    final String name =
+        profileInfo?['name'] ?? 'No Name'; // Provide a default value
+    final String username =
+        profileInfo?['customerId'] ?? 'No Username'; // Provide a default value
+    final String walletBalance =
+        '${profileInfo?['walletBalance']}'; // Provide a default value
+    final String profileUrl =
+        profileInfo?['profileUrl'] ?? ''; // URL of the profile image
+
     return Card(
       elevation: 4,
       margin: const EdgeInsets.all(16),
@@ -18,36 +30,41 @@ class HeaderProfile extends StatelessWidget {
               child: CircleAvatar(
                 radius: 40,
                 backgroundColor: Colors.grey.shade300,
-                child: const Icon(
-                  Icons.person,
-                  size: 40,
-                  color: Colors.blue,
-                ),
+                backgroundImage: profileUrl.isNotEmpty
+                    ? NetworkImage(profileUrl)
+                    : null, // Load image from URL
+                child: profileUrl.isEmpty
+                    ? const Icon(
+                        Icons.person,
+                        size: 40,
+                        color: Colors.blue,
+                      )
+                    : null, // Show icon if no image is available
               ),
             ),
             const SizedBox(width: 16),
             // Right part with Name, Username, Wallet Balance
-            const Expanded(
+            Expanded(
               flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Alok Prajapati',
-                    style: TextStyle(
+                    name,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    'Username: XDTET13345',
-                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                    'Username: $username',
+                    style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    'Wallet Balance: \$100.00',
-                    style: TextStyle(fontSize: 16, color: Colors.green),
+                    'Coin Balance: 🪙$walletBalance', // Format balance to 2 decimal places
+                    style: const TextStyle(fontSize: 16, color: Colors.green),
                   ),
                 ],
               ),

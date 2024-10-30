@@ -89,8 +89,8 @@ User.belongsToMany(Notification, { through: UserNotification });
 Notification.belongsToMany(User, { through: UserNotification });
 
 
-User.hasMany(Image)
-Image.belongsTo(User)
+// User.hasMany(Image)
+// Image.belongsTo(User)
 
 Games.hasMany(Image)
 Image.belongsTo(Games)

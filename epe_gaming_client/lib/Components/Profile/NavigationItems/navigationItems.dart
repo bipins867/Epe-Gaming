@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
 class NavigationItems extends StatelessWidget {
-  const NavigationItems({super.key});
+  final Map<String, dynamic>? profileInfo;
+  const NavigationItems({super.key, required this.profileInfo});
 
   Widget getListItem(String title, Icon icon, {VoidCallback? onClickFun}) {
     return Card(
@@ -29,6 +30,8 @@ class NavigationItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String kycStatus = profileInfo?['kycStatus'] ?? 'pending';
+    String bankStatus = profileInfo?['bankStatus'] ?? 'pending';
     return Expanded(
       child: ListView(
         padding: const EdgeInsets.all(16),
@@ -38,13 +41,19 @@ class NavigationItems extends StatelessWidget {
             const Icon(Icons.person, color: Colors.blue),
             onClickFun: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => MyProfilePage()),
+                MaterialPageRoute(
+                    builder: (context) => MyProfilePage(
+                          profileInfo: profileInfo,
+                        )),
               );
             },
           ),
           getListItem(
             "KYC",
-            const Icon(Icons.verified_user, color: Colors.green),
+            Icon(
+              Icons.verified_user,
+              color: kycStatus == 'verified' ? Colors.green : Colors.red,
+            ),
             onClickFun: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => KYCPage()),
@@ -53,7 +62,10 @@ class NavigationItems extends StatelessWidget {
           ),
           getListItem(
             "Bank Details",
-            const Icon(Icons.account_balance, color: Colors.grey),
+            Icon(
+              Icons.account_balance,
+              color: bankStatus == 'approved' ? Colors.green : Colors.red,
+            ),
             onClickFun: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => BankDetailsPage()),

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 class MyProfilePage extends StatelessWidget {
-  const MyProfilePage({super.key});
+  final Map<String, dynamic>? profileInfo;
+  const MyProfilePage({super.key, required this.profileInfo});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Profile'),
+        title: const Text('My Profile'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -24,27 +25,28 @@ class MyProfilePage extends StatelessWidget {
                   crossAxisAlignment:
                       CrossAxisAlignment.center, // Center-align contents
                   children: [
-                    Text(
+                    const Text(
                       'Profile Information',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     CircleAvatar(
-                      radius: 50, // Size of the avatar
-                      backgroundColor:
-                          Colors.grey[300], // Background color of the avatar
-                      child: Icon(
+                      radius: 50,
+                      backgroundColor: Colors.grey[300],
+                      child: const Icon(
                         Icons.person,
-                        size: 50, // Size of the icon
-                        color: Colors.black, // Color of the icon
+                        size: 50,
+                        color: Colors.black,
                       ),
                     ),
-                    SizedBox(height: 16),
-                    _buildInfoRow('Name:', 'John Doe'),
-                    _buildInfoRow('Email:', 'john.doe@example.com'),
-                    _buildInfoRow('Customer ID:', '123456'),
-                    _buildInfoRow('Phone Number:', '+1234567890'),
+                    const SizedBox(height: 16),
+                    _buildInfoRow('Name:', profileInfo?['name'] ?? 'N/A'),
+                    _buildInfoRow('Email:', profileInfo?['email'] ?? 'N/A'),
+                    _buildInfoRow(
+                        'Customer ID:', profileInfo?['customerId'] ?? 'N/A'),
+                    _buildInfoRow(
+                        'Phone Number:', profileInfo?['phone'] ?? 'N/A'),
                   ],
                 ),
               ),
@@ -59,14 +61,16 @@ class MyProfilePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Account Status',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 16),
-                    _buildInfoRow('Bank Status:', 'Updated'),
-                    _buildInfoRow('KYC Status:', 'Verified'),
+                    const SizedBox(height: 16),
+                    _buildInfoRow(
+                        'Bank Status:', profileInfo?['bankStatus'] ?? 'N/A'),
+                    _buildInfoRow(
+                        'KYC Status:', profileInfo?['kycStatus'] ?? 'N/A'),
                   ],
                 ),
               ),
@@ -81,41 +85,41 @@ class MyProfilePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Reset Password',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextField(
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Old Password',
                         border: OutlineInputBorder(),
                       ),
                       obscureText: true,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextField(
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'New Password',
                         border: OutlineInputBorder(),
                       ),
                       obscureText: true,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     TextField(
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: 'Confirm Password',
                         border: OutlineInputBorder(),
                       ),
                       obscureText: true,
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
                         // Add your reset password logic here
                       },
-                      child: Text('Reset Password'),
+                      child: const Text('Reset Password'),
                     ),
                   ],
                 ),
@@ -127,15 +131,15 @@ class MyProfilePage extends StatelessWidget {
     );
   }
 
-  // Helper method to create information rows
+  // Helper method to create information rows with default 'N/A' for null values
   Widget _buildInfoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(fontSize: 16)),
-          Text(value, style: TextStyle(fontSize: 16)),
+          Text(label, style: const TextStyle(fontSize: 16)),
+          Text(value, style: const TextStyle(fontSize: 16)),
         ],
       ),
     );
