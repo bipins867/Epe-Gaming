@@ -9,18 +9,21 @@ const kycRouter=require('./Kyc/kyc')
 const referralRouter=require('./Referral/referral')
 const authRouter=require('./Auth/auth');
 const infoRouter=require('./Info/info')
+const notificationRouter=require('./Notifications/notifications')
+const { userAuthentication } = require('../../Middleware/auth')
 
 
 const router=express.Router();
 
-router.use('/bankDetails',bankDetailsRouter)
-router.use('/kyc',kycRouter)
-router.use('/referral',referralRouter)
-router.use('/categories',categoriesRouter)
-router.use('/games',gamesRouter)
-router.use('/events',eventsRouter)
+router.use('/notifications',userAuthentication,notificationRouter)
+router.use('/bankDetails',userAuthentication,bankDetailsRouter)
+router.use('/kyc',userAuthentication,kycRouter)
+router.use('/referral',userAuthentication,referralRouter)
+router.use('/categories',userAuthentication,categoriesRouter)
+router.use('/games',userAuthentication,gamesRouter)
+router.use('/events',userAuthentication,eventsRouter)
 router.use('/auth',authRouter)
-router.use('/info',infoRouter)
+router.use('/info',userAuthentication,infoRouter)
 
 
 module.exports=router;

@@ -4,7 +4,7 @@ const kycController=require('../../../Controller/Users/Kyc/kyc')
 
 const router = express.Router();
 
-router.use("/get",kycController.getKycDetails)
-router.use('/update',kycController.updateKycDetails)
+router.get("/get",kycController.getKycDetails)
+router.post('/update',kycController.updateKycDetails)
 
 module.exports = router;
