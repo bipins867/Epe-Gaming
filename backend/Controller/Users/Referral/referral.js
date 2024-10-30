@@ -6,12 +6,11 @@ const ReferredUser = require("../../../Models/Wallet/referredUsers");
 
 exports.getUserReferallInfo = async (req, res, next) => {
   try {
-    // Extract the referralId from the request body
-    const { referralId } = req.body;
-
+    
+    
     // Find the referral using the referralId
     const referral = await Referrals.findOne({
-      where: { referralId: referralId }, // Assuming 'id' is the key in your Referrals model
+      where: { UserId: req.user.id }, // Assuming 'id' is the key in your Referrals model
       include: [{ model: User, attributes: ["customerId", "name"] }], // Join with User to get candidateId and name
     });
 

@@ -5,11 +5,12 @@ const userAndRoleRouter = require("./UserAndRole/userAndRole");
 const eventsRouter = require("./Event/events");
 const gamesRouter = require("./Games/games");
 const categoriesRouter = require("./Categories/categories");
-
+const announcementRouter=require('./Announcement/announcement')
 const { adminAuthentication } = require("../../Middleware/auth");
 
 const router = express.Router();
 
+router.use('/announcement',adminAuthentication,announcementRouter)
 router.use("/categories", adminAuthentication,categoriesRouter);
 router.use("/games", adminAuthentication,gamesRouter);
 router.use("/events", adminAuthentication,eventsRouter);

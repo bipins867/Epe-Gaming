@@ -33,6 +33,8 @@ router.post(
   userAuthenticationController.userSignUp
 );
 
+router.post('/verify',userAuthentication,userAuthenticationController.verifyUser);
+
 router.post(
   "/changePassword",
   userAuthentication,

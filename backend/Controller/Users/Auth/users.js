@@ -200,42 +200,9 @@ exports.userLogin = async (req, res, next) => {
   }
 };
 
-exports.getUserInfo = async (req, res, next) => {
-  try {
-    // Verify the signUpToken
-
-    const { phone } = req.payload;
-
-    const user = await User.findOne({
-      where: {
-        phone,
-      },
-    });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found!" });
-    }
-    await createUserActivity(
-      req,
-      user,
-      "auth",
-      "Forget Customer Id attempted!"
-    );
-
-    return res.status(200).json({
-      candidateId: user.candidateId,
-      phone: user.phone,
-      name: user.name,
-      email: user.email,
-    });
-  } catch (err) {
-    console.error("Error during OTP resend:", err);
-    return res
-      .status(500)
-      .json({ message: "Internal server error. Please try again later." });
-  }
-};
-
+exports.verifyUser=async(req,res,next)=>{
+  return res.json({message:"Authorized user!"})
+}
 
 exports.changeUserPassword = async (req, res, next) => {
   const { oldPassword, newPassword } = req.body;
@@ -282,7 +249,6 @@ exports.changeUserPassword = async (req, res, next) => {
     return res.status(500).json({ message: "Internal server error. Please try again later." });
   }
 };
-
 
 exports.userResendOtp = async (req, res, next) => {
   const { otpAuthenticationToken, otpType } = req.body;
@@ -333,3 +299,42 @@ exports.userResendOtp = async (req, res, next) => {
       .json({ message: "Internal server error. Please try again later." });
   }
 };
+
+
+exports.getUserInfo = async (req, res, next) => {
+  try {
+    // Verify the signUpToken
+
+    const { phone } = req.payload;
+
+    const user = await User.findOne({
+      where: {
+        phone,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+    await createUserActivity(
+      req,
+      user,
+      "auth",
+      "Forget Customer Id attempted!"
+    );
+
+    return res.status(200).json({
+      candidateId: user.candidateId,
+      phone: user.phone,
+      name: user.name,
+      email: user.email,
+    });
+  } catch (err) {
+    console.error("Error during OTP resend:", err);
+    return res
+      .status(500)
+      .json({ message: "Internal server error. Please try again later." });
+  }
+};
+
+

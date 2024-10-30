@@ -4,7 +4,7 @@ const bankDetailsController=require('../../../Controller/Users/BankDetails/bankD
 
 const router = express.Router();
 
-router.use('/get',bankDetailsController.getBankDetails)
-router.use('/update',bankDetailsController.updateBankDetails)
+router.get('/get',bankDetailsController.getBankDetails)
+router.post('/update',bankDetailsController.updateBankDetails)
 
 module.exports = router;
