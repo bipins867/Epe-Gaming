@@ -19,6 +19,7 @@ const router=express.Router();
 
 router.use('/wallet',userAuthentication,walletRouter)
 router.use('/notifications',userAuthentication,notificationRouter)
+router.use('/info',userAuthentication,infoRouter)
 router.use('/bankDetails',userAuthentication,bankDetailsRouter)
 router.use('/kyc',userAuthentication,kycRouter)
 router.use('/referral',userAuthentication,referralRouter)
@@ -26,7 +27,6 @@ router.use('/categories',userAuthentication,categoriesRouter)
 router.use('/games',userAuthentication,gamesRouter)
 router.use('/events',userAuthentication,eventsRouter)
 router.use('/auth',authRouter)
-router.use('/info',userAuthentication,infoRouter)
 
 
 module.exports=router;
