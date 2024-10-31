@@ -10,11 +10,14 @@ const referralRouter=require('./Referral/referral')
 const authRouter=require('./Auth/auth');
 const infoRouter=require('./Info/info')
 const notificationRouter=require('./Notifications/notifications')
+const walletRouter=require('./Wallet/wallet')
+
 const { userAuthentication } = require('../../Middleware/auth')
 
 
 const router=express.Router();
 
+router.use('/wallet',userAuthentication,walletRouter)
 router.use('/notifications',userAuthentication,notificationRouter)
 router.use('/bankDetails',userAuthentication,bankDetailsRouter)
 router.use('/kyc',userAuthentication,kycRouter)
