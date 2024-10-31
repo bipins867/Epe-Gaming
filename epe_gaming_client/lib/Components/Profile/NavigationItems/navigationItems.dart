@@ -64,7 +64,7 @@ class NavigationItems extends StatelessWidget {
             "Bank Details",
             Icon(
               Icons.account_balance,
-              color: bankStatus == 'approved' ? Colors.green : Colors.red,
+              color: bankStatus == 'updated' ? Colors.green : Colors.red,
             ),
             onClickFun: () {
               Navigator.of(context).push(

@@ -95,6 +95,7 @@ exports.updateBankDetails = async (req, res, next) => {
           accountNumber: hasBankDetails ? accountNumber : null,
           ifscCode: hasBankDetails ? ifscCode : null,
           upiId: hasUpiDetails ? upiId : null,
+          status:"updated"
         },
         { transaction: t }
       );
@@ -102,6 +103,7 @@ exports.updateBankDetails = async (req, res, next) => {
       // Update existing bank details
       await bankDetails.update(
         {
+          status:"updated",
           bankName: hasBankDetails ? bankName : bankDetails.bankName,
           accountHolderName: hasBankDetails
             ? accountHolderName
