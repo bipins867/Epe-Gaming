@@ -12,8 +12,7 @@ const Kyc = sequelize.define(
 
     status: {
       type: Sequelize.STRING,
-      allowNull: false,
-      defaultValue: "pending",
+      allowNull: true,
     },
 
     panNumber: {

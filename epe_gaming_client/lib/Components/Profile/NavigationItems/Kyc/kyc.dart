@@ -1,51 +1,71 @@
+import 'package:epe_gaming_client/Components/Profile/NavigationItems/Kyc/KycStatus/kycStatus.dart';
+import 'package:epe_gaming_client/Components/Profile/NavigationItems/Kyc/UpdateKyc/updateKyc.dart';
+import 'package:epe_gaming_client/Utils/alertHandler.dart';
+import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
+import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 
-class KYCPage extends StatelessWidget {
+class KYCPage extends StatefulWidget {
   const KYCPage({super.key});
 
   @override
+  State<KYCPage> createState() => _KYCPageState();
+}
+
+class _KYCPageState extends State<KYCPage> {
+  AppConfig? appConfig;
+  CustomLogger? customLogger;
+  Map<String, dynamic>? kycDetails;
+
+  @override
+  void initState() {
+    super.initState();
+    appConfig = AppConfig();
+    customLogger = CustomLogger();
+    _fetchKycDetails();
+  }
+
+  void _fetchKycDetails() async {
+    try {
+      dynamic response = await getRequestWithToken('user/kyc/get');
+
+      if (response['statusCode'] == 200) {
+        setState(() {
+          kycDetails = response['body']['data'];
+        });
+      } else {
+        handleErrors(response, alertFunction: (string) {
+          showErrorAlertDialog(context, string);
+        });
+      }
+    } catch (e) {
+      String error = 'System Error: ${e.toString()}';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error)),
+      );
+      customLogger!.logError(error);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final status = kycDetails?['status'];
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('KYC Verification'),
+        title: Text('KYC'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Card(
-          elevation: 4,
-          margin: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Enter PAN Number',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 16),
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: 'PAN Number',
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.text,
-                  maxLength: 10, // Assuming PAN number has 10 characters
-                ),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    // Add your update logic here
-                  },
-                  child: Text('Update KYC'),
-                ),
-              ],
-            ),
-          ),
+        child: Column(
+          children: [
+            if (status != null) KycStatus(kycDetails: kycDetails),
+            if (status != 'verified' && status != 'pending')
+              UpdateKyc(
+                kycDetails: kycDetails,
+                fetchKycFunction: _fetchKycDetails,
+              ),
+          ],
         ),
       ),
     );

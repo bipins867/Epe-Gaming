@@ -49,10 +49,18 @@ exports.updateKycDetails = async (req, res, next) => {
       });
     }
 
+    // Find the KYC record for the user
+    let kycDetails = await Kyc.findOne({ where: { UserId } });
+
+    if(kycDetails){
+      if(kycDetails.status=='verified'){
+        res.status(401).json({message:"Kyc details are already updated!"})
+      }
+    }
+
     t = await sequelize.transaction();
 
-    // Find the KYC record for the user
-    let kycDetails = await Kyc.findOne({ where: { UserId }, transaction: t });
+    
 
     if (!kycDetails) {
       // If no KYC record exists, create a new one
