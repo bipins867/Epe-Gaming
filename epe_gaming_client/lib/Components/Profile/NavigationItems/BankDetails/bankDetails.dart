@@ -1,7 +1,107 @@
+import 'package:epe_gaming_client/Utils/alertHandler.dart';
+import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
+import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 
-class BankDetailsPage extends StatelessWidget {
+class BankDetailsPage extends StatefulWidget {
   const BankDetailsPage({super.key});
+
+  @override
+  State<BankDetailsPage> createState() => _BankDetailsPageState();
+}
+
+class _BankDetailsPageState extends State<BankDetailsPage> {
+  AppConfig? appConfig;
+  CustomLogger? customLogger;
+  Map<String, dynamic>? bankDetails;
+
+  final TextEditingController bankNameController = TextEditingController();
+  final TextEditingController accountHolderNameController =
+      TextEditingController();
+  final TextEditingController accountNumberController = TextEditingController();
+  final TextEditingController ifscCodeController = TextEditingController();
+  final TextEditingController upiIdController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    appConfig = AppConfig();
+    customLogger = CustomLogger();
+    _fetchBankDetails();
+  }
+
+  void _fetchBankDetails() async {
+    try {
+      dynamic response = await getRequestWithToken('user/bankDetails/get');
+
+      if (response['statusCode'] == 200) {
+        setState(() {
+          bankDetails = response['body']['data'];
+          _initializeFields();
+        });
+      } else {
+        handleErrors(response, alertFunction: (string) {
+          showErrorAlertDialog(context, string);
+        });
+      }
+    } catch (e) {
+      String error = 'System Error: ${e.toString()}';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error)),
+      );
+      customLogger!.logError(error);
+    }
+  }
+
+  void _initializeFields() {
+    if (bankDetails != null) {
+      if (bankDetails!['bankName'] != null) {
+        bankNameController.text = bankDetails!['bankName'];
+      }
+      if (bankDetails!['accountHolderName'] != null) {
+        accountHolderNameController.text = bankDetails!['accountHolderName'];
+      }
+      if (bankDetails!['accountNumber'] != null) {
+        accountNumberController.text = bankDetails!['accountNumber'];
+      }
+      if (bankDetails!['ifscCode'] != null) {
+        ifscCodeController.text = bankDetails!['ifscCode'];
+      }
+      if (bankDetails!['upiId'] != null) {
+        upiIdController.text = bankDetails!['upiId'];
+      }
+    }
+  }
+
+  Future<void> _updateBankStatus() async {
+    Map<String, dynamic> requestData = {
+      'bankName': bankNameController.text,
+      'accountHolderName': accountHolderNameController.text,
+      'accountNumber': accountNumberController.text,
+      'ifscCode': ifscCodeController.text,
+      'upiId': upiIdController.text,
+    };
+
+    try {
+      dynamic response =
+          await postRequestWithToken('user/bankDetails/update', requestData);
+
+      if (response['statusCode'] == 200) {
+        showInfoAlertDialog(context, 'Bank details updated successfully.');
+        _fetchBankDetails();
+      } else {
+        handleErrors(response, alertFunction: (string) {
+          showErrorAlertDialog(context, string);
+        });
+      }
+    } catch (e) {
+      String error = 'System Error: ${e.toString()}';
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error)),
+      );
+      customLogger!.logError(error);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +129,7 @@ class BankDetailsPage extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 TextField(
+                  controller: bankNameController,
                   decoration: InputDecoration(
                     labelText: 'Bank Name',
                     border: OutlineInputBorder(),
@@ -36,6 +137,7 @@ class BankDetailsPage extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 TextField(
+                  controller: accountHolderNameController,
                   decoration: InputDecoration(
                     labelText: 'Account Holder Name',
                     border: OutlineInputBorder(),
@@ -43,6 +145,7 @@ class BankDetailsPage extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 TextField(
+                  controller: ifscCodeController,
                   decoration: InputDecoration(
                     labelText: 'IFSC Code',
                     border: OutlineInputBorder(),
@@ -50,6 +153,7 @@ class BankDetailsPage extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 TextField(
+                  controller: accountNumberController,
                   decoration: InputDecoration(
                     labelText: 'Account Number',
                     border: OutlineInputBorder(),
@@ -57,10 +161,9 @@ class BankDetailsPage extends StatelessWidget {
                   keyboardType: TextInputType.number,
                 ),
                 SizedBox(height: 16),
-
                 Divider(height: 32, thickness: 1.2), // Separator line
-
                 TextField(
+                  controller: upiIdController,
                   decoration: InputDecoration(
                     labelText: 'UPI ID',
                     border: OutlineInputBorder(),
@@ -69,9 +172,7 @@ class BankDetailsPage extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () {
-                    // Add your update settlement details logic here
-                  },
+                  onPressed: _updateBankStatus,
                   style: ElevatedButton.styleFrom(
                     minimumSize:
                         Size(double.infinity, 50), // Make button full-width
