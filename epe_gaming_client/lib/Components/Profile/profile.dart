@@ -5,8 +5,6 @@ import 'package:epe_gaming_client/Utils/alertHandler.dart';
 import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
