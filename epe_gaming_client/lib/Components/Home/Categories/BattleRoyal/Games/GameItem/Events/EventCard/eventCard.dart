@@ -1,32 +1,13 @@
 import 'package:epe_gaming_client/Components/Home/Categories/BattleRoyal/Games/GameItem/Events/EventDetails/eventDetails.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class EventCard extends StatelessWidget {
-  final String title;
-  final String eventId;
-  final String regStartTime;
-  final String regCloseTime;
-  final String matchStartTime;
-  final String prizePool;
-  final String perKill;
-  final String entryFee;
-  final String squadType;
-  final String version;
-  final String map;
+  final Map<String, dynamic> eventInfo;
 
   const EventCard({
     super.key,
-    required this.title,
-    required this.eventId,
-    required this.regStartTime,
-    required this.regCloseTime,
-    required this.matchStartTime,
-    required this.prizePool,
-    required this.perKill,
-    required this.entryFee,
-    required this.squadType,
-    required this.version,
-    required this.map,
+    required this.eventInfo,
   });
 
   @override
@@ -40,20 +21,16 @@ class EventCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title at the top
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            // Title at the top with a join status indicator
+
+            _buildTitleWithJoinStatus(
+                eventInfo['tittle'], eventInfo['isUserJoined']),
             const SizedBox(height: 16),
 
             // Row layout for Start, Close, and Match Start times
-            _buildTimeRow('Registration Start:', regStartTime),
-            _buildTimeRow('Registration Close:', regCloseTime),
-            _buildTimeRow('Match Start:', matchStartTime),
+            _buildTimeRow('Registration Start:', eventInfo['regStartTime']),
+            _buildTimeRow('Registration Close:', eventInfo['regCloseTime']),
+            _buildTimeRow('Match Start:', eventInfo['startTime']),
 
             const SizedBox(height: 16),
 
@@ -66,12 +43,13 @@ class EventCard extends StatelessWidget {
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               children: [
-                _buildDetailItem('Prize Pool', prizePool),
-                _buildDetailItem('Per Kill', perKill),
-                _buildDetailItem('Entry Fee', entryFee),
-                _buildDetailItem('Squad Type', squadType),
-                _buildDetailItem('Version', version),
-                _buildDetailItem('Map', map),
+                _buildDetailItem(
+                    'Prize Pool 1', '🪙${eventInfo['prizePool_1']}'),
+                _buildDetailItem('Per Kill', '🪙${eventInfo['perKill']}'),
+                _buildDetailItem('Entry Fee', '🪙${eventInfo['entryFee']}'),
+                _buildDetailItem('Squad Type', eventInfo['squadType']),
+                _buildDetailItem('Version', eventInfo['version']),
+                _buildDetailItem('Map', eventInfo['map']),
               ],
             ),
 
@@ -85,7 +63,9 @@ class EventCard extends StatelessWidget {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
-                        return EventDetailsPage();
+                        return EventDetailsPage(
+                          eventInfo: eventInfo,
+                        );
                       },
                     ),
                   );
@@ -102,8 +82,34 @@ class EventCard extends StatelessWidget {
     );
   }
 
-  // Helper method to build each time row
-  Widget _buildTimeRow(String title, String value) {
+  // Helper method to build the title with join status indicator
+  Widget _buildTitleWithJoinStatus(String? title, bool? isUserJoined) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text(
+            title ?? 'No Title Available',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        // Icon to indicate if user has joined
+        if (isUserJoined == true)
+          const Icon(
+            Icons.check_circle,
+            color: Colors.green,
+            size: 20,
+          ),
+      ],
+    );
+  }
+
+  // Helper method to build each time row with null-checker for 'N/A'
+  Widget _buildTimeRow(String title, String? value) {
+    final dateTime = _formatDateTime(value);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -113,17 +119,46 @@ class EventCard extends StatelessWidget {
             title,
             style: const TextStyle(fontSize: 14, color: Colors.grey),
           ),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                dateTime['date'] ?? 'N/A',
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                dateTime['time'] ?? 'N/A',
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  // Helper method to build each item in the grid
-  Widget _buildDetailItem(String title, String value) {
+  // Helper method to format the date-time string into separate date and time
+  Map<String, String?> _formatDateTime(String? dateTime) {
+    if (dateTime == null) {
+      return {'date': null, 'time': null};
+    }
+    try {
+      DateTime parsedDate = DateTime.parse(dateTime);
+      String formattedDate =
+          DateFormat('yyyy-MM-dd').format(parsedDate); // Format Date
+      String formattedTime =
+          DateFormat('hh:mm a').format(parsedDate); // Format Time in AM/PM
+      return {'date': formattedDate, 'time': formattedTime}; // Return as a Map
+    } catch (e) {
+      return {'date': 'Invalid Date', 'time': null};
+    }
+  }
+
+  // Helper method to build each item in the grid with null-checker for 'N/A'
+  Widget _buildDetailItem(String title, dynamic value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -133,7 +168,7 @@ class EventCard extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          value,
+          '${value ?? 'N/A'}',
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         ),
       ],

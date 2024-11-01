@@ -1,16 +1,22 @@
 import 'package:epe_gaming_client/Components/Home/Categories/BattleRoyal/Games/GameItem/Events/EventDetails/JoinTeam/joinTeam.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart'; // Import the intl package for date formatting
 
 class EventDetailsHome extends StatelessWidget {
-  const EventDetailsHome({super.key});
+  final Map<String, dynamic> eventInfo;
+  const EventDetailsHome({super.key, required this.eventInfo});
 
   void _copyToClipboard(BuildContext context, String text) {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Copied to clipboard: $text')),
     );
+  }
+
+  String _formatDateTime(String dateTime) {
+    DateTime parsedDate = DateTime.parse(dateTime);
+    return DateFormat('yyyy-MM-dd HH:mm').format(parsedDate);
   }
 
   @override
@@ -25,13 +31,11 @@ class EventDetailsHome extends StatelessWidget {
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10),
-          Text('Wallet Balance: \$500.00', style: TextStyle(fontSize: 16)),
-          SizedBox(height: 20),
 
-          // // Event ID with Copy Button
+          // Event ID with Copy Button
           Row(
             children: [
-              _buildCopyField(context, 'Event ID', 'EVT12345'),
+              _buildCopyField(context, 'Event ID', eventInfo['eventId']),
             ],
           ),
           SizedBox(height: 10),
@@ -43,13 +47,17 @@ class EventDetailsHome extends StatelessWidget {
           ),
           SizedBox(height: 5),
           Text(
-              'Join the ultimate BGMI Invitational event with a grand prize pool. Top teams across the nation will compete for glory and rewards.',
-              style: TextStyle(fontSize: 16)),
+            eventInfo['description'],
+            style: TextStyle(fontSize: 16),
+          ),
           SizedBox(height: 20),
 
           // Event Timings
           _buildDetailTimeItem(
-              '2024-10-10 10:00', '2024-10-10 10:00', '2024-10-10 10:00'),
+            _formatDateTime(eventInfo['regStartTime']),
+            _formatDateTime(eventInfo['regCloseTime']),
+            _formatDateTime(eventInfo['startTime']),
+          ),
           SizedBox(height: 20),
 
           // Event Info in 3x3 grid
@@ -61,19 +69,19 @@ class EventDetailsHome extends StatelessWidget {
             mainAxisSpacing: 16,
             crossAxisSpacing: 16,
             children: [
-              _buildDetailItem('Prize Pool', '₹50,000'),
-              _buildDetailItem('Per Kill', '₹100'),
-              _buildDetailItem('Entry Fee', '₹500'),
-              _buildDetailItem('Squad Type', 'Squad'),
-              _buildDetailItem('Version', 'TPP'),
-              _buildDetailItem('Map', 'Erangel'),
-              _buildDetailItem('No. of Players', '100'),
-              _buildDetailItem('Team Length', '4'),
-              _buildDetailItem('Prize Pool 1', '₹25,000'),
-              _buildDetailItem('Prize Pool 2', '₹15,000'),
-              _buildDetailItem('Prize Pool 3', '₹10,000'),
-              _buildDetailItem('Status', 'Open'),
-              _buildDetailItem('Public Event', 'No'),
+              _buildDetailItem('Prize Pool', '🪙${eventInfo['prizePool_1']}'),
+              _buildDetailItem('Per Kill', '🪙${eventInfo['perKill']}'),
+              _buildDetailItem('Entry Fee', '🪙${eventInfo['entryFee']}'),
+              _buildDetailItem('Squad Type', eventInfo['squadType'].toString()),
+              _buildDetailItem('Version', eventInfo['version']),
+              _buildDetailItem('Map', eventInfo['map']),
+              _buildDetailItem(
+                  'No. of Players', eventInfo['noOfPlayers'].toString()),
+              _buildDetailItem('Status', eventInfo['status']),
+              _buildDetailItem(
+                  'Public Event', eventInfo['isPublic'] ? 'Yes' : 'No'),
+              _buildDetailItem(
+                  'Joined', eventInfo['isUserJoined'] ? 'Yes' : 'No'),
             ],
           ),
           SizedBox(height: 20),
@@ -82,8 +90,9 @@ class EventDetailsHome extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildCopyField(context, 'Room ID', 'ROOM123'),
-              _buildCopyField(context, 'Room Password', 'PASS123'),
+              _buildCopyField(context, 'Room ID', eventInfo['roomId'] ?? 'N/A'),
+              _buildCopyField(
+                  context, 'Room Password', eventInfo['roomPassword'] ?? 'N/A'),
             ],
           ),
           SizedBox(height: 30),
@@ -163,10 +172,8 @@ class EventDetailsHome extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              label,
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-            ),
+            Text(label,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
             SizedBox(height: 5),
             Text(value, style: TextStyle(fontSize: 12)),
           ],
@@ -180,10 +187,8 @@ class EventDetailsHome extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
+          Text(label,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           SizedBox(height: 5),
           Row(
             children: [

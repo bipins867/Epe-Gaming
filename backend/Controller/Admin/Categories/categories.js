@@ -7,22 +7,22 @@ const path=require('path')
 const { v4: uuidv4 } = require("uuid");
 
 exports.createCategories = async (req, res, next) => {
-  const { title, description } = req.body;
+  const { tittle, description } = req.body;
   const admin = req.admin;
-  const imageFile = req.files ? req.files[req.fileName] : null; // Assuming multer is used
+  const imageFile = req.files ? req.files[req.fileName][0] : null; // Assuming multer is used
 
-  // Validation for title and description
+  // Validation for tittle and description
   if (
-    !title ||
-    typeof title !== "string" ||
-    title.length < 3 ||
-    title.length > 100
+    !tittle ||
+    typeof tittle !== "string" ||
+    tittle.length < 3 ||
+    tittle.length > 100
   ) {
     return res
       .status(400)
       .json({
         success: false,
-        message: "Title must be a string between 3 and 100 characters.",
+        message: "Tittle must be a string between 3 and 100 characters.",
       });
   }
 
@@ -43,19 +43,24 @@ exports.createCategories = async (req, res, next) => {
   let transaction;
   try {
     transaction = await sequelize.transaction();
+    const commonPath='CustomFiles'
+    const pathCategory='CategoryImages'
+
 
     // Handle the image file if provided
     let urlImage = null;
     if (imageFile) {
-      const filePath = path.join(baseDir,'CustomFiles', 'CategoryImages');
+      const filePath = path.join(baseDir,commonPath,pathCategory);
       const fileName = uuidv4();
-      urlImage = saveFile(imageFile, filePath, fileName); // Save the file and get the URL
+      urlImage = saveFile(imageFile, filePath, fileName); 
+      urlImage=path.join(commonPath,pathCategory,urlImage)
+      // Save the file and get the URL
     }
 
     // Create the new category with the image URL
     const newCategory = await Categories.create(
       {
-        title,
+        tittle,
         description,
         urlImage,
       },
@@ -67,7 +72,7 @@ exports.createCategories = async (req, res, next) => {
       req,
       admin,
       "categories",
-      `Created a new category with title: ${title}`,
+      `Created a new category with tittle: ${tittle}`,
       null,
       transaction
     );

@@ -29,6 +29,9 @@ const UserNotification = require("./AndModels/userNotifications");
 const Image = require("./Images/images");
 const Announcement = require("./Announcement/announcement");
 const AuthToken = require("./User/authToken");
+const EventUsers = require("./AndModels/EventUsers");
+
+
 
 //Now Association starts here ---
 
@@ -84,6 +87,9 @@ Teams.belongsTo(Events);
 UserGames.belongsToMany(Teams, { through: TeamUserGames });
 Teams.belongsToMany(UserGames, { through: TeamUserGames });
 
+
+User.belongsToMany(Events,{through:EventUsers})
+Events.belongsToMany(User,{through:EventUsers})
 
 User.belongsToMany(Notification, { through: UserNotification });
 Notification.belongsToMany(User, { through: UserNotification });

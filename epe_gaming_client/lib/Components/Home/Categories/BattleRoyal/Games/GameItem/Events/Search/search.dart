@@ -10,23 +10,83 @@ class SearchEvent extends StatefulWidget {
 
 class _SearchEventState extends State<SearchEvent> {
   final TextEditingController _searchController = TextEditingController();
-  // final List<String> _events = []; // This will hold the event data
-  List<String> _filteredEvents = []; // This will hold the filtered results
+  List<Map<String, dynamic>> _filteredEvents = []; // List of event info maps
 
   void _searchEvents() {
-    // Simulated event list (you would typically fetch this from an API)
-    List<String> allEvents = [
-      'BGMI Tournament',
-      'Free Fire Challenge',
-      'Call of Duty League',
-      'Valorant Showdown',
-      'FIFA 22 Cup',
+    // Simulated event list with each event as a Map<String, dynamic>
+    List<Map<String, dynamic>> allEvents = [
+      {
+        'title': 'BGMI Tournament',
+        'eventId': 'AXFFERT',
+        'regStartTime': '12/03/34-12:35',
+        'regCloseTime': '12/03/34-12:35',
+        'matchStartTime': '12/03/34-12:35',
+        'prizePool': '\$100',
+        'perKill': '\$5',
+        'entryFee': '\$10',
+        'squadType': '4',
+        'version': 'TPP',
+        'map': 'Erangle',
+      },
+      {
+        'title': 'Free Fire Challenge',
+        'eventId': 'AXFFERT',
+        'regStartTime': '12/03/34-12:35',
+        'regCloseTime': '12/03/34-12:35',
+        'matchStartTime': '12/03/34-12:35',
+        'prizePool': '\$100',
+        'perKill': '\$5',
+        'entryFee': '\$10',
+        'squadType': '4',
+        'version': 'TPP',
+        'map': 'Erangle',
+      },
+      {
+        'title': 'Call of Duty League',
+        'eventId': 'AXFFERT',
+        'regStartTime': '12/03/34-12:35',
+        'regCloseTime': '12/03/34-12:35',
+        'matchStartTime': '12/03/34-12:35',
+        'prizePool': '\$100',
+        'perKill': '\$5',
+        'entryFee': '\$10',
+        'squadType': '4',
+        'version': 'TPP',
+        'map': 'Erangle',
+      },
+      {
+        'title': 'Valorant Showdown',
+        'eventId': 'AXFFERT',
+        'regStartTime': '12/03/34-12:35',
+        'regCloseTime': '12/03/34-12:35',
+        'matchStartTime': '12/03/34-12:35',
+        'prizePool': '\$100',
+        'perKill': '\$5',
+        'entryFee': '\$10',
+        'squadType': '4',
+        'version': 'TPP',
+        'map': 'Erangle',
+      },
+      {
+        'title': 'FIFA 22 Cup',
+        'eventId': 'AXFFERT',
+        'regStartTime': '12/03/34-12:35',
+        'regCloseTime': '12/03/34-12:35',
+        'matchStartTime': '12/03/34-12:35',
+        'prizePool': '\$100',
+        'perKill': '\$5',
+        'entryFee': '\$10',
+        'squadType': '4',
+        'version': 'TPP',
+        'map': 'Erangle',
+      },
     ];
 
     // Filtering events based on the search input
     setState(() {
       _filteredEvents = allEvents
-          .where((event) => event
+          .where((event) => event['title']
+              .toString()
               .toLowerCase()
               .contains(_searchController.text.toLowerCase()))
           .toList();
@@ -44,7 +104,7 @@ class _SearchEventState extends State<SearchEvent> {
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                labelText: 'Enter event Id',
+                labelText: 'Enter event id',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -65,18 +125,8 @@ class _SearchEventState extends State<SearchEvent> {
                   : ListView.builder(
                       itemCount: _filteredEvents.length,
                       itemBuilder: (context, index) {
-                        return EventCard(
-                            title: _filteredEvents[index],
-                            eventId: 'AXFFERT',
-                            regStartTime: "12/03/34-12:35",
-                            regCloseTime: "12/03/34-12:35",
-                            matchStartTime: "12/03/34-12:35",
-                            prizePool: "\$100",
-                            perKill: "\$5",
-                            entryFee: "\$10",
-                            squadType: "4",
-                            version: "TPP",
-                            map: "Erangle");
+                        final eventInfo = _filteredEvents[index];
+                        return EventCard(eventInfo: eventInfo);
                       },
                     ),
             ),

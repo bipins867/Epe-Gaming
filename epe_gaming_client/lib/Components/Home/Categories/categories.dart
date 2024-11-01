@@ -1,4 +1,5 @@
 import 'package:epe_gaming_client/Components/Home/Categories/BattleRoyal/battleRoyal.dart';
+import 'package:epe_gaming_client/Utils/alertHandler.dart';
 import 'package:flutter/material.dart';
 
 class Categories extends StatelessWidget {
@@ -31,8 +32,14 @@ class Categories extends StatelessWidget {
                   );
                 },
               ),
-              _buildCategoryCard('PC Games', 'assets/feature.jpg'),
-              _buildCategoryCard('Board Games', 'assets/feature.jpg'),
+              _buildCategoryCard('PC Games', 'assets/feature.jpg',
+                  callbackFunc: () {
+                showInfoAlertDialog(context, "Comming Soon!");
+              }),
+              _buildCategoryCard('Board Games', 'assets/feature.jpg',
+                  callbackFunc: () {
+                showInfoAlertDialog(context, "Comming Soon!");
+              }),
             ],
           ),
         ],
