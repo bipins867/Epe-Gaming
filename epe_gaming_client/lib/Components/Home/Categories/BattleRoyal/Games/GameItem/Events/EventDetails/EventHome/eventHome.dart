@@ -26,12 +26,6 @@ class EventDetailsHome extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Event Details',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 10),
-
           // Event ID with Copy Button
           Row(
             children: [
@@ -69,9 +63,14 @@ class EventDetailsHome extends StatelessWidget {
             mainAxisSpacing: 16,
             crossAxisSpacing: 16,
             children: [
-              _buildDetailItem('Prize Pool', '🪙${eventInfo['prizePool_1']}'),
-              _buildDetailItem('Per Kill', '🪙${eventInfo['perKill']}'),
-              _buildDetailItem('Entry Fee', '🪙${eventInfo['entryFee']}'),
+              _buildDetailItem(
+                  'Prize Pool 1', '🪙${eventInfo['prizePool_1'] ?? 0}'),
+              _buildDetailItem(
+                  'Prize Pool 2', '🪙${eventInfo['prizePool_2'] ?? 0}'),
+              _buildDetailItem(
+                  'Prize Pool 3', '🪙${eventInfo['prizePool_3'] ?? 0}'),
+              _buildDetailItem('Per Kill', '🪙${eventInfo['perKill'] ?? 0}'),
+              _buildDetailItem('Entry Fee', '🪙${eventInfo['entryFee'] ?? 0}'),
               _buildDetailItem('Squad Type', eventInfo['squadType'].toString()),
               _buildDetailItem('Version', eventInfo['version']),
               _buildDetailItem('Map', eventInfo['map']),
@@ -87,34 +86,38 @@ class EventDetailsHome extends StatelessWidget {
           SizedBox(height: 20),
 
           // Room Information with Copy Buttons
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildCopyField(context, 'Room ID', eventInfo['roomId'] ?? 'N/A'),
-              _buildCopyField(
-                  context, 'Room Password', eventInfo['roomPassword'] ?? 'N/A'),
-            ],
-          ),
-          SizedBox(height: 30),
+          if (eventInfo['roomId'] != null) ...[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildCopyField(
+                    context, 'Room ID', eventInfo['roomId'] ?? 'N/A'),
+                _buildCopyField(context, 'Room Password',
+                    eventInfo['roomPassword'] ?? 'N/A'),
+              ],
+            ),
+            SizedBox(height: 30),
+          ],
 
           // Join Event and Play Now Buttons
           Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => JoinTeamPage()),
-                    );
-                  },
-                  child: Text('Join Event'),
-                ),
-                SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Text('Play Now'),
-                ),
+                if (!eventInfo['isUserJoined'])
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => JoinTeamPage()),
+                      );
+                    },
+                    child: Text('Join Event'),
+                  ),
+
+                // ElevatedButton(
+                //   onPressed: () {},
+                //   child: Text('Play Now'),
+                // ),
               ],
             ),
           ),

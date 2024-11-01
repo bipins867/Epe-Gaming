@@ -38,7 +38,7 @@ class Accountstatus extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildInfoRow(String label, String? value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0), // Space between rows
       child: Row(
@@ -49,7 +49,7 @@ class Accountstatus extends StatelessWidget {
             style: TextStyle(fontSize: 16),
           ),
           Text(
-            value,
+            '$value',
             style: TextStyle(fontSize: 16),
           ),
         ],

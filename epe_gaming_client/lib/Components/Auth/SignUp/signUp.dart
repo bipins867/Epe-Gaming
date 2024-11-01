@@ -30,7 +30,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   void signUpHandler() async {
     if (_nameController.text.isEmpty) {
-      return showInfoAlertDialog(context, "Please enter your name!",
+      return showInfoAlertDialog(context, "Name as on your PAN Card!",
           type: "Required!");
     }
     if (_emailController.text.isEmpty) {
@@ -124,7 +124,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   TextField(
                     controller: _nameController,
                     decoration: InputDecoration(
-                      labelText: 'Name',
+                      labelText: 'Name as on your PAN',
                       border: OutlineInputBorder(),
                     ),
                   ),
