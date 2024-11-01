@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class TransactionHistory extends StatefulWidget {
-  TransactionHistory({super.key});
+  const TransactionHistory({super.key});
 
   @override
   State<TransactionHistory> createState() => _TransactionHistoryState();

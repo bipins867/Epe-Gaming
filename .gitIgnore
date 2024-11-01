@@ -1,6 +1,7 @@
 # Ignore for backend (Node.js)
 backend/node_modules/
 backend/.env
+backend/CustomFiles/
 
 # Ignore for web-version (React.js)
 web-version/node_modules/

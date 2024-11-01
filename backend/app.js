@@ -29,6 +29,11 @@ app.use(
 
 app.use(bodyParser.json({ extends: false }));
 
+
+
+
+app.use(express.static(path.join(__dirname, "CustomFiles")));
+
 const activityLogger = (req, res, next) => {
   // Extracting IP Addresses (could be a list separated by commas)
   const ipAddresses = req.headers["x-forwarded-for"]

@@ -16,7 +16,7 @@ class KycStatus extends StatelessWidget {
         }[status] ??
         Colors.grey;
 
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Card(
         color: statusColor,

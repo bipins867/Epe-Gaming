@@ -7,7 +7,7 @@ const { userAuthentication } = require("../../../Middleware/auth");
 
 const router = express.Router();
 
-router.post('/getEventList',eventController.getEventList)
+router.post('/getEventsList',eventController.getEventList)
 router.post('/searchEvent',eventController.searchEvent)
 router.post('/getUserGameInfo',userAuthentication,eventController.getUserGamesInfo)
 router.post('/updateUserGameInfo',userAuthentication,eventController.updateUserGamesInfo)

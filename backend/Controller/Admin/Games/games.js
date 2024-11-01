@@ -7,7 +7,9 @@ const path=require('path')
 const { v4: uuidv4 } = require("uuid");
 const { saveFile } = require("../../../Utils/fileHandler");
 
+
 exports.createGames = async (req, res, next) => {
+  
   const { tittle, description, categorieId } = req.body;
   const admin = req.admin;
 
@@ -36,8 +38,9 @@ exports.createGames = async (req, res, next) => {
     });
   }
 
-  const imageFile = req.files[req.fileName]; // Assuming multer stores files here
+  const imageFile = req.files[req.fileName][0]; // Assuming multer stores files here
   let transaction;
+  
 
   try {
     // Find the associated category by ID
@@ -49,11 +52,19 @@ exports.createGames = async (req, res, next) => {
         message: "Category not found",
       });
     }
+    const commonPath='CustomFiles'
+    const pathCategory='GameImages'
 
     // Prepare file path for saving
-    const filePath = path.join(baseDir, 'CustomFiles', 'GameImages');
+    const filePath = path.join(baseDir, commonPath, pathCategory);
     const fileName = uuidv4();
-    const url = saveFile(imageFile, filePath, fileName); // Save the file and get the URL
+    let url = saveFile(imageFile, filePath, fileName); // Save the file and get the URL
+
+    url=path.join(commonPath,pathCategory,url)
+    
+    
+
+
 
     transaction = await sequelize.transaction();
 
@@ -64,6 +75,7 @@ exports.createGames = async (req, res, next) => {
         description,
         CategoryId: category.id, // Ensure the game is associated with the category
         urlImage: url, // Save the URL of the uploaded image
+
       },
       { transaction }
     );

@@ -1,4 +1,5 @@
 import 'package:epe_gaming_client/Components/Home/Categories/BattleRoyal/Games/GameItem/Events/Hosted/hosted.dart';
+import 'package:epe_gaming_client/Utils/alertHandler.dart';
 import 'package:flutter/material.dart';
 
 class Events extends StatelessWidget {
@@ -21,20 +22,22 @@ class Events extends StatelessWidget {
             );
           },
         ),
-        _buildInfoCard(
-          context,
-          icon: Icons.group,
-          title: 'Challenge',
-          description:
-              'Users can join or host an event created by other users. Compete to be the best!',
-        ),
-        _buildInfoCard(
-          context,
-          icon: Icons.business,
-          title: 'Sponsored',
-          description:
-              'Sponsored events are hosted by partner companies with exclusive rewards.',
-        ),
+        _buildInfoCard(context,
+            icon: Icons.group,
+            title: 'Challenge',
+            description:
+                'Users can join or host an event created by other users. Compete to be the best!',
+            callbackFunc: () {
+          showInfoAlertDialog(context, "Comming Soon!");
+        }),
+        _buildInfoCard(context,
+            icon: Icons.business,
+            title: 'Sponsored',
+            description:
+                'Sponsored events are hosted by partner companies with exclusive rewards.',
+            callbackFunc: () {
+          showInfoAlertDialog(context, "Comming Soon!");
+        }),
       ],
     );
   }

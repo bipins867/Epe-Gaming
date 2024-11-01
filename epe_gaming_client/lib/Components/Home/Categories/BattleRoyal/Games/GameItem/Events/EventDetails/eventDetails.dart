@@ -4,7 +4,8 @@ import 'package:epe_gaming_client/Components/Home/Categories/BattleRoyal/Games/G
 import 'package:flutter/material.dart';
 
 class EventDetailsPage extends StatelessWidget {
-  const EventDetailsPage({super.key});
+  final Map<String, dynamic> eventInfo;
+  const EventDetailsPage({super.key, required this.eventInfo});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,9 @@ class EventDetailsPage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            EventDetailsHome(), // First tab for Event Details
+            EventDetailsHome(
+              eventInfo: eventInfo,
+            ), // First tab for Event Details
             TeamInfoPage(), // Second tab for Team Info
             SearchTeamPage(), // Third tab for Search Team
           ],

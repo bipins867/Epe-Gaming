@@ -8,6 +8,8 @@ import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 
 class WalletHomePage extends StatefulWidget {
+  const WalletHomePage({super.key});
+
   @override
   _WalletHomePageState createState() => _WalletHomePageState();
 }

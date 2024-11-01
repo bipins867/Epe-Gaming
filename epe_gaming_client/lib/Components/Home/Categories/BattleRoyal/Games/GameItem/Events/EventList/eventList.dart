@@ -5,58 +5,35 @@ import 'package:flutter/material.dart';
 class EventsList extends StatelessWidget {
   final String category;
   final String type;
+  final List? eventLists;
 
-  const EventsList({super.key, required this.category, required this.type});
+  const EventsList({
+    super.key,
+    required this.category,
+    required this.type,
+    required this.eventLists,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return ListView.builder(
       padding: const EdgeInsets.all(16),
-      children: [
-        // Placeholder for events, can be replaced with actual event data
+      itemCount: eventLists?.length ?? 0,
+      itemBuilder: (context, index) {
+        dynamic eventInfo = eventLists![index];
 
-        EventCard(
-            title: "Title of the Event!",
-            eventId: 'AXFFERT',
-            regStartTime: "12/03/34-12:35",
-            regCloseTime: "12/03/34-12:35",
-            matchStartTime: "12/03/34-12:35",
-            prizePool: "\$100",
-            perKill: "\$5",
-            entryFee: "\$10",
-            squadType: "4",
-            version: "TPP",
-            map: "Erangle"),
-        EventCard(
-            title: "100 v 1",
-            eventId: 'AXFFERT',
-            regStartTime: "12/03/34-12:35",
-            regCloseTime: "12/03/34-12:35",
-            matchStartTime: "12/03/34-12:35",
-            prizePool: "\$100",
-            perKill: "\$5",
-            entryFee: "\$10",
-            squadType: "4",
-            version: "TPP",
-            map: "Erangle"),
-        EventCard(
-            title: "100 v 1",
-            eventId: 'AXFFERT',
-            regStartTime: "12/03/34-12:35",
-            regCloseTime: "12/03/34-12:35",
-            matchStartTime: "12/03/34-12:35",
-            prizePool: "\$100",
-            perKill: "\$5",
-            entryFee: "\$10",
-            squadType: "4",
-            version: "TPP",
-            map: "Erangle"),
-      ],
+        eventInfo = eventInfo as Map<String, dynamic>;
+
+        return EventCard(eventInfo: eventInfo);
+      },
     );
   }
 
-  Widget _buildEventCard(BuildContext context,
-      {required String title, required String description}) {
+  Widget _buildEventCard(
+    BuildContext context, {
+    required String title,
+    required String description,
+  }) {
     return Card(
       elevation: 4,
       margin: const EdgeInsets.symmetric(vertical: 8),

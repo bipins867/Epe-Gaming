@@ -1,4 +1,5 @@
 import 'package:epe_gaming_client/Components/Home/Categories/BattleRoyal/Games/GameItem/gameItem.dart';
+import 'package:epe_gaming_client/Utils/alertHandler.dart';
 import 'package:flutter/material.dart';
 
 class Games extends StatelessWidget {
@@ -17,8 +18,14 @@ class Games extends StatelessWidget {
             MaterialPageRoute(builder: (context) => const GameItem()),
           );
         }),
-        _buildGameCard('Free Fire', 'assets/BattleRoyal/FreeFire/freefire.jpg'),
-        _buildGameCard('Call of Duty', 'assets/BattleRoyal/COD/cod.jpg'),
+        _buildGameCard('Free Fire', 'assets/BattleRoyal/FreeFire/freefire.jpg',
+            callbackFunc: () {
+          showInfoAlertDialog(context, "Comming Soon!");
+        }),
+        _buildGameCard('Call of Duty', 'assets/BattleRoyal/COD/cod.jpg',
+            callbackFunc: () {
+          showInfoAlertDialog(context, "Comming Soon!");
+        }),
       ],
     );
   }
