@@ -1,0 +1,12 @@
+.app-container {
+    position: relative;
+    color: #fff; /* Text color */
+  }
+  
+  .app-container > *:not(.shuffled-background) {
+    background-color: rgba(0, 0, 0, 0.7); /* Adjust alpha for desired transparency */
+    padding: 20px;
+    border-radius: 8px;
+    backdrop-filter: blur(1px); /* Optional, to add a subtle blur effect */
+  }
+  
