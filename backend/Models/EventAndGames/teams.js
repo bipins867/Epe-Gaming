@@ -10,6 +10,10 @@ const Teams = sequelize.define('Teams', {
   teamNumber: {
     type: DataTypes.STRING,
     allowNull: false,
+  }, 
+  teamRank: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
   },
   teamId: {
     type: DataTypes.STRING,

@@ -32,6 +32,11 @@ const TeamUserGames = sequelize.define(
       type:DataTypes.INTEGER,
       allowNull:false,
       defaultValue:0
+    },
+    winningBalance:{
+      type:DataTypes.FLOAT,
+      allowNull:false,
+      defaultValue:0
     }
   },
   {

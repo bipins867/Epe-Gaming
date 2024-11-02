@@ -28,7 +28,9 @@ class EventDetailsPage extends StatelessWidget {
             EventDetailsHome(
               eventInfo: eventInfo,
             ), // First tab for Event Details
-            TeamInfoPage(), // Second tab for Team Info
+            TeamInfoPage(
+              eventId: eventInfo['eventId'],
+            ), // Second tab for Team Info
             SearchTeamPage(), // Third tab for Search Team
           ],
         ),

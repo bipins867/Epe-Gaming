@@ -98,6 +98,11 @@ const Events = sequelize.define(
       allowNull: true,
       defaultValue:"upcoming"
     },
+    isResultDeclared: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
     isRunning: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

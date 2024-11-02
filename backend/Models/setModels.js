@@ -33,73 +33,75 @@ const EventUsers = require("./AndModels/EventUsers");
 
 
 
-//Now Association starts here ---
-
-User.hasMany(UserActivity);
-UserActivity.belongsTo(User);
-
-Admin.hasMany(AdminActivity);
-AdminActivity.belongsTo(Admin);
-
-User.hasOne(BankDetails);
-BankDetails.belongsTo(User);
-
-User.hasOne(Kyc);
-Kyc.belongsTo(User);
-
-User.hasOne(Wallet);
-Wallet.belongsTo(User);
-
-User.hasOne(Referrals);
-Referrals.belongsTo(User);
-
-User.hasMany(RequestWithdrawal);
-RequestWithdrawal.belongsTo(User);
-
-User.hasMany(TransactionHistory);
-TransactionHistory.belongsTo(User);
-
-User.hasMany(Transaction);
-Transaction.belongsTo(User);
-
-Referrals.hasMany(ReferredUser);
-ReferredUser.belongsTo(Referrals);
-
-//-------------
-
-Categories.hasMany(Games);
-Games.belongsTo(Categories);
-
-Games.hasMany(Events);
-Events.belongsTo(Games);
-
-//Through Associations --
-
-Admin.belongsToMany(Role, { through: AdminAndRole, foreignKey: "AdminId" });
-Role.belongsToMany(Admin, { through: AdminAndRole, foreignKey: "RoleId" });
-
-User.belongsToMany(Games, { through: UserGames });
-Games.belongsToMany(User, { through: UserGames });
-
-Events.hasMany(Teams);
-Teams.belongsTo(Events);
-
-UserGames.belongsToMany(Teams, { through: TeamUserGames });
-Teams.belongsToMany(UserGames, { through: TeamUserGames });
+// Now Association starts here
+const setupModels = () => {
+    User.hasMany(UserActivity);
+    UserActivity.belongsTo(User);
+  
+    Admin.hasMany(AdminActivity);
+    AdminActivity.belongsTo(Admin);
+  
+    User.hasOne(BankDetails);
+    BankDetails.belongsTo(User);
+  
+    User.hasOne(Kyc);
+    Kyc.belongsTo(User);
+  
+    User.hasOne(Wallet);
+    Wallet.belongsTo(User);
+  
+    User.hasOne(Referrals);
+    Referrals.belongsTo(User);
+  
+    User.hasMany(RequestWithdrawal);
+    RequestWithdrawal.belongsTo(User);
+  
+    User.hasMany(TransactionHistory);
+    TransactionHistory.belongsTo(User);
+  
+    User.hasMany(Transaction);
+    Transaction.belongsTo(User);
+  
+    Referrals.hasMany(ReferredUser);
+    ReferredUser.belongsTo(Referrals);
+  
+    Categories.hasMany(Games);
+    Games.belongsTo(Categories);
+  
+    Games.hasMany(Events);
+    Events.belongsTo(Games);
+  
+    // Through Associations
+    Admin.belongsToMany(Role, { through: AdminAndRole, foreignKey: "AdminId" });
+    Role.belongsToMany(Admin, { through: AdminAndRole, foreignKey: "RoleId" });
+  
+    User.belongsToMany(Games, { through: UserGames, foreignKey: 'UserId' });
+    Games.belongsToMany(User, { through: UserGames, foreignKey: 'GameId' });
+  
+    
 
 
-User.belongsToMany(Events,{through:EventUsers})
-Events.belongsToMany(User,{through:EventUsers})
-
-User.belongsToMany(Notification, { through: UserNotification });
-Notification.belongsToMany(User, { through: UserNotification });
-
-
-// User.hasMany(Image)
-// Image.belongsTo(User)
-
-Games.hasMany(Image)
-Image.belongsTo(Games)
-
-User.hasMany(AuthToken)
-AuthToken.belongsTo(User)
+    Events.hasMany(Teams);
+    Teams.belongsTo(Events);
+  
+    UserGames.belongsToMany(Teams, { through: TeamUserGames });
+    Teams.belongsToMany(UserGames, { through: TeamUserGames });
+  
+    User.belongsToMany(Events, { through: EventUsers });
+    Events.belongsToMany(User, { through: EventUsers });
+  
+    User.belongsToMany(Notification, { through: UserNotification });
+    Notification.belongsToMany(User, { through: UserNotification });
+  
+    // Uncomment if needed
+    // User.hasMany(Image);
+    // Image.belongsTo(User);
+  
+    Games.hasMany(Image);
+    Image.belongsTo(Games);
+  
+    User.hasMany(AuthToken);
+    AuthToken.belongsTo(User);
+  };
+  
+  module.exports = setupModels;

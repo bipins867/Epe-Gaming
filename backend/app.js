@@ -10,8 +10,8 @@ const geoip = require("geoip-lite");
 const { setupRoutes } = require("./Routes/setupRoutes");
 const db = require("./database");
 const infoRoutes = require("./infoRoutes");
-
-require("./Models/setModels");
+const setupModels = require("./Models/setModels");
+const UserGames = require("./Models/AndModels/userGames");
 
 // Just check
 app = express();
@@ -72,6 +72,7 @@ app.use("/", infoRoutes);
 
 setupRoutes(app);
 
+setupModels();
 
 db.sync()
   .then(() => {

@@ -3,7 +3,9 @@ const EventUsers = require("../../../Models/AndModels/EventUsers");
 const TeamUserGames = require("../../../Models/AndModels/teamUserGames");
 const UserGames = require("../../../Models/AndModels/userGames");
 const Events = require("../../../Models/EventAndGames/events");
+const Games = require("../../../Models/EventAndGames/games");
 const Teams = require("../../../Models/EventAndGames/teams");
+const User = require("../../../Models/User/users");
 const Wallet = require("../../../Models/Wallet/wallet");
 const { createUserActivity } = require("../../../Utils/activityUtils");
 const { generateRandomId } = require("../../../Utils/utils");
@@ -146,13 +148,13 @@ exports.getUserGamesInfo = async (req, res, next) => {
 
     if (!userGameInfo) {
       return res.status(404).json({
-        error: "No user game information found for the given GameId and UserId",
+        error: "No user game information found!",
       });
     }
 
     return res.status(200).json({
       success: true,
-      data: userGameInfo,
+      userGameInfo,
     });
   } catch (error) {
     console.error("Error fetching user games info:", error);
@@ -740,6 +742,65 @@ exports.createChallengeEvent = async (req, res, next) => {
 
 //------------
 
-exports.getEventDetails = async (req, res, next) => {};
+exports.getEventTeamInfo = async (req, res, next) => {
+  try {
+    const { eventId } = req.body;
 
-exports.getEventTeamInfo = async (req, res, next) => {};
+    // Validate if eventId is provided
+    if (!eventId) {
+      return res.status(400).json({
+        success: false,
+        message: "Event ID is required.",
+      });
+    }
+
+    // Find the event
+    const event = await Events.findOne({ where: { eventId } });
+
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found.",
+      });
+    }
+
+    // Fetch teams associated with the event
+    const teams = await Teams.findAll({
+      where: { EventId: event.id },
+
+      include: [
+        {
+          model: UserGames,
+
+          required: true, // Optional: Use if you want to enforce that teams must have user games
+          through: {
+            model: TeamUserGames,
+          },
+        },
+      ],
+    });
+
+    // Calculate total number of players across all teams for the event
+    const totalPlayersJoined = teams.reduce((count, team) => {
+      return count + team.UserGames.length;
+    }, 0);
+
+    return res.status(200).json({
+      success: true,
+      message: "Teams and associated UserGames retrieved successfully.",
+      data: {
+        totalNumberOfTeams: teams.length,
+        totalPlayersJoined,
+        userId: req.user.id,
+        teams,
+        event,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching event team information:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while retrieving team information.",
+    });
+  }
+};

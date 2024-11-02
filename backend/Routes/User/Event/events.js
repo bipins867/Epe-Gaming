@@ -20,4 +20,6 @@ router.post('/joinEventPrivateTeam',joinEventMiddlewareRouter,eventController.jo
 
 router.post('/createChallengeEvent',userAuthentication,eventController.createChallengeEvent)
 
+router.post('/getTeamInfo',eventController.getEventTeamInfo);
+
 module.exports = router;
