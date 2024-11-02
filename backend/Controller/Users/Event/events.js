@@ -10,7 +10,7 @@ const Wallet = require("../../../Models/Wallet/wallet");
 const { createUserActivity } = require("../../../Utils/activityUtils");
 const { generateRandomId } = require("../../../Utils/utils");
 const { deductAmountForEventJoin } = require("../../../Utils/wallet");
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 
 exports.getEventList = async (req, res, next) => {
   try {
@@ -785,15 +785,26 @@ exports.getEventTeamInfo = async (req, res, next) => {
       return count + team.UserGames.length;
     }, 0);
 
+    const eventUser=await EventUsers.findOne({where:{UserId:req.user.id,EventId:event.id}})
+    let isEventJoined;
+    if(eventUser){
+      isEventJoined=true;
+    }
+    else{
+      isEventJoined=false;
+    }
+
     return res.status(200).json({
       success: true,
       message: "Teams and associated UserGames retrieved successfully.",
       data: {
         totalNumberOfTeams: teams.length,
         totalPlayersJoined,
+        isEventJoined,
         userId: req.user.id,
         teams,
         event,
+        
       },
     });
   } catch (error) {
