@@ -4,7 +4,10 @@ import 'package:intl/intl.dart';
 
 class TeamMembersList extends StatelessWidget {
   final dynamic team;
-  const TeamMembersList({super.key, required this.team});
+  final Map<String, dynamic> userEventInfo;
+
+  const TeamMembersList(
+      {super.key, required this.team, required this.userEventInfo});
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +17,12 @@ class TeamMembersList extends StatelessWidget {
     final isAmountDistributed = team['isAmountDistributed'];
     final createdAt = DateFormat('yyyy-MM-dd HH:mm:ss')
         .format(DateTime.parse(team['createdAt']));
+    final userId = userEventInfo['userId'];
+    final isEventJoined = bool.parse(userEventInfo['isEventJoined']);
+
+    // Check if userId exists in the UserGames list
+    final userExists =
+        members.any((member) => member['UserId'].toString() == userId);
 
     return Card(
       elevation: 4,
@@ -27,9 +36,15 @@ class TeamMembersList extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Team ID: $teamId', style: TextStyle(fontSize: 16)),
-                IconButton(
-                  icon: Icon(Icons.copy),
-                  onPressed: () => _copyToClipboard(context, teamId),
+                Row(
+                  children: [
+                    if (userExists)
+                      Icon(Icons.check_circle, color: Colors.green),
+                    IconButton(
+                      icon: Icon(Icons.copy),
+                      onPressed: () => _copyToClipboard(context, teamId),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -78,6 +93,19 @@ class TeamMembersList extends StatelessWidget {
                 }).toList(),
               ),
             ),
+            SizedBox(height: 20),
+
+            // Conditionally display Join Team button if isEventJoined is false
+            if (!isEventJoined)
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Handle the join team logic here
+                    print("Join Team button pressed");
+                  },
+                  child: Text("Join Team"),
+                ),
+              ),
           ],
         ),
       ),
