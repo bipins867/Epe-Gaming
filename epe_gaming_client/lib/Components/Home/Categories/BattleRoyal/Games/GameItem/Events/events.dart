@@ -1,4 +1,5 @@
 import 'package:epe_gaming_client/Components/Home/Categories/BattleRoyal/Games/GameItem/Events/Hosted/hosted.dart';
+import 'package:epe_gaming_client/Components/Home/Categories/BattleRoyal/Games/GameItem/Events/PlayerGameInfo/playerGameInfo.dart';
 import 'package:epe_gaming_client/Utils/alertHandler.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,24 @@ class Events extends StatelessWidget {
     return ListView(
       shrinkWrap: true, // Helps avoid layout issues when nested
       children: [
+        _buildInfoCard(
+          context,
+          icon: Icons.person,
+          title: 'Add/Update Player Id',
+          description: 'Add or update player Id of this game',
+          callbackFunc: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) => const PlayerGameInfoPage(
+                        gameTitle: 'BGMI',
+                        gameId: "1",
+                      )),
+            );
+          },
+        ),
+        SizedBox(
+          height: 30,
+        ),
         _buildInfoCard(
           context,
           icon: Icons.videogame_asset,

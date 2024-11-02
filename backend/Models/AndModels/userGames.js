@@ -8,7 +8,7 @@ const UserGames = sequelize.define('UserGames', {
     autoIncrement: true,
   },
   playerId: {
-    type: DataTypes.INTEGER, // Assuming playerId corresponds to User id
+    type: DataTypes.STRING, // Assuming playerId corresponds to User id
     allowNull: true,
     
   },
