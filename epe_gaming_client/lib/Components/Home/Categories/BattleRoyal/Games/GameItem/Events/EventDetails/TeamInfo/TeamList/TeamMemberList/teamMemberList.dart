@@ -1,3 +1,4 @@
+import 'package:epe_gaming_client/Components/Home/Categories/BattleRoyal/Games/GameItem/Events/EventDetails/JoinTeam/joinTeam.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -20,7 +21,7 @@ class TeamMembersList extends StatelessWidget {
     final createdAt = DateFormat('yyyy-MM-dd HH:mm:ss')
         .format(DateTime.parse(team['createdAt']));
     final userId = userEventInfo['userId'];
-    final isEventJoined = bool.parse(userEventInfo['isEventJoined']);
+    final isEventJoined = userEventInfo['isEventJoined'];
 
     // Check if userId exists in the UserGames list
     final userExists =
@@ -113,8 +114,13 @@ class TeamMembersList extends StatelessWidget {
               Center(
                 child: ElevatedButton(
                   onPressed: () {
-                    // Handle the join team logic here
-                    print("Join Team button pressed");
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => JoinTeamPage(
+                                eventId: userEventInfo['event']['eventId'],
+                                teamId: teamId,
+                              )),
+                    );
                   },
                   child: Text("Join Team"),
                 ),

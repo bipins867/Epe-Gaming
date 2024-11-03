@@ -39,14 +39,16 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
   }
 
   Future<void> _getJoinEventTeamInfo() async {
-    Map<String, dynamic> payload;
+    Map<String, dynamic> payload = {"eventId": widget.eventId};
+
+    if (widget.teamId != null) {
+      payload['teamId'] = widget.teamId;
+    }
 
     // Fetch event and team information
     try {
-      dynamic response =
-          await postRequestWithToken('user/events/getJoinEventTeamInfo', {
-        "eventId": widget.eventId,
-      });
+      dynamic response = await postRequestWithToken(
+          'user/events/getJoinEventTeamInfo', payload);
 //"teamId": "EGNNK29986"
       if (response['statusCode'] == 200) {
         setState(() {
@@ -76,6 +78,50 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
       );
       customLogger!.logError(error);
     } finally {}
+  }
+
+  void _payAndJoin() async {
+    if (eventInfo != null) {
+      Map<String, dynamic> payload = {
+        "GameId": '${eventInfo!['GameId']}',
+        'eventId': eventInfo!['eventId'],
+        'isTotalPaid': isFreeForOthers
+      };
+      String url = 'user/events';
+      if (teamInfo != null) {
+        url = '$url/joinEventPrivateTeam';
+        payload['teamId'] = teamInfo!['teamId'];
+      } else {
+        if (purchaseFullSlot) {
+          url = '$url/joinEventSoloTeam';
+          payload['isTeamPublic'] = isPublicTeam;
+          payload['isJoinnersPaid'] = isFreeForOthers;
+          payload['isAmountDistributed'] = isAmountDistributed;
+        } else {
+          url = '$url/joinEventPublicTeam';
+        }
+      }
+
+      try {
+        dynamic response = await postRequestWithToken(url, payload);
+
+        if (response['statusCode'] == 200) {
+          customLogger!.logInfo('${response['body']}');
+        } else {
+          handleErrors(response, alertFunction: (string) {
+            showErrorAlertDialog(context, string);
+          });
+        }
+      } catch (e) {
+        // Handle exceptions
+        String error = 'System Error: ${e.toString()}';
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(error)),
+        );
+        customLogger!.logError(error);
+      } finally {}
+    }
   }
 
   void _updateToogleFunctions() {
@@ -121,6 +167,14 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
           break;
         case 'isFreeForOthers':
           isFreeForOthers = value;
+
+          // New logic: if teamInfo is null and purchaseFullSlot is enabled,
+          // setting isFreeForOthers to false sets isPublicTeam to true.
+          if (teamInfo == null && purchaseFullSlot && !value) {
+            isPublicTeam = true;
+            //purchaseFullSlot = false;
+          }
+
           if (!value) {
             isAmountDistributed = true;
           }
@@ -302,18 +356,27 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
                           'Purchase Full Slot',
                           purchaseFullSlot,
                           'purchaseFullSlot',
+                          'User is aquiring a new team slot.',
                           purchaseFullSlot || teamInfo == null),
-                      _buildSwitch('Is Public Team', isPublicTeam,
-                          'isPublicTeam', teamInfo == null && purchaseFullSlot),
+                      _buildSwitch(
+                          'Is Public Team',
+                          isPublicTeam,
+                          'isPublicTeam',
+                          'Yes :- Team Id will be publically visible to other members.\nNo :- It will be only visible to You.',
+                          teamInfo == null &&
+                              purchaseFullSlot &&
+                              isFreeForOthers),
                       _buildSwitch(
                           'Is Free for Others',
                           isFreeForOthers,
                           'isFreeForOthers',
+                          'You are paying your teammates fees. So for them the entry fee will be 🪙0.00 .',
                           teamInfo == null && purchaseFullSlot),
                       _buildSwitch(
                           'Is Amount Distributed',
                           isAmountDistributed,
                           'isAmountDistributed',
+                          'Wheter the winning amount will be distributed among the teamates or not.',
                           teamInfo == null &&
                               purchaseFullSlot &&
                               isFreeForOthers),
@@ -346,8 +409,8 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
     );
   }
 
-  Widget _buildSwitch(
-      String title, bool value, String switchName, bool isEnabled) {
+  Widget _buildSwitch(String title, bool value, String switchName,
+      String description, bool isEnabled) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -361,7 +424,7 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
             ),
             IconButton(
               icon: Icon(Icons.info),
-              onPressed: () => _showInfoPopup(context, title),
+              onPressed: () => _showInfoPopup(context, description),
             ),
           ],
         ),
@@ -384,11 +447,5 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
         );
       },
     );
-  }
-
-  void _payAndJoin() {
-    // Handle pay and join logic here
-    print(
-        "Paying and joining the event with fee: 🪙${calculatedFee.toStringAsFixed(2)}");
   }
 }
