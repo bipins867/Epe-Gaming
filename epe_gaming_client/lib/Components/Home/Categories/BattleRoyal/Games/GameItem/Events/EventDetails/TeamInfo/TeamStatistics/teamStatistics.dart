@@ -17,6 +17,9 @@ class TeamStatisticsPage extends StatelessWidget {
     final totalNumberOfTeams = dataInfo!['totalNumberOfTeams'] ?? 0;
     final totalTeamSize = (event['noOfPlayers'] / event['squadType']).round();
     final perTeamSize = event['squadType'];
+    String remeningTeamSize = (totalTeamSize - totalNumberOfTeams).toString();
+    //print();
+    //!int.parse(totalTeamSize) - int.parse(totalNumberOfTeams);
 
     return Card(
       elevation: 4,
@@ -28,10 +31,10 @@ class TeamStatisticsPage extends StatelessWidget {
             Text('Team Statistics',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
-            _buildStatisticRow('Total Team Size:', totalTeamSize.toString()),
+            _buildStatisticRow('Remening Team Space:', remeningTeamSize),
             _buildStatisticRow(
-                'Current Team Size:', totalNumberOfTeams.toString()),
-            _buildStatisticRow('Per Team Size:', perTeamSize.toString()),
+                'Current Team Space:', totalNumberOfTeams.toString()),
+            _buildStatisticRow('Squad Type:', perTeamSize.toString()),
             _buildStatisticRow(
                 'Total Players Joined:', totalPlayersJoined.toString()),
           ],

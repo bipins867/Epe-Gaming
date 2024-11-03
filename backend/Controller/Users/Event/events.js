@@ -87,6 +87,7 @@ exports.getEventList = async (req, res, next) => {
     });
   }
 };
+
 exports.searchEvent = async (req, res, next) => {
   try {
     const { GameId, eventId } = req.body; // Extract GameId and eventId from the request body
@@ -114,11 +115,23 @@ exports.searchEvent = async (req, res, next) => {
       });
     }
 
+    const eventUser = await EventUsers.findOne({
+      where: { UserId: req.user.id, EventId: event.id },
+    });
+    let isEventJoined;
+    if (eventUser) {
+      isEventJoined = true;
+    } else {
+      isEventJoined = false;
+    }
     // Return the found event details
     return res.status(200).json({
       success: true,
       message: "Event retrieved successfully",
-      data: event,
+      data: {
+        isEventJoined,
+        event,
+      },
     });
   } catch (error) {
     console.error("Error searching for event:", error);
@@ -785,13 +798,14 @@ exports.getEventTeamInfo = async (req, res, next) => {
       return count + team.UserGames.length;
     }, 0);
 
-    const eventUser=await EventUsers.findOne({where:{UserId:req.user.id,EventId:event.id}})
+    const eventUser = await EventUsers.findOne({
+      where: { UserId: req.user.id, EventId: event.id },
+    });
     let isEventJoined;
-    if(eventUser){
-      isEventJoined=true;
-    }
-    else{
-      isEventJoined=false;
+    if (eventUser) {
+      isEventJoined = true;
+    } else {
+      isEventJoined = false;
     }
 
     return res.status(200).json({
@@ -804,7 +818,6 @@ exports.getEventTeamInfo = async (req, res, next) => {
         userId: req.user.id,
         teams,
         event,
-        
       },
     });
   } catch (error) {
@@ -812,6 +825,189 @@ exports.getEventTeamInfo = async (req, res, next) => {
     return res.status(500).json({
       success: false,
       message: "An error occurred while retrieving team information.",
+    });
+  }
+};
+
+//----
+exports.searchTeamInfo = async (req, res, next) => {
+  try {
+    const { teamId, eventId } = req.body;
+    const user = req.user;
+
+    // Validate if teamId and eventId are provided
+    if (!teamId || !eventId) {
+      return res.status(400).json({
+        success: false,
+        message: "Both team ID and event ID are required.",
+      });
+    }
+
+    // Check if the event exists
+    const event = await Events.findOne({ where: { eventId } });
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found.",
+      });
+    }
+
+    // Check if the team exists for the specified event
+    const team = await Teams.findOne({
+      where: { EventId: event.id, teamId },
+
+      include: [
+        {
+          model: UserGames,
+
+          required: true, // Optional: Use if you want to enforce that teams must have user games
+          through: {
+            model: TeamUserGames,
+          },
+        },
+      ],
+    });
+
+    if (!team) {
+      return res.status(404).json({
+        success: false,
+        message: "Team not found for this event.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Team information retrieved successfully.",
+      userId: user.id,
+      team,
+    });
+  } catch (error) {
+    console.error("Error fetching team information:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while retrieving team information.",
+    });
+  }
+};
+
+exports.getJoinEventTeamInfo = async (req, res, next) => {
+  try {
+    const { teamId, eventId } = req.body;
+    const user = req.user;
+
+    // Validate if eventId is provided
+    if (!eventId) {
+      return res.status(400).json({
+        success: false,
+        message: "Event ID is required.",
+      });
+    }
+
+    // Fetch the event details
+    const event = await Events.findOne({
+      where: {  eventId },
+    });
+
+    if (!event) {
+      return res.status(404).json({
+        success: false,
+        message: "Event not found.",
+      });
+    }
+
+    // Fetch teams associated with the event
+    const teams = await Teams.findAll({
+      where: { EventId: event.id },
+
+      include: [
+        {
+          model: UserGames,
+
+          required: true, // Optional: Use if you want to enforce that teams must have user games
+          through: {
+            model: TeamUserGames,
+          },
+        },
+      ],
+    });
+
+    // Calculate total number of players across all teams for the event
+    const totalPlayersJoined = teams.reduce((count, team) => {
+      return count + team.UserGames.length;
+    }, 0);
+
+    // Calculate the total wallet balance (deposit + netWinning + 10% of cashBonus)
+    const userWallet = await Wallet.findOne({
+      where: { UserId: user.id },
+      attributes: ["deposit", "netWinning", "cashBonus"],
+    });
+
+    if (!userWallet) {
+      return res.status(404).json({
+        success: false,
+        message: "User wallet not found.",
+      });
+    }
+
+    const totalBalance =
+      userWallet.deposit + userWallet.netWinning + 0.1 * userWallet.cashBonus;
+
+    const eventUser = await EventUsers.findOne({
+      where: { UserId: req.user.id, EventId: event.id },
+    });
+    let isEventJoined;
+    if (eventUser) {
+      isEventJoined = true;
+    } else {
+      isEventJoined = false;
+    }
+
+    // Prepare response data
+    const responseData = {
+      totalBalance: totalBalance,
+      totalTeams: teams.length,
+      totalPlayersJoined,
+      isEventJoined,
+      event,
+    };
+
+    // If teamId is provided, fetch the respective team and associated information
+    if (teamId) {
+      const team = await Teams.findOne({
+        where: { EventId: event.id, teamId },
+
+        include: [
+          {
+            model: UserGames,
+
+            required: true, // Optional: Use if you want to enforce that teams must have user games
+            through: {
+              model: TeamUserGames,
+            },
+          },
+        ],
+      });
+
+      if (!team) {
+        return res.status(404).json({
+          success: false,
+          message: "Team not found for this event.",
+        });
+      }
+
+      responseData.team = team;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "User info for event join retrieved successfully.",
+      data: responseData,
+    });
+  } catch (error) {
+    console.error("Error fetching user info for event join:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while retrieving user info for event join.",
     });
   }
 };

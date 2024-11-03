@@ -108,7 +108,10 @@ class EventDetailsHome extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => JoinTeamPage()),
+                        MaterialPageRoute(
+                            builder: (context) => JoinTeamPage(
+                                  eventId: eventInfo['eventId'],
+                                )),
                       );
                     },
                     child: Text('Join Event'),
