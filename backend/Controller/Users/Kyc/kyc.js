@@ -1,6 +1,8 @@
+const { verify } = require("crypto");
 const sequelize = require("../../../database");
 const Kyc = require("../../../Models/Wallet/kyc");
 const { createUserActivity } = require("../../../Utils/activityUtils");
+const { verifyPAN, isNameMatching } = require("../../../Utils/fidypay");
 
 exports.getKycDetails = async (req, res, next) => {
   try {
@@ -52,15 +54,26 @@ exports.updateKycDetails = async (req, res, next) => {
     // Find the KYC record for the user
     let kycDetails = await Kyc.findOne({ where: { UserId } });
 
-    if(kycDetails){
-      if(kycDetails.status=='verified'){
-        res.status(401).json({message:"Kyc details are already updated!"})
+    if (kycDetails) {
+      if (kycDetails.status == "verified") {
+        res.status(401).json({ message: "Kyc details are already updated!" });
       }
     }
 
-    t = await sequelize.transaction();
+    const response = await verifyPAN(panNumber);
+
+    const dataResponse = response.data;
+
+    if (dataResponse.status === "FAILED") {
+      return res.status(404).json({ error: dataResponse.description });
+    }
+
+    if (!isNameMatching(dataResponse.name, req.user.name)) {
+      return res.status(403).json({ error: "Name Mismatch in PAN!" });
+    }
 
     
+    t = await sequelize.transaction();
 
     if (!kycDetails) {
       // If no KYC record exists, create a new one

@@ -25,8 +25,8 @@ class Categories extends StatelessWidget {
               _buildCategoryCard(
                 'BattleRoyal',
                 'assets/BattleRoyal/battleRoyal.jpg',
-                callbackFunc: () {
-                  Navigator.of(context).push(
+                callbackFunc: () async {
+                  await Navigator.of(context).push(
                     MaterialPageRoute(
                         builder: (context) => const BattleRoyal()),
                   );
