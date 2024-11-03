@@ -1,8 +1,12 @@
 import 'package:epe_gaming_client/Components/Home/Categories/BattleRoyal/Games/GameItem/Events/EventCard/eventCard.dart';
+import 'package:epe_gaming_client/Utils/alertHandler.dart';
+import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
+import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 
 class SearchEvent extends StatefulWidget {
-  const SearchEvent({super.key});
+  final String gameId;
+  const SearchEvent({super.key, required this.gameId});
 
   @override
   _SearchEventState createState() => _SearchEventState();
@@ -10,87 +14,52 @@ class SearchEvent extends StatefulWidget {
 
 class _SearchEventState extends State<SearchEvent> {
   final TextEditingController _searchController = TextEditingController();
-  List<Map<String, dynamic>> _filteredEvents = []; // List of event info maps
+  Map<String, dynamic>? _filteredEvent; // List of event info maps
+  CustomLogger? customLogger;
 
-  void _searchEvents() {
-    // Simulated event list with each event as a Map<String, dynamic>
-    List<Map<String, dynamic>> allEvents = [
-      {
-        'title': 'BGMI Tournament',
-        'eventId': 'AXFFERT',
-        'regStartTime': '12/03/34-12:35',
-        'regCloseTime': '12/03/34-12:35',
-        'matchStartTime': '12/03/34-12:35',
-        'prizePool': '\$100',
-        'perKill': '\$5',
-        'entryFee': '\$10',
-        'squadType': '4',
-        'version': 'TPP',
-        'map': 'Erangle',
-      },
-      {
-        'title': 'Free Fire Challenge',
-        'eventId': 'AXFFERT',
-        'regStartTime': '12/03/34-12:35',
-        'regCloseTime': '12/03/34-12:35',
-        'matchStartTime': '12/03/34-12:35',
-        'prizePool': '\$100',
-        'perKill': '\$5',
-        'entryFee': '\$10',
-        'squadType': '4',
-        'version': 'TPP',
-        'map': 'Erangle',
-      },
-      {
-        'title': 'Call of Duty League',
-        'eventId': 'AXFFERT',
-        'regStartTime': '12/03/34-12:35',
-        'regCloseTime': '12/03/34-12:35',
-        'matchStartTime': '12/03/34-12:35',
-        'prizePool': '\$100',
-        'perKill': '\$5',
-        'entryFee': '\$10',
-        'squadType': '4',
-        'version': 'TPP',
-        'map': 'Erangle',
-      },
-      {
-        'title': 'Valorant Showdown',
-        'eventId': 'AXFFERT',
-        'regStartTime': '12/03/34-12:35',
-        'regCloseTime': '12/03/34-12:35',
-        'matchStartTime': '12/03/34-12:35',
-        'prizePool': '\$100',
-        'perKill': '\$5',
-        'entryFee': '\$10',
-        'squadType': '4',
-        'version': 'TPP',
-        'map': 'Erangle',
-      },
-      {
-        'title': 'FIFA 22 Cup',
-        'eventId': 'AXFFERT',
-        'regStartTime': '12/03/34-12:35',
-        'regCloseTime': '12/03/34-12:35',
-        'matchStartTime': '12/03/34-12:35',
-        'prizePool': '\$100',
-        'perKill': '\$5',
-        'entryFee': '\$10',
-        'squadType': '4',
-        'version': 'TPP',
-        'map': 'Erangle',
-      },
-    ];
+  @override
+  void initState() {
+    customLogger = CustomLogger();
 
-    // Filtering events based on the search input
-    setState(() {
-      _filteredEvents = allEvents
-          .where((event) => event['title']
-              .toString()
-              .toLowerCase()
-              .contains(_searchController.text.toLowerCase()))
-          .toList();
-    });
+    super.initState();
+  }
+
+  Future<void> _searchEvents() async {
+    String eventId = '';
+    if (_searchController.text == '') {
+      return;
+    }
+    eventId = _searchController.text;
+
+    try {
+      Map<String, dynamic> payload = {
+        "GameId": widget.gameId,
+        "eventId": eventId
+      };
+
+      dynamic response =
+          await postRequestWithToken('user/events/searchEvent', payload);
+
+      if (response['statusCode'] == 200) {
+        //setState(() {});
+        setState(() {
+          _filteredEvent = response['body']['event'];
+          print(_filteredEvent);
+        });
+      } else {
+        handleErrors(response, alertFunction: (string) {
+          showErrorAlertDialog(context, string);
+        });
+      }
+    } catch (e) {
+      // Handle exceptions
+      String error = 'System Error: ${e.toString()}';
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error)),
+      );
+      customLogger!.logError(error);
+    } finally {}
   }
 
   @override
@@ -114,22 +83,14 @@ class _SearchEventState extends State<SearchEvent> {
               child: Text('Search'),
             ),
             SizedBox(height: 20),
-            Expanded(
-              child: _filteredEvents.isEmpty
-                  ? Center(
-                      child: Text(
-                        'No records found.',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: _filteredEvents.length,
-                      itemBuilder: (context, index) {
-                        final eventInfo = _filteredEvents[index];
-                        return EventCard(eventInfo: eventInfo);
-                      },
+            _filteredEvent == null
+                ? Center(
+                    child: Text(
+                      'No Event found.',
+                      style: TextStyle(fontSize: 18),
                     ),
-            ),
+                  )
+                : EventCard(eventInfo: _filteredEvent!),
           ],
         ),
       ),

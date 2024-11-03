@@ -4,7 +4,9 @@ import 'package:epe_gaming_client/Utils/alertHandler.dart';
 import 'package:flutter/material.dart';
 
 class Events extends StatelessWidget {
-  const Events({super.key});
+  final String gameTitle;
+  final String gameId;
+  const Events({super.key, required this.gameId, required this.gameTitle});
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +21,9 @@ class Events extends StatelessWidget {
           callbackFunc: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                  builder: (context) => const PlayerGameInfoPage(
-                        gameTitle: 'BGMI',
-                        gameId: "1",
+                  builder: (context) => PlayerGameInfoPage(
+                        gameTitle: gameTitle,
+                        gameId: gameId,
                       )),
             );
           },
@@ -37,7 +39,10 @@ class Events extends StatelessWidget {
               'The server hosts events with various challenges and rewards.',
           callbackFunc: () {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const Hosted()),
+              MaterialPageRoute(
+                  builder: (context) => Hosted(
+                        gameId: gameId,
+                      )),
             );
           },
         ),
