@@ -106,7 +106,8 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
         dynamic response = await postRequestWithToken(url, payload);
 
         if (response['statusCode'] == 200) {
-          customLogger!.logInfo('${response['body']}');
+          //customLogger!.logInfo('${response['body']}');
+          Navigator.pop(context);
         } else {
           handleErrors(response, alertFunction: (string) {
             showErrorAlertDialog(context, string);
@@ -233,9 +234,18 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Wallet Balance:',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            Text('Wallet Balance:',
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.bold)),
+                            IconButton(
+                              icon: Icon(Icons.info),
+                              onPressed: () => _showInfoPopup(context,
+                                  '10% of cash bonus + deposit + netWinning'),
+                            ),
+                          ],
+                        ),
                         Text(
                           totalBalance != null
                               ? '🪙${totalBalance ?? 0.toStringAsFixed(2)}'
