@@ -12,6 +12,8 @@ class TeamMembersList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final members = team['UserGames'] ?? [];
+    final teamNumber = team['teamNumber'];
+    final teamRank = team['teamRank'];
     final teamId = team['teamId'];
     final isFree = team['isJoinnersPaid'];
     final isAmountDistributed = team['isAmountDistributed'];
@@ -32,6 +34,9 @@ class TeamMembersList extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text('Team Number: $teamNumber', style: TextStyle(fontSize: 16)),
+            SizedBox(height: 10),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -48,6 +53,9 @@ class TeamMembersList extends StatelessWidget {
                 ),
               ],
             ),
+
+            if (teamRank != null)
+              Text('Team Rank: $teamRank', style: TextStyle(fontSize: 16)),
             Text('Created At: $createdAt', style: TextStyle(fontSize: 14)),
             SizedBox(height: 10),
             Text('Team Members: ${members.length}',
@@ -67,13 +75,17 @@ class TeamMembersList extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: DataTable(
                 columns: [
+                  DataColumn(label: Text('#')), // New column for numbering
                   DataColumn(label: Text('Player ID')),
                   DataColumn(label: Text('Player Name')),
                   DataColumn(label: Text('Kills')),
                   DataColumn(label: Text('Winning')),
                   DataColumn(label: Text('Joined At')),
                 ],
-                rows: members.map<DataRow>((member) {
+                rows: members.asMap().entries.map<DataRow>((entry) {
+                  final index = entry.key;
+                  final member = entry.value;
+
                   final playerId = member['playerId'].toString();
                   final playerName = member['playerName'];
                   final kills = member['TeamUserGames']['kills'].toString();
@@ -83,6 +95,7 @@ class TeamMembersList extends StatelessWidget {
                       .format(DateTime.parse(member['createdAt']));
 
                   return DataRow(cells: [
+                    DataCell(Text((index + 1).toString())), // Row number
                     DataCell(Text(playerId),
                         onTap: () => _copyToClipboard(context, playerId)),
                     DataCell(Text(playerName)),
