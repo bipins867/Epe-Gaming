@@ -6,9 +6,13 @@ import 'package:intl/intl.dart';
 class TeamMembersList extends StatelessWidget {
   final dynamic team;
   final Map<String, dynamic> userEventInfo;
+  final bool isSearched;
 
   const TeamMembersList(
-      {super.key, required this.team, required this.userEventInfo});
+      {super.key,
+      required this.team,
+      required this.userEventInfo,
+      required this.isSearched});
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +20,7 @@ class TeamMembersList extends StatelessWidget {
     final teamNumber = team['teamNumber'];
     final teamRank = team['teamRank'];
     final isFree = team['isJoinnersPaid'];
+    final isPublic = team['isPublic'];
     final isAmountDistributed = team['isAmountDistributed'];
     final createdAt = DateFormat('yyyy-MM-dd HH:mm:ss')
         .format(DateTime.parse(team['createdAt']));
@@ -76,6 +81,10 @@ class TeamMembersList extends StatelessWidget {
             SizedBox(height: 10),
             Text('Is Free: ${isFree ? "Yes" : "No"}',
                 style: TextStyle(fontSize: 16)),
+            SizedBox(height: 10),
+            Text('Is Public: ${isPublic ? "Yes" : "No"}',
+                style: TextStyle(fontSize: 16)),
+            SizedBox(height: 10),
             Text('Is Amount Distributed: ${isAmountDistributed ? "Yes" : "No"}',
                 style: TextStyle(fontSize: 16)),
             SizedBox(height: 10),
@@ -122,7 +131,8 @@ class TeamMembersList extends StatelessWidget {
             SizedBox(height: 20),
 
             // Conditionally display Join Team button if isEventJoined is false
-            if (!isEventJoined && !isSlotFull && teamId != null)
+            if ((!isEventJoined && !isSlotFull) &&
+                (teamId != null || isSearched))
               Center(
                 child: ElevatedButton(
                   onPressed: () {

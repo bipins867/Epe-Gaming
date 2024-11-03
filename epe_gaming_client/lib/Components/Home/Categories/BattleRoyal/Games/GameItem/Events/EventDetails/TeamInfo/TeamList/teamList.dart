@@ -35,6 +35,7 @@ class TeamListPage extends StatelessWidget {
                 .map<Widget>((team) => TeamMembersList(
                       team: team,
                       userEventInfo: userEventInfo,
+                      isSearched: false,
                     ))
                 .toList(),
           ),
