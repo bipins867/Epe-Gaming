@@ -92,7 +92,11 @@ class _SearchTeamPageState extends State<SearchTeamPage> {
               style: TextStyle(color: Colors.red, fontSize: 16),
             )
           else
-            TeamMembersList(team: teamInfo, userEventInfo: userEventInfo!)
+            TeamMembersList(
+              team: teamInfo,
+              userEventInfo: userEventInfo!,
+              isSearched: true,
+            )
         ],
       ),
     );
