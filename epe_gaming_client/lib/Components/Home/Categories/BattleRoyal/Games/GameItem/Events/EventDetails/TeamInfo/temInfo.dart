@@ -59,10 +59,7 @@ class _TeamInfoPageState extends State<TeamInfoPage> {
             SizedBox(height: 20),
             TeamListPage(
               teams: teams,
-              userEventInfo: {
-                'userId': '${dataInfo!['userId']}',
-                'isEventJoined': '${dataInfo!['isEventJoined']}'
-              },
+              userEventInfo: dataInfo!,
             )
           ],
         ),
