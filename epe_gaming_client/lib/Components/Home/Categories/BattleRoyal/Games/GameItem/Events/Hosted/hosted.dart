@@ -6,7 +6,8 @@ import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 
 class Hosted extends StatefulWidget {
-  const Hosted({super.key});
+  final String gameId;
+  const Hosted({super.key, required this.gameId});
 
   @override
   State<Hosted> createState() => _HostedState();
@@ -31,8 +32,8 @@ class _HostedState extends State<Hosted> {
 
   Future<void> _fetchEventList() async {
     try {
-      dynamic response = await postRequestWithToken(
-          'user/events/getEventsList', {"GameId": 1, "eventType": "hosted"});
+      dynamic response = await postRequestWithToken('user/events/getEventsList',
+          {"GameId": widget.gameId, "eventType": "hosted"});
 
       if (response['statusCode'] == 200) {
         setState(() {
@@ -93,7 +94,9 @@ class _HostedState extends State<Hosted> {
               eventLists: pastEvents,
             ),
 
-            SearchEvent() // Past Events tab
+            SearchEvent(
+              gameId: widget.gameId,
+            ) // Past Events tab
           ],
         ),
       ),

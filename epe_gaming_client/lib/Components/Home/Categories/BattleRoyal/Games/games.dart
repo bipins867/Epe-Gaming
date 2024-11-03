@@ -15,7 +15,11 @@ class Games extends StatelessWidget {
         _buildGameCard('BGMI', 'assets/BattleRoyal/BGMI/bgmi.jpg',
             callbackFunc: () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const GameItem()),
+            MaterialPageRoute(
+                builder: (context) => const GameItem(
+                      gameId: '1',
+                      gameTitle: 'BGMI',
+                    )),
           );
         }),
         _buildGameCard('Free Fire', 'assets/BattleRoyal/FreeFire/freefire.jpg',

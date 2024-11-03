@@ -3,13 +3,15 @@ import 'package:epe_gaming_client/Components/Home/Categories/BattleRoyal/Games/G
 import 'package:flutter/material.dart';
 
 class GameItem extends StatelessWidget {
-  const GameItem({super.key});
+  final String gameId;
+  final String gameTitle;
+  const GameItem({super.key, required this.gameId, required this.gameTitle});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('BGMI'),
+        title: Text(gameTitle),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -19,7 +21,10 @@ class GameItem extends StatelessWidget {
             SizedBox(
               height: 10,
             ),
-            Events()
+            Events(
+              gameId: gameId,
+              gameTitle: gameTitle,
+            )
           ],
         ),
       ),

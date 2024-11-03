@@ -16,9 +16,19 @@ class EventsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Check if the list is empty and display a message if it is
+    if (eventLists == null || eventLists!.isEmpty) {
+      return Center(
+        child: Text(
+          "No records found",
+          style: TextStyle(fontSize: 18, color: Colors.grey),
+        ),
+      );
+    }
+
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: eventLists?.length ?? 0,
+      itemCount: eventLists!.length,
       itemBuilder: (context, index) {
         dynamic eventInfo = eventLists![index];
 

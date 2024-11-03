@@ -3,16 +3,14 @@ const EventUsers = require("../../../Models/AndModels/EventUsers");
 const TeamUserGames = require("../../../Models/AndModels/teamUserGames");
 const UserGames = require("../../../Models/AndModels/userGames");
 const Events = require("../../../Models/EventAndGames/events");
-const Games = require("../../../Models/EventAndGames/games");
 const Teams = require("../../../Models/EventAndGames/teams");
-const User = require("../../../Models/User/users");
 const Wallet = require("../../../Models/Wallet/wallet");
 const { createUserActivity } = require("../../../Utils/activityUtils");
 const { generateRandomId } = require("../../../Utils/utils");
 const { deductAmountForEventJoin } = require("../../../Utils/wallet");
-const { Op, where } = require("sequelize");
+const { Op } = require("sequelize");
 
-exports.getEventList = async (req, res, next) => {
+exports.getEventList = async (req, res) => {
   try {
     const { GameId, eventType } = req.body;
     const userId = req.user.id; // Get user ID from request
@@ -88,7 +86,7 @@ exports.getEventList = async (req, res, next) => {
   }
 };
 
-exports.searchEvent = async (req, res, next) => {
+exports.searchEvent = async (req, res) => {
   try {
     const { GameId, eventId } = req.body; // Extract GameId and eventId from the request body
 
@@ -124,14 +122,12 @@ exports.searchEvent = async (req, res, next) => {
     } else {
       isEventJoined = false;
     }
+
     // Return the found event details
     return res.status(200).json({
       success: true,
       message: "Event retrieved successfully",
-      data: {
-        isEventJoined,
-        event,
-      },
+      event: { ...event.dataValues, isUserJoined: isEventJoined },
     });
   } catch (error) {
     console.error("Error searching for event:", error);
@@ -142,7 +138,7 @@ exports.searchEvent = async (req, res, next) => {
   }
 };
 
-exports.getUserGamesInfo = async (req, res, next) => {
+exports.getUserGamesInfo = async (req, res) => {
   try {
     const userId = req.user.id; // Assuming UserId is available in req.user
     const { GameId } = req.body;
@@ -178,7 +174,7 @@ exports.getUserGamesInfo = async (req, res, next) => {
   }
 };
 
-exports.updateUserGamesInfo = async (req, res, next) => {
+exports.updateUserGamesInfo = async (req, res) => {
   let t;
   try {
     const userId = req.user.id; // Get UserId from the request
@@ -255,7 +251,7 @@ exports.updateUserGamesInfo = async (req, res, next) => {
 };
 
 //-------------------------
-exports.joinEventPublicTeam = async (req, res, next) => {
+exports.joinEventPublicTeam = async (req, res) => {
   let t;
 
   try {
@@ -385,7 +381,7 @@ exports.joinEventPublicTeam = async (req, res, next) => {
   }
 };
 
-exports.joinEventSoloTeam = async (req, res, next) => {
+exports.joinEventSoloTeam = async (req, res) => {
   let t;
 
   try {
@@ -510,14 +506,13 @@ exports.joinEventSoloTeam = async (req, res, next) => {
   }
 };
 
-exports.joinEventPrivateTeam = async (req, res, next) => {
+exports.joinEventPrivateTeam = async (req, res) => {
   let t;
 
   try {
     const userId = req.user.id;
     const event = req.event;
     //const wallet=req.wallet;
-    const lastTeam = req.lastTeam;
     const userGames = req.userGames;
     const newTeam = req.team;
 
@@ -598,7 +593,7 @@ exports.joinEventPrivateTeam = async (req, res, next) => {
 
 //==================================
 
-exports.createChallengeEvent = async (req, res, next) => {
+exports.createChallengeEvent = async (req, res) => {
   let t;
   try {
     const userId = req.user.id;
@@ -755,7 +750,7 @@ exports.createChallengeEvent = async (req, res, next) => {
 
 //------------
 
-exports.getEventTeamInfo = async (req, res, next) => {
+exports.getEventTeamInfo = async (req, res) => {
   try {
     const { eventId } = req.body;
 
@@ -830,7 +825,7 @@ exports.getEventTeamInfo = async (req, res, next) => {
 };
 
 //----
-exports.searchTeamInfo = async (req, res, next) => {
+exports.searchTeamInfo = async (req, res) => {
   try {
     const { teamId, eventId } = req.body;
     const user = req.user;
@@ -875,10 +870,24 @@ exports.searchTeamInfo = async (req, res, next) => {
       });
     }
 
+    const eventUser = await EventUsers.findOne({
+      where: { UserId: req.user.id, EventId: event.id },
+    });
+    let isEventJoined;
+    if (eventUser) {
+      isEventJoined = true;
+    } else {
+      isEventJoined = false;
+    }
+
     return res.status(200).json({
       success: true,
       message: "Team information retrieved successfully.",
-      userId: user.id,
+      userEventInfo: {
+        userId: user.id,
+        isEventJoined,
+        event,
+      },
       team,
     });
   } catch (error) {
@@ -890,7 +899,7 @@ exports.searchTeamInfo = async (req, res, next) => {
   }
 };
 
-exports.getJoinEventTeamInfo = async (req, res, next) => {
+exports.getJoinEventTeamInfo = async (req, res) => {
   try {
     const { teamId, eventId } = req.body;
     const user = req.user;
@@ -905,7 +914,7 @@ exports.getJoinEventTeamInfo = async (req, res, next) => {
 
     // Fetch the event details
     const event = await Events.findOne({
-      where: {  eventId },
+      where: { eventId },
     });
 
     if (!event) {
