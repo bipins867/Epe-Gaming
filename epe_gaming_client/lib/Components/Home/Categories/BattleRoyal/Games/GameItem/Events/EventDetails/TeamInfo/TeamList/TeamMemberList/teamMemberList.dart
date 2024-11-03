@@ -15,17 +15,25 @@ class TeamMembersList extends StatelessWidget {
     final members = team['UserGames'] ?? [];
     final teamNumber = team['teamNumber'];
     final teamRank = team['teamRank'];
-    final teamId = team['teamId'];
     final isFree = team['isJoinnersPaid'];
     final isAmountDistributed = team['isAmountDistributed'];
     final createdAt = DateFormat('yyyy-MM-dd HH:mm:ss')
         .format(DateTime.parse(team['createdAt']));
     final userId = userEventInfo['userId'];
     final isEventJoined = userEventInfo['isEventJoined'];
+    final isSlotFull = userEventInfo['event']['squadType'] == members.length;
 
+    String? teamId = team['teamId'];
     // Check if userId exists in the UserGames list
-    final userExists =
-        members.any((member) => member['UserId'].toString() == userId);
+
+    final userExists = members.any((member) {
+      bool cond = member['UserId'] == userId;
+      return cond;
+    });
+
+    if (!team['isPublic'] && !userExists) {
+      teamId = null;
+    }
 
     return Card(
       elevation: 4,
@@ -41,15 +49,19 @@ class TeamMembersList extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Team ID: $teamId', style: TextStyle(fontSize: 16)),
+                Text(
+                  'Team ID: ${teamId ?? "HIDDEN-ID"}', // Show "******" if teamId is null
+                  style: TextStyle(fontSize: 16),
+                ),
                 Row(
                   children: [
                     if (userExists)
                       Icon(Icons.check_circle, color: Colors.green),
-                    IconButton(
-                      icon: Icon(Icons.copy),
-                      onPressed: () => _copyToClipboard(context, teamId),
-                    ),
+                    if (teamId != null)
+                      IconButton(
+                        icon: Icon(Icons.copy),
+                        onPressed: () => _copyToClipboard(context, teamId!),
+                      ),
                   ],
                 ),
               ],
@@ -110,7 +122,7 @@ class TeamMembersList extends StatelessWidget {
             SizedBox(height: 20),
 
             // Conditionally display Join Team button if isEventJoined is false
-            if (!isEventJoined)
+            if (!isEventJoined && !isSlotFull && teamId != null)
               Center(
                 child: ElevatedButton(
                   onPressed: () {
@@ -123,6 +135,13 @@ class TeamMembersList extends StatelessWidget {
                     );
                   },
                   child: Text("Join Team"),
+                ),
+              )
+            else if (isSlotFull)
+              Center(
+                child: Text(
+                  "Slot is full",
+                  style: TextStyle(fontSize: 16, color: Colors.red),
                 ),
               ),
           ],

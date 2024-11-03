@@ -15,15 +15,15 @@ exports.deductAmountForEventJoin = async (user, amount, transaction) => {
   const totalAmount = cashBonus + netWinning + deposit;
 
   // Check if the amount is less than or equal to 10% of the cash bonus
-  let amountUsed = 0;
+  //let amountUsed = 0;
 
   if (amount <= 0.1 * cashBonus) {
     // Deduct from cashBonus
     wallet.unclearedCashBonus += parseFloat(amount);
-    amountUsed = parseFloat(amount);
-    wallet.cashBonus -= amountUsed;
+    //amountUsed = parseFloat(amount);
+    wallet.cashBonus -= amount;
 
-    amountMap.cashBonus = amountUsed;
+    amountMap.cashBonus = amount;
   } else {
     // Deduct from netWinning
     let remainingAmount = amount - 0.1 * cashBonus;
@@ -67,8 +67,8 @@ exports.deductAmountForEventJoin = async (user, amount, transaction) => {
       transactionType: "eventJoin",
       remark: "User joined the event",
       credit: 0,
-      debit: amountUsed,
-      balance: totalAmount - amountUsed, // Calculate the new balance
+      debit: amount,
+      balance: totalAmount - amount, // Calculate the new balance
       UserId: user.id,
     },
     { transaction }
