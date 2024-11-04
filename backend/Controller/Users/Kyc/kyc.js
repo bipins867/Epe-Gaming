@@ -51,6 +51,15 @@ exports.updateKycDetails = async (req, res, next) => {
       });
     }
 
+    const existingPan=await Kyc.findOne({where:{panNumber}})
+
+    if(existingPan){
+      return res.status(401).json({
+        success: false,
+        message: "This PAN is already registerd with another user.",
+      });
+    }
+
     // Find the KYC record for the user
     let kycDetails = await Kyc.findOne({ where: { UserId } });
 

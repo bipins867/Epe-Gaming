@@ -7,6 +7,7 @@ const { fileHandlerRouter } = require("../../FileHandler/fileHandler");
 const router = express.Router();
 
 router.get('/profileInfo',infoController.getUserProfileInfo);
-router.post('/updateProfile',fileHandlerRouter('image',0.2),infoController.updateProfile)
+router.post('/updateProfileImage',fileHandlerRouter('image',0.2),infoController.updateProfileImage)
+router.post('/updateProfileInfo',infoController.updateProfileInfo)
 
 module.exports = router;

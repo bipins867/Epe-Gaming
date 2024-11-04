@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:epe_gaming_client/Utils/alertHandler.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
@@ -147,6 +148,35 @@ Future<Map<String, dynamic>> postRequestWithToken(
   );
 
   dynamic bodyResponse = jsonDecode(response.body);
+
+  return {"body": bodyResponse, "statusCode": response.statusCode};
+}
+
+Future<Map<String, dynamic>> uploadImageHandler(
+    String url, File imageFile) async {
+  // Construct the request URL
+  String apiUrl = AppConfig.baseUrl + url;
+
+  // Create a multipart request
+  final request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+
+  // Add the image file to the request
+  request.files.add(await http.MultipartFile.fromPath('image', imageFile.path));
+
+  // Add headers including the token
+  String? token = getTokenHeaders();
+  request.headers.addAll({
+    "Authorization": "$token",
+  });
+
+  // Send the request
+  final response = await request.send();
+
+  // Read the response body
+  final responseBody = await http.Response.fromStream(response);
+
+  // Parse the response body
+  dynamic bodyResponse = jsonDecode(responseBody.body);
 
   return {"body": bodyResponse, "statusCode": response.statusCode};
 }
