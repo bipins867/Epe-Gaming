@@ -1,6 +1,5 @@
 import 'package:epe_gaming_client/Components/Profile/NavigationItems/Kyc/KycStatus/kycStatus.dart';
 import 'package:epe_gaming_client/Components/Profile/NavigationItems/Kyc/UpdateKyc/updateKyc.dart';
-import 'package:epe_gaming_client/Utils/alertHandler.dart';
 import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
@@ -34,9 +33,7 @@ class _KYCPageState extends State<KYCPage> {
           kycDetails = response['body']['data'];
         });
       } else {
-        handleErrors(response, alertFunction: (string) {
-          showErrorAlertDialog(context, string);
-        });
+        handleErrors(context, response);
       }
     } catch (e) {
       String error = 'System Error: ${e.toString()}';

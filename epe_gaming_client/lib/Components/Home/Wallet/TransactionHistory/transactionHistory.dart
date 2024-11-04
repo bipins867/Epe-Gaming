@@ -1,4 +1,3 @@
-import 'package:epe_gaming_client/Utils/alertHandler.dart';
 import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
@@ -34,9 +33,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
               .toList();
         });
       } else {
-        handleErrors(response, alertFunction: (string) {
-          showErrorAlertDialog(context, string);
-        });
+        handleErrors(context, response);
       }
     } catch (e) {
       String error = 'System Error: ${e.toString()}';

@@ -76,9 +76,7 @@ class _SignUpPageState extends State<SignUpPage> {
           },
         );
       } else {
-        handleErrors(response, alertFunction: (message) {
-          showErrorAlertDialog(context, message);
-        });
+        handleErrors(context, response);
       }
     } catch (e) {
       String error = 'System Error: ${e.toString()}';

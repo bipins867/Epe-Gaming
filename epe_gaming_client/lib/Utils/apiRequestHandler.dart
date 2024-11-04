@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'package:epe_gaming_client/Utils/alertHandler.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 dynamic errorLogger = CustomLogger().logError;
@@ -9,9 +11,18 @@ void alertFunction(String message) {
   CustomLogger().logInfo('ALERT: $message');
 }
 
+void logoutHandler(BuildContext context) {
+  Navigator.of(context).pushNamedAndRemoveUntil(
+    '/login', // Navigates to the base route
+    (Route<dynamic> route) =>
+        false, // Removes all previous routes from the stack
+  );
+  AppConfig.removeLocalStorageItem('authToken');
+}
+
 // Handle errors function// Map<int, Function(dynamic)> mapFunction
-Future<void> handleErrors(dynamic err,
-    {bool log = true, Function(String)? alertFunction}) async {
+void handleErrors(BuildContext context, Map<String, dynamic> err,
+    {bool log = true, bool alert = true}) {
   String logMessage = '';
   String alertMessage = '';
 
@@ -23,6 +34,7 @@ Future<void> handleErrors(dynamic err,
   } else {
     // Assume `err` has a response property
     dynamic response = err['body'];
+    dynamic statusCode = err['statusCode'];
 
     // Check if response exists
     if (response != null) {
@@ -49,8 +61,16 @@ Future<void> handleErrors(dynamic err,
       }
 
       // Call the alertFunction if it exists and alertMessage has content
-      if (alertFunction != null) {
-        alertFunction(alertMessage);
+      if (alert) {
+        showErrorAlertDialog(context, alertMessage, callbackFunction: () {
+          if (statusCode == 503) {
+            logoutHandler(context);
+          }
+        });
+      } else {
+        if (statusCode == 503) {
+          logoutHandler(context);
+        }
       }
     }
   }

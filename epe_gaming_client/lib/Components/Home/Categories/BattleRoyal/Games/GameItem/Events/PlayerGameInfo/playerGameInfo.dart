@@ -44,9 +44,7 @@ class _PlayerGameInfoPageState extends State<PlayerGameInfoPage> {
           _inGameNameController.text = playerName;
         });
       } else {
-        handleErrors(response, alertFunction: (string) {
-          showErrorAlertDialog(context, string);
-        });
+        handleErrors(context, response);
       }
     } catch (e) {
       // Handle exceptions
@@ -76,9 +74,7 @@ class _PlayerGameInfoPageState extends State<PlayerGameInfoPage> {
         showInfoAlertDialog(context, "Info updated Successfully!");
         _fetchPlayerInfo();
       } else {
-        handleErrors(response, alertFunction: (string) {
-          showErrorAlertDialog(context, string);
-        });
+        handleErrors(context, response);
       }
     } catch (e) {
       // Handle exceptions

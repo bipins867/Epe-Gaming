@@ -40,9 +40,7 @@ class _BankDetailsPageState extends State<BankDetailsPage> {
           _initializeFields();
         });
       } else {
-        handleErrors(response, alertFunction: (string) {
-          showErrorAlertDialog(context, string);
-        });
+        handleErrors(context, response);
       }
     } catch (e) {
       String error = 'System Error: ${e.toString()}';
@@ -90,9 +88,7 @@ class _BankDetailsPageState extends State<BankDetailsPage> {
         showInfoAlertDialog(context, 'Bank details updated successfully.');
         _fetchBankDetails();
       } else {
-        handleErrors(response, alertFunction: (string) {
-          showErrorAlertDialog(context, string);
-        });
+        handleErrors(context, response);
       }
     } catch (e) {
       String error = 'System Error: ${e.toString()}';
