@@ -1,3 +1,4 @@
+import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 
 class HeaderProfile extends StatelessWidget {
@@ -14,8 +15,15 @@ class HeaderProfile extends StatelessWidget {
         profileInfo?['customerId'] ?? 'No Username'; // Provide a default value
     final String walletBalance =
         '${profileInfo?['walletBalance']}'; // Provide a default value
-    final String profileUrl =
+
+    String baseImageUrl = AppConfig.fileBaseUrl;
+
+    String profileUrl =
         profileInfo?['profileUrl'] ?? ''; // URL of the profile image
+
+    if (profileUrl != '') {
+      profileUrl = '$baseImageUrl$profileUrl';
+    }
 
     return Card(
       elevation: 4,

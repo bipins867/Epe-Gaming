@@ -8,6 +8,7 @@ class AppConfig {
   static late String remoteAddr;
   static late String? authToken;
   static late String baseUrl;
+  static late String fileBaseUrl;
 
   static SharedPreferences? preferences;
   static CustomLogger? customLogger;
@@ -25,6 +26,7 @@ class AppConfig {
       baseUrl = '${dotenv.env['REMOTE_ADDRESS']}/';
     }
 
+    fileBaseUrl = '${baseUrl}files/';
     customLogger = CustomLogger();
 
     String? token = getLocalStorageItem('authToken');

@@ -1,11 +1,134 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
-class MyProfilePage extends StatelessWidget {
+import 'package:epe_gaming_client/Utils/alertHandler.dart';
+import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
+import 'package:epe_gaming_client/Utils/appConfig.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
+class MyProfilePage extends StatefulWidget {
   final Map<String, dynamic>? profileInfo;
+
   const MyProfilePage({super.key, required this.profileInfo});
 
   @override
+  _MyProfilePageState createState() => _MyProfilePageState();
+}
+
+class _MyProfilePageState extends State<MyProfilePage> {
+  late TextEditingController nameController;
+  late TextEditingController emailController;
+  late TextEditingController oldPasswordController;
+  late TextEditingController newPasswordController;
+  late TextEditingController confirmPasswordController;
+  File? _imageFile;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController(text: widget.profileInfo?['name']);
+    emailController = TextEditingController(text: widget.profileInfo?['email']);
+    oldPasswordController = TextEditingController();
+    newPasswordController = TextEditingController();
+    confirmPasswordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    emailController.dispose();
+    oldPasswordController.dispose();
+    newPasswordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+      await _uploadProfileImage(); // Make sure you implement this method
+    }
+  }
+
+  Future<void> _uploadProfileImage() async {
+    print('uploading the image');
+    try {
+      dynamic response =
+          await uploadImageHandler('user/info/updateProfileImage', _imageFile!);
+
+      if (response['statusCode'] == 200) {
+        showInfoAlertDialog(context, "Info updated!");
+      } else {
+        handleErrors(context, response);
+      }
+    } catch (e) {
+      handleErrors(context, {'body': 'System error: ${e.toString()}'});
+    }
+  }
+
+  Future<void> _updateProfile() async {
+    try {
+      dynamic response = await postRequestWithToken(
+        'user/info/updateProfileInfo',
+        {
+          'name': nameController.text,
+          'email': emailController.text,
+        },
+      );
+
+      if (response['statusCode'] == 200) {
+        showInfoAlertDialog(context, "Info updated!");
+      } else {
+        handleErrors(context, response);
+      }
+    } catch (e) {
+      handleErrors(context, {'body': 'System error: ${e.toString()}'});
+    }
+  }
+
+  Future<void> _resetPassword() async {
+    if (newPasswordController.text != confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Passwords do not match")),
+      );
+      return;
+    }
+
+    try {
+      dynamic response = await postRequestWithToken(
+        'user/auth/changePassword',
+        {
+          'oldPassword': oldPasswordController.text,
+          'newPassword': newPasswordController.text,
+        },
+      );
+
+      if (response['statusCode'] == 200) {
+        showInfoAlertDialog(context, "Info updated!");
+      } else {
+        handleErrors(context, response);
+      }
+    } catch (e) {
+      handleErrors(context, {'body': 'System error: ${e.toString()}'});
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    String baseImageUrl = AppConfig.fileBaseUrl;
+
+    String profileUrl =
+        widget.profileInfo?['profileUrl'] ?? ''; // URL of the profile image
+
+    if (profileUrl != '') {
+      profileUrl = '$baseImageUrl$profileUrl';
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Profile'),
@@ -15,15 +138,14 @@ class MyProfilePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Profile Information Card
+            // Profile Information Card with Update Feature
             Card(
               elevation: 4,
               margin: const EdgeInsets.symmetric(vertical: 8.0),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.center, // Center-align contents
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Text(
                       'Profile Information',
@@ -31,28 +153,51 @@ class MyProfilePage extends StatelessWidget {
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundColor: Colors.grey[300],
-                      child: const Icon(
-                        Icons.person,
-                        size: 50,
-                        color: Colors.black,
+                    GestureDetector(
+                      onTap: _pickImage,
+                      child: CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.grey.shade300,
+                        backgroundImage: profileUrl.isNotEmpty
+                            ? NetworkImage(profileUrl)
+                            : null, // Load image from URL
+                        child: profileUrl.isEmpty
+                            ? const Icon(
+                                Icons.person,
+                                size: 40,
+                                color: Colors.blue,
+                              )
+                            : null, // Show icon if no image is available
                       ),
                     ),
                     const SizedBox(height: 16),
-                    _buildInfoRow('Name:', profileInfo?['name'] ?? 'N/A'),
-                    _buildInfoRow('Email:', profileInfo?['email'] ?? 'N/A'),
+                    _buildInfoRow('Customer ID:',
+                        widget.profileInfo?['customerId'] ?? 'N/A'),
                     _buildInfoRow(
-                        'Customer ID:', profileInfo?['customerId'] ?? 'N/A'),
-                    _buildInfoRow(
-                        'Phone Number:', profileInfo?['phone'] ?? 'N/A'),
+                        'Phone Number:', widget.profileInfo?['phone'] ?? 'N/A'),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    TextField(
+                      controller: nameController,
+                      decoration: const InputDecoration(labelText: 'Name'),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: emailController,
+                      decoration: const InputDecoration(labelText: 'Email'),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: _updateProfile,
+                      child: const Text('Update Profile'),
+                    ),
                   ],
                 ),
               ),
             ),
 
-            // Bank and KYC Status Card
+            // Account Status Information
             Card(
               elevation: 4,
               margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -67,16 +212,16 @@ class MyProfilePage extends StatelessWidget {
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
-                    _buildInfoRow(
-                        'Bank Status:', profileInfo?['bankStatus'] ?? 'N/A'),
-                    _buildInfoRow(
-                        'KYC Status:', profileInfo?['kycStatus'] ?? 'N/A'),
+                    _buildInfoRow('Bank Status:',
+                        widget.profileInfo?['bankStatus'] ?? 'N/A'),
+                    _buildInfoRow('KYC Status:',
+                        widget.profileInfo?['kycStatus'] ?? 'N/A'),
                   ],
                 ),
               ),
             ),
 
-            // Reset Password Card
+            // Reset Password Section
             Card(
               elevation: 4,
               margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -92,6 +237,7 @@ class MyProfilePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     TextField(
+                      controller: oldPasswordController,
                       decoration: const InputDecoration(
                         labelText: 'Old Password',
                         border: OutlineInputBorder(),
@@ -100,6 +246,7 @@ class MyProfilePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     TextField(
+                      controller: newPasswordController,
                       decoration: const InputDecoration(
                         labelText: 'New Password',
                         border: OutlineInputBorder(),
@@ -108,6 +255,7 @@ class MyProfilePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     TextField(
+                      controller: confirmPasswordController,
                       decoration: const InputDecoration(
                         labelText: 'Confirm Password',
                         border: OutlineInputBorder(),
@@ -116,9 +264,7 @@ class MyProfilePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: () {
-                        // Add your reset password logic here
-                      },
+                      onPressed: _resetPassword,
                       child: const Text('Reset Password'),
                     ),
                   ],
