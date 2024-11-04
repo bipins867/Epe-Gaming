@@ -1,5 +1,4 @@
 import 'package:epe_gaming_client/Components/Home/Categories/BattleRoyal/Games/GameItem/Events/EventDetails/TeamInfo/TeamList/TeamMemberList/teamMemberList.dart';
-import 'package:epe_gaming_client/Utils/alertHandler.dart';
 import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
@@ -48,9 +47,7 @@ class _SearchTeamPageState extends State<SearchTeamPage> {
           userEventInfo = response['body']['userEventInfo'];
         });
       } else {
-        handleErrors(response, alertFunction: (string) {
-          showErrorAlertDialog(context, string);
-        });
+        handleErrors(context, response);
       }
     } catch (e) {
       // Handle exceptions

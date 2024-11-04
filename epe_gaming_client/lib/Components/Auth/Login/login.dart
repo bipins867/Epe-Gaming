@@ -58,9 +58,7 @@ class _LoginPageState extends State<LoginPage> {
               false, // Removes all previous routes from the stack
         );
       } else {
-        handleErrors(response, alertFunction: (string) {
-          showErrorAlertDialog(context, string);
-        });
+        handleErrors(context, response);
       }
     } catch (e) {
       // Handle exceptions

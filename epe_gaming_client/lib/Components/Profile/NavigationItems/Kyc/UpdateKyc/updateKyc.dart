@@ -43,9 +43,7 @@ class _UpdateKycState extends State<UpdateKyc> {
 
         widget.fetchKycFunction();
       } else {
-        handleErrors(response, alertFunction: (string) {
-          showErrorAlertDialog(context, string);
-        });
+        handleErrors(context, response);
       }
     } catch (e) {
       String error = 'System Error: ${e.toString()}';

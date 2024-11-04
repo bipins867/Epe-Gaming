@@ -2,7 +2,6 @@ import 'package:epe_gaming_client/Components/Home/Wallet/WalletHome/AccountStatu
 import 'package:epe_gaming_client/Components/Home/Wallet/WalletHome/AddFunds/addFunds.dart';
 import 'package:epe_gaming_client/Components/Home/Wallet/WalletHome/WalletInformation/walletInformation.dart';
 import 'package:epe_gaming_client/Components/Home/Wallet/WalletHome/Withdrawal/withdrawal.dart';
-import 'package:epe_gaming_client/Utils/alertHandler.dart';
 import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
@@ -38,9 +37,7 @@ class _WalletHomePageState extends State<WalletHomePage> {
           accountStatus = response['body']['accountStatus'];
         });
       } else {
-        handleErrors(response, alertFunction: (string) {
-          showErrorAlertDialog(context, string);
-        });
+        handleErrors(context, response);
       }
     } catch (e) {
       // Handle exceptions

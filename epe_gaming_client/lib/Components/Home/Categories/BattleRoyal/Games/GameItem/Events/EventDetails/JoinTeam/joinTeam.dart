@@ -1,4 +1,3 @@
-import 'package:epe_gaming_client/Utils/alertHandler.dart';
 import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
@@ -65,9 +64,7 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
           _updateToogleFunctions();
         });
       } else {
-        handleErrors(response, alertFunction: (string) {
-          showErrorAlertDialog(context, string);
-        });
+        handleErrors(context, response);
       }
     } catch (e) {
       // Handle exceptions
@@ -109,9 +106,7 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
           //customLogger!.logInfo('${response['body']}');
           Navigator.pop(context);
         } else {
-          handleErrors(response, alertFunction: (string) {
-            showErrorAlertDialog(context, string);
-          });
+          handleErrors(context, response);
         }
       } catch (e) {
         // Handle exceptions
