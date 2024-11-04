@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:epe_gaming_client/Utils/alertHandler.dart';
 import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
+import 'package:epe_gaming_client/Utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -44,19 +45,23 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    try {
+      final picker = ImagePicker();
+      XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-    if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-      await _uploadProfileImage(); // Make sure you implement this method
+      if (pickedFile != null) {
+        pickedFile = await compressImage(pickedFile);
+
+        _imageFile = File(pickedFile!.path);
+
+        await _uploadProfileImage(); // Make sure you implement this method
+      }
+    } catch (e) {
+      handleErrors(context, {'body': 'System error: ${e.toString()}'});
     }
   }
 
   Future<void> _uploadProfileImage() async {
-    print('uploading the image');
     try {
       dynamic response =
           await uploadImageHandler('user/info/updateProfileImage', _imageFile!);
@@ -155,19 +160,39 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     const SizedBox(height: 16),
                     GestureDetector(
                       onTap: _pickImage,
-                      child: CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Colors.grey.shade300,
-                        backgroundImage: profileUrl.isNotEmpty
-                            ? NetworkImage(profileUrl)
-                            : null, // Load image from URL
-                        child: profileUrl.isEmpty
-                            ? const Icon(
-                                Icons.person,
-                                size: 40,
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundColor: Colors.grey.shade300,
+                            backgroundImage: profileUrl.isNotEmpty
+                                ? NetworkImage(profileUrl)
+                                : null, // Load image from URL
+                            child: profileUrl.isEmpty
+                                ? const Icon(
+                                    Icons.person,
+                                    size: 40,
+                                    color: Colors.blue,
+                                  )
+                                : null, // Show icon if no image is available
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                              padding: const EdgeInsets.all(4),
+                              child: Icon(
+                                Icons.edit,
                                 color: Colors.blue,
-                              )
-                            : null, // Show icon if no image is available
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 16),

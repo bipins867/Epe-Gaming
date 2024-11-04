@@ -193,15 +193,26 @@ exports.updateProfileInfo = async (req, res, next) => {
     const user = req.user;
 
     // Start transaction
-    transaction = await sequelize.transaction();
+    
 
     // Track the original values for logging purposes
     const originalData = { email: user.email, name: user.name };
 
     // Update only the fields provided in the request
     if (email) user.email = email;
-    if (name) user.name = name;
+    if (name){
+      if(user.name!==name){
+        const userKyc=await Kyc.findOne({where:{UserId:user.id}})
+        if(userKyc.status==='verified')
+        {
+          return res.status(402).json({message:"Can't Update the name after the KYC verification!"})
+        }
+        user.name = name
+      }
+      
+    };
 
+    transaction = await sequelize.transaction();
     // Save the changes
     await user.save({ transaction });
 
