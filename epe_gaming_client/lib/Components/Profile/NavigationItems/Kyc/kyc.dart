@@ -1,3 +1,4 @@
+import 'package:epe_gaming_client/ApiHandler/UserProfile/userProfileApiHandler.dart';
 import 'package:epe_gaming_client/Components/Profile/NavigationItems/Kyc/KycStatus/kycStatus.dart';
 import 'package:epe_gaming_client/Components/Profile/NavigationItems/Kyc/UpdateKyc/updateKyc.dart';
 import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
@@ -32,6 +33,7 @@ class _KYCPageState extends State<KYCPage> {
         setState(() {
           kycDetails = response['body']['data'];
         });
+        UserProfileApiHandler.updateProfileInfo(context);
       } else {
         handleErrors(context, response);
       }

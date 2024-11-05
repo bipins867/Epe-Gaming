@@ -83,7 +83,7 @@ exports.userSignUp = async (req, res, next) => {
     // Create a new referral for the new user with a UUID
     const newReferral = await Referrals.create(
       {
-        referralId: uuidv4(), // Generate a UUID for the referral ID
+        referralId: generateRandomId(), // Generate a UUID for the referral ID
         noOfReferrals: 0, // Initially 0
         pendingReferrals: 0, // Initially 0
         UserId: newUser.id, // Associate the referral with the new user

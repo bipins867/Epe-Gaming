@@ -1,12 +1,19 @@
+import 'package:epe_gaming_client/Store/baseStoreProvider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Info extends StatelessWidget {
-  final Map<String, dynamic>? statusInfo;
-
-  const Info({super.key, required this.statusInfo});
+  const Info({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic>? userProfileInfo =
+        Provider.of<BaseStoreProvider>(context).userProfileInfo;
+    Map<String, dynamic>? statusInfo =
+        userProfileInfo != null && userProfileInfo.containsKey('statusInfo')
+            ? userProfileInfo['statusInfo']
+            : null;
+
     // Get data from statusInfo or use "N/A" if null
     String matchesPlayed = statusInfo?['matchesPlayed']?.toString() ?? '0';
     String totalKills = statusInfo?['totalKills']?.toString() ?? '0';

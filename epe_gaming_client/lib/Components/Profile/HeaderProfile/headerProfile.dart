@@ -1,13 +1,20 @@
+import 'package:epe_gaming_client/Store/baseStoreProvider.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HeaderProfile extends StatelessWidget {
-  final Map<String, dynamic>? profileInfo;
-
-  const HeaderProfile({super.key, required this.profileInfo});
+  const HeaderProfile({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic>? userProfileInfo =
+        Provider.of<BaseStoreProvider>(context).userProfileInfo;
+    Map<String, dynamic>? profileInfo =
+        userProfileInfo != null && userProfileInfo.containsKey('userProfile')
+            ? userProfileInfo['userProfile']
+            : null;
+
     // Extract the relevant information from profileInfo
     final String name =
         profileInfo?['name'] ?? 'No Name'; // Provide a default value

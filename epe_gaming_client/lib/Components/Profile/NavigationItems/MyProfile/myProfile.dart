@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:epe_gaming_client/Utils/alertHandler.dart';
+import 'package:epe_gaming_client/ApiHandler/UserProfile/userProfileApiHandler.dart';
 import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:epe_gaming_client/Utils/utils.dart';
@@ -62,38 +62,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
   }
 
   Future<void> _uploadProfileImage() async {
-    try {
-      dynamic response =
-          await uploadImageHandler('user/info/updateProfileImage', _imageFile!);
-
-      if (response['statusCode'] == 200) {
-        showInfoAlertDialog(context, "Info updated!");
-      } else {
-        handleErrors(context, response);
-      }
-    } catch (e) {
-      handleErrors(context, {'body': 'System error: ${e.toString()}'});
-    }
+    UserProfileApiHandler.uploadProfileImage(context, _imageFile);
   }
 
   Future<void> _updateProfile() async {
-    try {
-      dynamic response = await postRequestWithToken(
-        'user/info/updateProfileInfo',
-        {
-          'name': nameController.text,
-          'email': emailController.text,
-        },
-      );
-
-      if (response['statusCode'] == 200) {
-        showInfoAlertDialog(context, "Info updated!");
-      } else {
-        handleErrors(context, response);
-      }
-    } catch (e) {
-      handleErrors(context, {'body': 'System error: ${e.toString()}'});
-    }
+    UserProfileApiHandler.updateProfile(
+        context, nameController.text, emailController.text);
   }
 
   Future<void> _resetPassword() async {
@@ -104,23 +78,8 @@ class _MyProfilePageState extends State<MyProfilePage> {
       return;
     }
 
-    try {
-      dynamic response = await postRequestWithToken(
-        'user/auth/changePassword',
-        {
-          'oldPassword': oldPasswordController.text,
-          'newPassword': newPasswordController.text,
-        },
-      );
-
-      if (response['statusCode'] == 200) {
-        showInfoAlertDialog(context, "Info updated!");
-      } else {
-        handleErrors(context, response);
-      }
-    } catch (e) {
-      handleErrors(context, {'body': 'System error: ${e.toString()}'});
-    }
+    UserProfileApiHandler.resetPassword(
+        context, oldPasswordController.text, newPasswordController.text);
   }
 
   @override

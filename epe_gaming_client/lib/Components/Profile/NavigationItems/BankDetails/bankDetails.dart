@@ -1,4 +1,4 @@
-import 'package:epe_gaming_client/Utils/alertHandler.dart';
+import 'package:epe_gaming_client/ApiHandler/UserProfile/userProfileApiHandler.dart';
 import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +39,7 @@ class _BankDetailsPageState extends State<BankDetailsPage> {
           bankDetails = response['body']['data'];
           _initializeFields();
         });
+        UserProfileApiHandler.updateProfileInfo(context);
       } else {
         handleErrors(context, response);
       }
@@ -80,23 +81,7 @@ class _BankDetailsPageState extends State<BankDetailsPage> {
       'upiId': upiIdController.text,
     };
 
-    try {
-      dynamic response =
-          await postRequestWithToken('user/bankDetails/update', requestData);
-
-      if (response['statusCode'] == 200) {
-        showInfoAlertDialog(context, 'Bank details updated successfully.');
-        _fetchBankDetails();
-      } else {
-        handleErrors(context, response);
-      }
-    } catch (e) {
-      String error = 'System Error: ${e.toString()}';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error)),
-      );
-      customLogger!.logError(error);
-    }
+    UserProfileApiHandler.updateBankStatus(context, requestData);
   }
 
   @override
