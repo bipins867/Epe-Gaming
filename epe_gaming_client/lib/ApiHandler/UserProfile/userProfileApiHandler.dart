@@ -28,14 +28,18 @@ class UserProfileApiHandler {
     } catch (e) {
       String error = 'System Error: ${e.toString()}';
       handleErrors(context, error);
+    } finally {
+      if (provider.isProfileLoading) {
+        provider.updateIsProfileLoadingStatus(false);
+      }
     }
   }
 
   static Future<void> uploadProfileImage(
-      BuildContext context, File? _imageFile) async {
+      BuildContext context, File? imageFile) async {
     try {
       dynamic response =
-          await uploadImageHandler('user/info/updateProfileImage', _imageFile!);
+          await uploadImageHandler('user/info/updateProfileImage', imageFile!);
 
       if (response['statusCode'] == 200) {
         updateProfileInfo(context);
