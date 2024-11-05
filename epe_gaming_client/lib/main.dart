@@ -1,15 +1,24 @@
 import 'package:epe_gaming_client/Components/Auth/Login/login.dart';
 import 'package:epe_gaming_client/Components/LoadingScreen/loadingScreen.dart';
 import 'package:epe_gaming_client/Components/base.dart';
+import 'package:epe_gaming_client/Store/baseStoreProvider.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env'); // Load environment variables
   await AppConfig.initializeAppInformation(); // Initialize AppConfig
 
-  runApp(MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(
+        create: (context) => BaseStoreProvider(),
+      )
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

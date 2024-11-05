@@ -22,7 +22,7 @@ void logoutHandler(BuildContext context) {
 }
 
 // Handle errors function// Map<int, Function(dynamic)> mapFunction
-void handleErrors(BuildContext context, Map<String, dynamic> err,
+void handleErrors(BuildContext context, dynamic err,
     {bool log = true, bool alert = true}) {
   String logMessage = '';
   String alertMessage = '';
@@ -32,6 +32,12 @@ void handleErrors(BuildContext context, Map<String, dynamic> err,
     logMessage = "Network error or server is not responding: ${err.toString()}";
     alertMessage =
         "Network error or server is not responding. Please try again later.";
+  } else if (err is String) {
+    if (alert) {
+      String error = 'System Error: $err';
+      errorLogger(error);
+      showErrorAlertDialog(context, error, type: "System Error!");
+    }
   } else {
     // Assume `err` has a response property
     dynamic response = err['body'];

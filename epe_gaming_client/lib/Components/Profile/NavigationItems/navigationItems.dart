@@ -5,13 +5,14 @@ import 'package:epe_gaming_client/Components/Profile/NavigationItems/BankDetails
 import 'package:epe_gaming_client/Components/Profile/NavigationItems/Kyc/kyc.dart';
 import 'package:epe_gaming_client/Components/Profile/NavigationItems/Legality/legality.dart';
 import 'package:epe_gaming_client/Components/Profile/NavigationItems/MyProfile/myProfile.dart';
+import 'package:epe_gaming_client/Store/baseStoreProvider.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class NavigationItems extends StatelessWidget {
-  final Map<String, dynamic>? profileInfo;
-  const NavigationItems({super.key, required this.profileInfo});
+  const NavigationItems({super.key});
 
   Widget getListItem(String title, Icon icon, {VoidCallback? onClickFun}) {
     return Card(
@@ -30,6 +31,13 @@ class NavigationItems extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic>? userProfileInfo =
+        Provider.of<BaseStoreProvider>(context).userProfileInfo;
+    Map<String, dynamic>? profileInfo =
+        userProfileInfo != null && userProfileInfo.containsKey('userProfile')
+            ? userProfileInfo['userProfile']
+            : null;
+
     String kycStatus = profileInfo?['kycStatus'] ?? 'pending';
     String bankStatus = profileInfo?['bankStatus'] ?? 'pending';
     return Expanded(

@@ -1,5 +1,5 @@
+import 'package:epe_gaming_client/ApiHandler/UserProfile/userProfileApiHandler.dart';
 import 'package:epe_gaming_client/Utils/alertHandler.dart';
-import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 
@@ -32,26 +32,7 @@ class _UpdateKycState extends State<UpdateKyc> {
       return;
     }
 
-    try {
-      dynamic response = await postRequestWithToken(
-        'user/kyc/update',
-        {'panNumber': panController.text},
-      );
-
-      if (response['statusCode'] == 200) {
-        showInfoAlertDialog(context, 'KYC updated successfully.');
-
-        widget.fetchKycFunction();
-      } else {
-        handleErrors(context, response);
-      }
-    } catch (e) {
-      String error = 'System Error: ${e.toString()}';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(error)),
-      );
-      customLogger!.logError(error);
-    }
+    UserProfileApiHandler.updateKyc(context, panController.text);
   }
 
   @override
