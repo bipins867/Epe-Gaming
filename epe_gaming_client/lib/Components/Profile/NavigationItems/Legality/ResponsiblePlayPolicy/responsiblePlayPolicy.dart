@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ResponsiblePlayPolicyPage extends StatelessWidget {
+  const ResponsiblePlayPolicyPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
