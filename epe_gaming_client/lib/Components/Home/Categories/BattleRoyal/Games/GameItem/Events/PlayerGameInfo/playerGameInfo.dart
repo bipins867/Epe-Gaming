@@ -18,12 +18,11 @@ class _PlayerGameInfoPageState extends State<PlayerGameInfoPage> {
   final TextEditingController _inGameIdController = TextEditingController();
   final TextEditingController _inGameNameController = TextEditingController();
   AppConfig? appConfig;
-  CustomLogger? customLogger;
 
   @override
   void initState() {
     appConfig = AppConfig();
-    customLogger = CustomLogger();
+
     _fetchPlayerInfo();
     // TODO: implement initState
     super.initState();
@@ -53,7 +52,7 @@ class _PlayerGameInfoPageState extends State<PlayerGameInfoPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error)),
       );
-      customLogger!.logError(error);
+      CustomLogger.logError(error);
     } finally {}
   }
 
@@ -83,7 +82,7 @@ class _PlayerGameInfoPageState extends State<PlayerGameInfoPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error)),
       );
-      customLogger!.logError(error);
+      CustomLogger.logError(error);
     } finally {}
   }
 

@@ -18,14 +18,12 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   bool _isLoading = false;
-  CustomLogger? customLogger;
   AppConfig? appConfig;
 
   @override
   void initState() {
     super.initState();
     appConfig = AppConfig();
-    customLogger = CustomLogger();
   }
 
   void signUpHandler() async {
@@ -83,7 +81,7 @@ class _SignUpPageState extends State<SignUpPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error)),
       );
-      customLogger!.logError(error);
+      CustomLogger.logError(error);
     } finally {
       setState(() {
         _isLoading = false;

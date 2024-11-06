@@ -26,12 +26,8 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
   double calculatedFee = 0.0;
   int squadType = 4;
 
-  CustomLogger? customLogger;
-
   @override
   void initState() {
-    customLogger = CustomLogger();
-
     _getJoinEventTeamInfo();
 
     super.initState();
@@ -73,7 +69,7 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error)),
       );
-      customLogger!.logError(error);
+      CustomLogger.logError(error);
     } finally {}
   }
 
@@ -115,7 +111,7 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(error)),
         );
-        customLogger!.logError(error);
+        CustomLogger.logError(error);
       } finally {}
     }
   }

@@ -6,12 +6,20 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const useragent = require("express-useragent");
 const geoip = require("geoip-lite");
+const firebaseAdmin=require('firebase-admin')
 
 const { setupRoutes } = require("./Routes/setupRoutes");
 const db = require("./database");
 const infoRoutes = require("./infoRoutes");
 const setupModels = require("./Models/setModels");
 const UserGames = require("./Models/AndModels/userGames");
+const { firebaseServiceAccount } = require("./importantInfo");
+
+firebaseAdmin.initializeApp({
+  credential: firebaseAdmin.credential.cert(firebaseServiceAccount),
+});
+
+
 
 // Just check
 app = express();

@@ -16,12 +16,8 @@ class _SearchTeamPageState extends State<SearchTeamPage> {
   Map<String, dynamic>? teamInfo;
   Map<String, dynamic>? userEventInfo;
 
-  CustomLogger? customLogger;
-
   @override
   void initState() {
-    customLogger = CustomLogger();
-
     super.initState();
   }
 
@@ -56,7 +52,7 @@ class _SearchTeamPageState extends State<SearchTeamPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error)),
       );
-      customLogger!.logError(error);
+      CustomLogger.logError(error);
     } finally {}
   }
 

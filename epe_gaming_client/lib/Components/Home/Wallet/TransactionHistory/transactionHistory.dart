@@ -12,12 +12,10 @@ class TransactionHistory extends StatefulWidget {
 
 class _TransactionHistoryState extends State<TransactionHistory> {
   List<Transaction>? transactions;
-  CustomLogger? customLogger;
 
   @override
   void initState() {
     super.initState();
-    customLogger = CustomLogger();
     _fetchTransactionHistory();
   }
 
@@ -40,7 +38,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error)),
       );
-      customLogger!.logError(error);
+      CustomLogger.logError(error);
     }
   }
 

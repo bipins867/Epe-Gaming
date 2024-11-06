@@ -14,7 +14,6 @@ class Hosted extends StatefulWidget {
 
 class _HostedState extends State<Hosted> {
   AppConfig? appConfig;
-  CustomLogger? customLogger;
 
   List? upcommingEvents;
   List? ongoingEvents;
@@ -23,7 +22,6 @@ class _HostedState extends State<Hosted> {
   @override
   void initState() {
     appConfig = AppConfig();
-    customLogger = CustomLogger();
 
     super.initState();
     _fetchEventList();
@@ -50,7 +48,7 @@ class _HostedState extends State<Hosted> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error)),
       );
-      customLogger!.logError(error);
+      CustomLogger.logError(error);
     } finally {}
   }
 

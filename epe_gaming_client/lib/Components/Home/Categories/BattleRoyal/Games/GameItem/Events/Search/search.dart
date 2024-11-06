@@ -14,12 +14,9 @@ class SearchEvent extends StatefulWidget {
 class _SearchEventState extends State<SearchEvent> {
   final TextEditingController _searchController = TextEditingController();
   Map<String, dynamic>? _filteredEvent; // List of event info maps
-  CustomLogger? customLogger;
 
   @override
   void initState() {
-    customLogger = CustomLogger();
-
     super.initState();
   }
 
@@ -55,7 +52,7 @@ class _SearchEventState extends State<SearchEvent> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error)),
       );
-      customLogger!.logError(error);
+      CustomLogger.logError(error);
     } finally {}
   }
 

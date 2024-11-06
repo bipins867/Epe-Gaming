@@ -29,7 +29,7 @@ class _BaseScreenState extends State<BaseScreen> {
     return Scaffold(
       appBar: _selectedIndex == 0
           ? AppBar(
-              title: const Text("EPE Gaming"),
+              title: const Text("Pro Player League"),
               actions: [
                 IconButton(
                   onPressed: () {

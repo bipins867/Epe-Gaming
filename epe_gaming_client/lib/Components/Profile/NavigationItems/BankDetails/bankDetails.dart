@@ -12,7 +12,6 @@ class BankDetailsPage extends StatefulWidget {
 
 class _BankDetailsPageState extends State<BankDetailsPage> {
   AppConfig? appConfig;
-  CustomLogger? customLogger;
   Map<String, dynamic>? bankDetails;
 
   final TextEditingController bankNameController = TextEditingController();
@@ -26,7 +25,7 @@ class _BankDetailsPageState extends State<BankDetailsPage> {
   void initState() {
     super.initState();
     appConfig = AppConfig();
-    customLogger = CustomLogger();
+
     _fetchBankDetails();
   }
 
@@ -48,7 +47,7 @@ class _BankDetailsPageState extends State<BankDetailsPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error)),
       );
-      customLogger!.logError(error);
+      CustomLogger.logError(error);
     }
   }
 

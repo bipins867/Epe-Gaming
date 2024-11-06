@@ -18,7 +18,7 @@ class Announcement extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         alignment: Alignment.centerLeft,
         child: Marquee(
-          text: '🚨 EPE Gaming Welcomes you! 🚨',
+          text: '🚨 Pro Player League Welcomes you! 🚨',
           style: TextStyle(fontSize: 20, color: Colors.white),
           scrollAxis: Axis.horizontal,
           crossAxisAlignment: CrossAxisAlignment.start,

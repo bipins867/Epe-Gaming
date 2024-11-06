@@ -17,12 +17,10 @@ class _WalletHomePageState extends State<WalletHomePage> {
   // Wallet information and account status placeholder
   Map<String, dynamic>? walletInfo;
   Map<String, dynamic>? accountStatus;
-  CustomLogger? customLogger;
 
   @override
   void initState() {
     super.initState();
-    customLogger = CustomLogger();
     _fetchWalletInfo(); // Simulate API request on page load
   }
 
@@ -46,7 +44,7 @@ class _WalletHomePageState extends State<WalletHomePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error)),
       );
-      customLogger!.logError(error);
+      CustomLogger.logError(error);
     } finally {}
   }
 

@@ -2,6 +2,7 @@
 backend/node_modules/
 backend/.env
 backend/CustomFiles/
+backend/firebase-cloud-messaging.json
 
 # Ignore for web-version (React.js)
 web-version/node_modules/
