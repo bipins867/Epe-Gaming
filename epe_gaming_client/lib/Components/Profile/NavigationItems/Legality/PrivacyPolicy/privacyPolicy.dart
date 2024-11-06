@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class PrivacyPolicyPage extends StatelessWidget {
+  const PrivacyPolicyPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -309,7 +311,7 @@ class Section extends StatelessWidget {
   final String title;
   final Widget content;
 
-  Section({required this.title, required this.content});
+  const Section({super.key, required this.title, required this.content});
 
   @override
   Widget build(BuildContext context) {
