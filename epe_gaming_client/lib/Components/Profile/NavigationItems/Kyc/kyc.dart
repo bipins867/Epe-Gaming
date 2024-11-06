@@ -14,14 +14,12 @@ class KYCPage extends StatefulWidget {
 
 class _KYCPageState extends State<KYCPage> {
   AppConfig? appConfig;
-  CustomLogger? customLogger;
   Map<String, dynamic>? kycDetails;
 
   @override
   void initState() {
     super.initState();
     appConfig = AppConfig();
-    customLogger = CustomLogger();
     _fetchKycDetails();
   }
 
@@ -42,7 +40,7 @@ class _KYCPageState extends State<KYCPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error)),
       );
-      customLogger!.logError(error);
+      CustomLogger.logError(error);
     }
   }
 

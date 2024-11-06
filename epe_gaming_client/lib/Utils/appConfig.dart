@@ -9,6 +9,7 @@ class AppConfig {
   static late String? authToken;
   static late String baseUrl;
   static late String fileBaseUrl;
+  static late String fcmToken;
 
   static SharedPreferences? preferences;
   static CustomLogger? customLogger;
@@ -58,28 +59,28 @@ class AppConfig {
 
 class CustomLogger {
   // Create a logger instance
-  final Logger _logger = Logger();
+  static final Logger _logger = Logger();
 
   // Method to log messages based on the environment
-  void logDebug(String message) {
+  static void logDebug(String message) {
     if (kDebugMode) {
       _logger.d(message); // Log debug messages only in debug mode
     }
   }
 
-  void logInfo(String message) {
+  static void logInfo(String message) {
     if (kDebugMode) {
       _logger.i(message); // Log info messages only in debug mode
     }
   }
 
-  void logWarning(String message) {
+  static void logWarning(String message) {
     if (kDebugMode) {
       _logger.w(message); // Log warning messages only in debug mode
     }
   }
 
-  void logError(String message) {
+  static void logError(String message) {
     if (kDebugMode) {
       _logger.e(message); // Log error messages only in debug mode
     }

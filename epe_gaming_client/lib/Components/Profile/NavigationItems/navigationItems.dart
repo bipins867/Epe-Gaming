@@ -3,7 +3,7 @@ import 'package:epe_gaming_client/Components/Home/Wallet/wallet.dart';
 import 'package:epe_gaming_client/Components/Profile/NavigationItems/AboutUs/aboutUs.dart';
 import 'package:epe_gaming_client/Components/Profile/NavigationItems/BankDetails/bankDetails.dart';
 import 'package:epe_gaming_client/Components/Profile/NavigationItems/Kyc/kyc.dart';
-import 'package:epe_gaming_client/Components/Profile/NavigationItems/Legality/legality.dart';
+import 'package:epe_gaming_client/Components/Profile/NavigationItems/Legality/legalityItems.dart';
 import 'package:epe_gaming_client/Components/Profile/NavigationItems/MyProfile/myProfile.dart';
 import 'package:epe_gaming_client/Store/baseStoreProvider.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
@@ -22,8 +22,7 @@ class NavigationItems extends StatelessWidget {
       child: ListTile(
         leading: icon,
         title: Text(title),
-        trailing: const Icon(Icons.arrow_forward_ios,
-            color: Colors.grey), // Add arrow
+        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.grey),
         onTap: onClickFun,
       ),
     );
@@ -40,6 +39,7 @@ class NavigationItems extends StatelessWidget {
 
     String kycStatus = profileInfo?['kycStatus'] ?? 'pending';
     String bankStatus = profileInfo?['bankStatus'] ?? 'pending';
+
     return Expanded(
       child: ListView(
         padding: const EdgeInsets.all(16),
@@ -79,8 +79,7 @@ class NavigationItems extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => BankDetailsPage()),
               );
             },
-          ), // New Bank Details Item
-
+          ),
           getListItem(
             "My Wallet",
             const Icon(Icons.account_balance_wallet, color: Colors.purple),
@@ -113,19 +112,12 @@ class NavigationItems extends StatelessWidget {
             const Icon(Icons.share, color: Colors.red),
             onClickFun: () {
               Share.share(
-                'Check out the EPE Gaming app for tournaments and competitions! Download here: https://example.com',
+                'Check out the Pro Player League app for tournaments and competitions! Download here: https://example.com',
               );
             },
           ),
-          getListItem(
-            "Legality",
-            const Icon(Icons.gavel, color: Colors.brown),
-            onClickFun: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => LegalityPage()),
-              );
-            },
-          ),
+          // Dropdown for Legality Options using ExpansionTile
+          LegalityItemsList(),
           getListItem(
             "Logout",
             const Icon(Icons.logout, color: Colors.black),

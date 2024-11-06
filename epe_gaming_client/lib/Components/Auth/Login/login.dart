@@ -16,12 +16,10 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false; // State variable for loading
-  CustomLogger? customLogger;
   AppConfig? appConfig;
   @override
   void initState() {
     appConfig = AppConfig();
-    customLogger = CustomLogger();
     super.initState();
   }
 
@@ -43,7 +41,8 @@ class _LoginPageState extends State<LoginPage> {
     try {
       Map<String, String> body = {
         "phone": _mobileController.text,
-        "password": _passwordController.text
+        "password": _passwordController.text,
+        "fcmToken": AppConfig.fcmToken,
       };
       dynamic response = await postRequest(
         'user/auth/login',
@@ -67,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error)),
       );
-      customLogger!.logError(error);
+      CustomLogger.logError(error);
     } finally {
       // Hide loading indicator
       setState(() {

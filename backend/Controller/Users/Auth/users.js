@@ -20,7 +20,6 @@ const Kyc = require("../../../Models/Wallet/kyc");
 const { generateRandomId, hashToken } = require("../../../Utils/utils");
 const AuthToken = require("../../../Models/User/authToken");
 
-
 exports.userSignUp = async (req, res, next) => {
   let transaction; // Start the transaction
 
@@ -29,9 +28,9 @@ exports.userSignUp = async (req, res, next) => {
 
     // Find the last candidateId and increment by 1
 
-    const user=await User.findOne({where:{phone}})
-    if(user){
-      return  res.status(403).json({message:"User already exists!"})
+    const user = await User.findOne({ where: { phone } });
+    if (user) {
+      return res.status(403).json({ message: "User already exists!" });
     }
     const newCustomerId = generateRandomId();
     transaction = await sequelize.transaction();
@@ -97,7 +96,7 @@ exports.userSignUp = async (req, res, next) => {
         cashBonus: 0,
         netWinning: 0,
         unclearedDeposit: 0,
-        unclearedCashBonus:0,
+        unclearedCashBonus: 0,
         unclearedNetWinning: 0,
         UserId: newUser.id,
       },
@@ -126,7 +125,7 @@ exports.userSignUp = async (req, res, next) => {
 
     return res.status(200).json({
       message: "SignUp Successful",
-      customerId:newUser.customerId,
+      customerId: newUser.customerId,
     });
   } catch (err) {
     // If any error occurs, rollback the transaction
@@ -141,12 +140,13 @@ exports.userSignUp = async (req, res, next) => {
 };
 
 exports.userLogin = async (req, res, next) => {
-  const { phone, password } = req.body;
+  const { phone, password, fcmToken } = req.body;
+
   let t; // Transaction variable
 
   try {
     // Step 1: Start a transaction
-    
+
     // Step 2: Find the user by phone number
     const user = await User.findOne({ where: { phone } });
 
@@ -159,24 +159,60 @@ exports.userLogin = async (req, res, next) => {
 
     if (!isMatch) {
       // Log unsuccessful login attempt due to incorrect password in UserActivity
-      await createUserActivity(req, user, "auth", "Login failed: Incorrect password !");
+      await createUserActivity(
+        req,
+        user,
+        "auth",
+        "Login failed: Incorrect password !"
+      );
       return res.status(401).json({ error: "Invalid Password" });
     }
 
     // Step 4: Generate a JWT token
     const expiresIn = process.env.NODE_ENV === "testing" ? "7d" : "7d";
-    const token = jwt.sign({ name: user.name, id: user.id }, process.env.JWT_SECRET_KEY, { expiresIn });
-
+    const token = jwt.sign(
+      { name: user.name, id: user.id },
+      process.env.JWT_SECRET_KEY,
+      { expiresIn }
+    );
 
     t = await sequelize.transaction();
 
-    const hashedToken=hashToken(token);
-    // Step 5: Save the token to the AuthToken table
-    await AuthToken.create({
-      token:hashedToken,
-      type: 'authToken',
-      UserId:user.id
-    }, { transaction: t }); // Use the transaction here
+    const hashedToken = hashToken(token);
+    const authToken = await AuthToken.findOne({ where: { type: "authToken" } });
+
+    if (!authToken) {
+      // Step 5: Save the token to the AuthToken table
+      await AuthToken.create(
+        {
+          token: hashedToken,
+          type: "authToken",
+          UserId: user.id,
+        },
+        { transaction: t }
+      ); // Use the transaction here
+    } else {
+      authToken.update({ token: hashedToken }, { transaction: t });
+    }
+
+    if (fcmToken) {
+      const fcmAuthToken = await AuthToken.findOne({
+        where: { type: "fcmToken" },
+      });
+
+      if (!fcmAuthToken) {
+        await AuthToken.create(
+          {
+            token: hashedToken,
+            type: "fcmToken",
+            UserId: user.id,
+          },
+          { transaction: t }
+        ); // Use the transaction here
+      } else {
+        fcmAuthToken.update({ token: fcmToken }, { transaction: t });
+      }
+    }
 
     // Step 6: Log successful login attempt in UserActivity
     await createUserActivity(req, user, "auth", "Login Successful!", t); // Pass the transaction
@@ -190,19 +226,20 @@ exports.userLogin = async (req, res, next) => {
       token,
       userId: user.id,
     });
-
   } catch (err) {
     // Rollback the transaction if it exists
     if (t) await t.rollback();
 
     console.error("Error during login:", err);
-    return res.status(500).json({ error: "Internal server error. Please try again later." });
+    return res
+      .status(500)
+      .json({ error: "Internal server error. Please try again later." });
   }
 };
 
-exports.verifyUser=async(req,res,next)=>{
-  return res.json({message:"Authorized user!"})
-}
+exports.verifyUser = async (req, res, next) => {
+  return res.json({ message: "Authorized user!" });
+};
 
 exports.changeUserPassword = async (req, res, next) => {
   const { oldPassword, newPassword } = req.body;
@@ -212,7 +249,10 @@ exports.changeUserPassword = async (req, res, next) => {
     // Find the user by phone number
     const user = req.user;
     // Verify the old password
-    const isOldPasswordCorrect = await bcrypt.compare(oldPassword, user.password);
+    const isOldPasswordCorrect = await bcrypt.compare(
+      oldPassword,
+      user.password
+    );
     if (!isOldPasswordCorrect) {
       return res.status(400).json({ message: "Old password is incorrect." });
     }
@@ -232,7 +272,13 @@ exports.changeUserPassword = async (req, res, next) => {
     await user.save({ transaction });
 
     // Log user activity (optional)
-    await createUserActivity(req, user, "auth", "Change password successful!", transaction);
+    await createUserActivity(
+      req,
+      user,
+      "auth",
+      "Change password successful!",
+      transaction
+    );
 
     // Commit the transaction
     await transaction.commit();
@@ -245,8 +291,9 @@ exports.changeUserPassword = async (req, res, next) => {
       await transaction.rollback();
     }
 
-    
-    return res.status(500).json({ message: "Internal server error. Please try again later." });
+    return res
+      .status(500)
+      .json({ message: "Internal server error. Please try again later." });
   }
 };
 
@@ -300,7 +347,6 @@ exports.userResendOtp = async (req, res, next) => {
   }
 };
 
-
 exports.getUserInfo = async (req, res, next) => {
   try {
     // Verify the signUpToken
@@ -336,5 +382,3 @@ exports.getUserInfo = async (req, res, next) => {
       .json({ message: "Internal server error. Please try again later." });
   }
 };
-
-

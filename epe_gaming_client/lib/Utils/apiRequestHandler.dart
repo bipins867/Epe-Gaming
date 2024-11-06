@@ -5,11 +5,9 @@ import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-dynamic errorLogger = CustomLogger().logError;
-
 // Function to simulate an alert (errorLoggers to console)
 void alertFunction(String message) {
-  CustomLogger().logInfo('ALERT: $message');
+  CustomLogger.logInfo('ALERT: $message');
 }
 
 void logoutHandler(BuildContext context) {
@@ -35,7 +33,7 @@ void handleErrors(BuildContext context, dynamic err,
   } else if (err is String) {
     if (alert) {
       String error = 'System Error: $err';
-      errorLogger(error);
+      CustomLogger.logError(error);
       showErrorAlertDialog(context, error, type: "System Error!");
     }
   } else {
@@ -64,7 +62,7 @@ void handleErrors(BuildContext context, dynamic err,
 
       // Log the error if log argument is true and logMessage exists
       if (log) {
-        errorLogger(logMessage);
+        CustomLogger.logError(logMessage);
       }
 
       // Call the alertFunction if it exists and alertMessage has content
