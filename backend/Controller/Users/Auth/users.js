@@ -179,7 +179,9 @@ exports.userLogin = async (req, res, next) => {
     t = await sequelize.transaction();
 
     const hashedToken = hashToken(token);
-    const authToken = await AuthToken.findOne({ where: { type: "authToken" } });
+    const authToken = await AuthToken.findOne({
+      where: { type: "authToken", UserId: user.id },
+    });
 
     if (!authToken) {
       // Step 5: Save the token to the AuthToken table
@@ -197,13 +199,13 @@ exports.userLogin = async (req, res, next) => {
 
     if (fcmToken) {
       const fcmAuthToken = await AuthToken.findOne({
-        where: { type: "fcmToken" },
+        where: { type: "fcmToken", UserId: user.id },
       });
 
       if (!fcmAuthToken) {
         await AuthToken.create(
           {
-            token: hashedToken,
+            token: fcmToken,
             type: "fcmToken",
             UserId: user.id,
           },
