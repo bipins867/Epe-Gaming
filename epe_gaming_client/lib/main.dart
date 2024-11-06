@@ -13,7 +13,7 @@ import 'package:epe_gaming_client/Components/Home/Notifications/notifications.da
 // Define background message handler
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  CustomLogger.logInfo("Handling a background messages: ${message.messageId}");
+  CustomLogger.logInfo("Handling a background message: ${message.messageId}");
 }
 
 Future<void> main() async {
