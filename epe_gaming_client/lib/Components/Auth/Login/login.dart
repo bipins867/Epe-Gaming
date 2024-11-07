@@ -4,7 +4,6 @@ import 'package:epe_gaming_client/Utils/apiRequestHandler.dart';
 import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 
-// Login Page
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -16,7 +15,10 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _mobileController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false; // State variable for loading
+  bool _isPasswordVisible = false; // State variable for password visibility
+
   AppConfig? appConfig;
+
   @override
   void initState() {
     appConfig = AppConfig();
@@ -32,12 +34,11 @@ class _LoginPageState extends State<LoginPage> {
       return showInfoAlertDialog(context, "Please enter the password!",
           type: "Required!");
     }
-    // Show loading indicator
+
     setState(() {
       _isLoading = true;
     });
 
-    // Example API requestfgdgdg
     try {
       Map<String, String> body = {
         "phone": _mobileController.text,
@@ -52,23 +53,19 @@ class _LoginPageState extends State<LoginPage> {
       if (response['statusCode'] == 200) {
         AppConfig.setLocalStorageItem('authToken', response['body']['token']);
         Navigator.of(context).pushNamedAndRemoveUntil(
-          '/', // Navigates to the base route
-          (Route<dynamic> route) =>
-              false, // Removes all previous routes from the stack
+          '/',
+          (Route<dynamic> route) => false,
         );
       } else {
         handleErrors(context, response);
       }
     } catch (e) {
-      // Handle exceptions
       String error = 'System Error: ${e.toString()}';
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error)),
       );
       CustomLogger.logError(error);
     } finally {
-      // Hide loading indicator
       setState(() {
         _isLoading = false;
       });
@@ -78,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200], // Background color for contrast
+      backgroundColor: Colors.grey[200],
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -93,15 +90,12 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: NetworkImage(
-                      'https://upload.wikimedia.org/wikipedia/commons/a/a2/Person_Image_Placeholder.png', // Placeholder image
-                    ),
+                    backgroundImage:
+                        AssetImage('assets/Home/ppl-logo-half.png'),
                   ),
                   SizedBox(height: 24),
-                  // Mobile Number Field
                   TextField(
                     controller: _mobileController,
                     decoration: InputDecoration(
@@ -111,32 +105,38 @@ class _LoginPageState extends State<LoginPage> {
                     keyboardType: TextInputType.phone,
                   ),
                   SizedBox(height: 16),
-                  // Password Field
                   TextField(
                     controller: _passwordController,
+                    obscureText: !_isPasswordVisible,
                     decoration: InputDecoration(
                       labelText: 'Password',
                       border: OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                      ),
                     ),
-                    obscureText: true,
                   ),
                   SizedBox(height: 16),
-                  // Login Button
                   ElevatedButton(
-                    onPressed: _isLoading
-                        ? null
-                        : loginHandler, // Disable button during loading
+                    onPressed: _isLoading ? null : loginHandler,
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(
                           vertical: 12.0, horizontal: 40.0),
                     ),
                     child: _isLoading
-                        ? CircularProgressIndicator(
-                            color: Colors.white) // Show loading indicator
+                        ? CircularProgressIndicator(color: Colors.white)
                         : Text('Login'),
                   ),
                   SizedBox(height: 8),
-                  // Link to SignUp Page
                   TextButton(
                     onPressed: () {
                       Navigator.push(

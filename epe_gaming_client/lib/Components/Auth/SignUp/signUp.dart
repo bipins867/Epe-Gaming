@@ -17,7 +17,11 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+
   bool _isLoading = false;
+  bool _isPasswordVisible = false; // Track password visibility
+  bool _isConfirmPasswordVisible = false; // Track confirm password visibility
+
   AppConfig? appConfig;
 
   @override
@@ -112,9 +116,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: NetworkImage(
-                      'https://upload.wikimedia.org/wikipedia/commons/a/a2/Person_Image_Placeholder.png',
-                    ),
+                    backgroundImage:
+                        AssetImage('assets/Home/ppl-logo-half.png'),
                   ),
                   SizedBox(height: 24),
                   TextField(
@@ -143,22 +146,49 @@ class _SignUpPageState extends State<SignUpPage> {
                     keyboardType: TextInputType.phone,
                   ),
                   SizedBox(height: 16),
+                  // Password Field with Eye Icon
                   TextField(
                     controller: _passwordController,
                     decoration: InputDecoration(
                       labelText: 'Password',
                       border: OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                      ),
                     ),
-                    obscureText: true,
+                    obscureText: !_isPasswordVisible,
                   ),
                   SizedBox(height: 16),
+                  // Confirm Password Field with Eye Icon
                   TextField(
                     controller: _confirmPasswordController,
                     decoration: InputDecoration(
                       labelText: 'Confirm Password',
                       border: OutlineInputBorder(),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isConfirmPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isConfirmPasswordVisible =
+                                !_isConfirmPasswordVisible;
+                          });
+                        },
+                      ),
                     ),
-                    obscureText: true,
+                    obscureText: !_isConfirmPasswordVisible,
                   ),
                   SizedBox(height: 24),
                   ElevatedButton(

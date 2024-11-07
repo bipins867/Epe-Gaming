@@ -63,9 +63,8 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
                   // Logo
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: NetworkImage(
-                      'https://upload.wikimedia.org/wikipedia/commons/a/a2/Person_Image_Placeholder.png',
-                    ), // Placeholder image
+                    backgroundImage: AssetImage(
+                        'assets/Home/ppl-logo-half.png'), // Placeholder image
                   ),
                   SizedBox(height: 24),
                   // OTP Input Field
