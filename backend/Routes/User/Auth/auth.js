@@ -25,8 +25,8 @@ router.post(
 );
 router.post(
   "/signUp",
-  // validateSignUp,
-  // checkValidationErrors,
+  validateSignUp,
+  checkValidationErrors,
   // initialSignuUserAuthentication,
   // middlewareSendOtp,
   // middlewareVerifyOtp,

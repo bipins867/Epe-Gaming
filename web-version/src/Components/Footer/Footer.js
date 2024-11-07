@@ -8,8 +8,8 @@ export const Footer = () => {
       <footer className="footer">
       <div className="footer-content">
         <div className="footer-section about">
-          <h3>About Quantum Arena</h3>
-          <p>Welcome to Quantum Arena, your destination for gaming tournaments and competitions. Join, compete, and show off your skills!</p>
+          <h3>About Pro Player League</h3>
+          <p>Welcome to Pro Player League, your destination for gaming tournaments and competitions. Join, compete, and show off your skills!</p>
         </div>
         
         <div className="footer-section links">
@@ -24,7 +24,7 @@ export const Footer = () => {
 
         <div className="footer-section contact">
           <h3>Contact Us</h3>
-          <p>Email: support@Quantum Arena.com</p>
+          <p>Email: support@Pro Player League.com</p>
           <p>Phone: +123 456 7890</p>
           <div className="socials">
             <a href="#facebook" className="social-icon">
@@ -44,7 +44,7 @@ export const Footer = () => {
       </div>
 
       <div className="footer-bottom">
-        <p>&copy; 2024 Quantum Arena. All rights reserved.</p>
+        <p>&copy; 2024 Pro Player League. All rights reserved.</p>
       </div>
     </footer>
   );

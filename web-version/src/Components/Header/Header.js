@@ -4,7 +4,7 @@ import "./Navbar.css"; // Importing CSS for styling
 export const Header = () => {
   return (
     <nav className="navbar">
-      <div className="navbar-logo">Quantum Arena</div>
+      <div className="navbar-logo">Pro Player League</div>
       <ul className="navbar-links">
         <li><a href="#home">Home</a></li>
         <li><a href="#tournaments">Tournaments</a></li>
