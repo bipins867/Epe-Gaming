@@ -10,28 +10,40 @@ class LoadingScreenPage extends StatefulWidget {
 
 class _LoadingScreenPageState extends State<LoadingScreenPage>
     with TickerProviderStateMixin {
-  // Animation controllers for the logo and the "Powered by" text
-  late AnimationController _logoController;
-  late Animation<double> _logoAnimation;
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
+  bool showFirstImage = true;
 
   @override
   void initState() {
     super.initState();
-    _logoController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this, // TickerProviderStateMixin provides the vsync
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
     );
+    _fadeAnimation =
+        CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut);
 
-    _logoAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _logoController, curve: Curves.easeInOut),
-    );
+    _startAnimationSequence();
+  }
 
-    // Start the animation
-    _logoController.forward();
+  void _startAnimationSequence() async {
+    // First image fade in
+    await _fadeController.forward();
+    await Future.delayed(const Duration(seconds: 2));
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _changeScreen();
+    // First image fade out
+    await _fadeController.reverse();
+    setState(() {
+      showFirstImage = false;
     });
+
+    // Second image fade in
+    await _fadeController.forward();
+    await Future.delayed(const Duration(seconds: 2));
+
+    // Navigate to the next screen after the splash
+    _changeScreen();
   }
 
   _changeScreen() {
@@ -41,18 +53,13 @@ class _LoadingScreenPageState extends State<LoadingScreenPage>
       path = '/';
     }
 
-    Future.delayed(
-      const Duration(seconds: 2),
-      () {
-        Navigator.pushNamedAndRemoveUntil(
-            context, path, (Route<dynamic> route) => false);
-      },
-    );
+    Navigator.pushNamedAndRemoveUntil(
+        context, path, (Route<dynamic> route) => false);
   }
 
   @override
   void dispose() {
-    _logoController.dispose();
+    _fadeController.dispose();
     super.dispose();
   }
 
@@ -62,23 +69,28 @@ class _LoadingScreenPageState extends State<LoadingScreenPage>
       body: SafeArea(
         child: Center(
           child: FadeTransition(
-            opacity: _logoAnimation,
+            opacity: _fadeAnimation,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Logo image with scaling animation
-                ScaleTransition(
-                  scale: _logoAnimation,
-                  child: Image.asset(
-                    'assets/Home/epe-logo.png',
+                if (showFirstImage) ...[
+                  // First image with the "Win Exciting Rewards" text below
+                  Image.asset(
+                    'assets/Home/ppl.png',
                     height: 200,
                   ),
-                ),
-                SizedBox(height: 20),
-                // "Powered by" text with scaling effect
-                ScaleTransition(
-                  scale: _logoAnimation,
-                  child: Text(
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Win Exciting Rewards',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                ] else ...[
+                  // Second image with "Powered by" above and "Unit of Techfin Innovations" below
+                  const Text(
                     'Powered by',
                     style: TextStyle(
                       fontSize: 18,
@@ -86,7 +98,21 @@ class _LoadingScreenPageState extends State<LoadingScreenPage>
                       color: Colors.blueAccent,
                     ),
                   ),
-                ),
+                  const SizedBox(height: 10),
+                  Image.asset(
+                    'assets/Home/epe-logo.png',
+                    height: 200,
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Unit of Techfin Innovations',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
