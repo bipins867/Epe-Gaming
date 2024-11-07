@@ -10,6 +10,8 @@ class AppConfig {
   static late String baseUrl;
   static late String fileBaseUrl;
   static late String fcmToken;
+  static String appVersion = '1.0.0';
+  static String appUpdateDate = 'October 2024';
 
   static SharedPreferences? preferences;
   static CustomLogger? customLogger;

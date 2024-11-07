@@ -29,7 +29,17 @@ class _BaseScreenState extends State<BaseScreen> {
     return Scaffold(
       appBar: _selectedIndex == 0
           ? AppBar(
-              title: const Text("Pro Player League"),
+              title: Row(
+                children: [
+                  Image.asset(
+                    'assets/Home/ppl-logo-half.png', // Update with your asset path
+                    height: 30, // Set appropriate height for the icon
+                    width: 30,
+                  ),
+                  const SizedBox(width: 8), // Add spacing between icon and text
+                  const Text("Pro Player League"),
+                ],
+              ),
               actions: [
                 IconButton(
                   onPressed: () {

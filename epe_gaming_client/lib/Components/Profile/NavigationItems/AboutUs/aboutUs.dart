@@ -1,3 +1,4 @@
+import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 
 class AboutUsPage extends StatelessWidget {
@@ -38,11 +39,11 @@ class AboutUsPage extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  'Version: 1.0.0',
+                  'Version: ${AppConfig.appVersion}',
                   style: TextStyle(fontSize: 16),
                 ),
                 Text(
-                  'Last Updated: October 2024',
+                  'Last Updated: ${AppConfig.appUpdateDate}',
                   style: TextStyle(fontSize: 16),
                 ),
                 SizedBox(height: 20),

@@ -42,7 +42,7 @@ class _WithdrawalState extends State<Withdrawal> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Reedeem Coin',
+              'Reedeem Coins',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -81,7 +81,7 @@ class _WithdrawalState extends State<Withdrawal> {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: _handleWithdrawal,
-              child: Text('Request Withdrawal'),
+              child: Text('Reedeem Coins'),
             ),
           ],
         ),

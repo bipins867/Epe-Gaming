@@ -46,7 +46,7 @@ class _AddfundsState extends State<Addfunds> {
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: _handleAddFunds,
-              child: Text('Add Funds'),
+              child: Text('Add Coins'),
             ),
           ],
         ),
