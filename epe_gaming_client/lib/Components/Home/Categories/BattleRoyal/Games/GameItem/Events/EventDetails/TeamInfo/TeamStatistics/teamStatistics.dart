@@ -1,3 +1,4 @@
+import 'package:epe_gaming_client/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 
 class TeamStatisticsPage extends StatelessWidget {
@@ -11,13 +12,13 @@ class TeamStatisticsPage extends StatelessWidget {
         child: CircularProgressIndicator(),
       );
     }
-
+    CustomLogger.logInfo('$dataInfo');
     final event = dataInfo!['event'] ?? {};
     final totalPlayersJoined = dataInfo!['totalPlayersJoined'] ?? 0;
     final totalNumberOfTeams = dataInfo!['totalNumberOfTeams'] ?? 0;
     final totalTeamSize = (event['noOfPlayers'] / event['squadType']).round();
     final perTeamSize = event['squadType'];
-    String remeningTeamSize = (totalTeamSize - totalNumberOfTeams).toString();
+    String RemainingTeamSize = (totalTeamSize - totalNumberOfTeams).toString();
     //print();
     //!int.parse(totalTeamSize) - int.parse(totalNumberOfTeams);
 
@@ -31,7 +32,7 @@ class TeamStatisticsPage extends StatelessWidget {
             Text('Team Statistics',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             SizedBox(height: 10),
-            _buildStatisticRow('Remening Team Space:', remeningTeamSize),
+            _buildStatisticRow('Remaining Team Space:', RemainingTeamSize),
             _buildStatisticRow(
                 'Current Team Space:', totalNumberOfTeams.toString()),
             _buildStatisticRow('Squad Type:', perTeamSize.toString()),
