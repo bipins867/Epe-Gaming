@@ -1,0 +1,54 @@
+/* TermsAndConditions.css */
+
+.terms-container {
+    max-width: 800px;
+  }
+  
+  .terms-heading {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .terms-card {
+    padding: 20px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .terms-card h2 {
+    font-size: 1.8rem;
+    color: #444;
+    margin-top: 20px;
+  }
+  
+  .terms-card h3 {
+    font-size: 1.5rem;
+    color: #555;
+  }
+  
+  .terms-card p {
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.6;
+  }
+  
+  .terms-card ul {
+    list-style-type: disc;
+    margin-left: 20px;
+  }
+  
+  @media (max-width: 576px) {
+    .terms-heading {
+      font-size: 2rem;
+    }
+  
+    .terms-card h2, .terms-card h3 {
+      font-size: 1.5rem;
+    }
+  
+    .terms-card p {
+      font-size: 0.9rem;
+    }
+  }
+  

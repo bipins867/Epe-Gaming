@@ -1,0 +1,79 @@
+/* Container style */
+.home-page {
+  padding: 40px 20px;
+  background-color: rgba(0, 0, 0, 0.6); /* Optional: add semi-transparent overlay */
+  border-radius: 8px;
+}
+
+.blur-background {
+  position: relative;
+}
+
+/* Apply a blurred background to the content */
+.blurred-content {
+  background-color: rgba(0, 0, 0, 0.5); /* Add some dark background for the content */
+  backdrop-filter: blur(8px); /* Apply the blur effect */
+  border-radius: 10px;
+  padding: 30px;
+  margin-bottom: 30px;
+}
+
+.home-page h1 {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.home-page p {
+  font-size: 1.2rem;
+  color: #ddd;
+}
+
+.card {
+  border-radius: 10px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.card-text {
+  font-size: 1.1rem;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  text-align: center;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+button svg {
+  margin-right: 10px;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 576px) {
+  .home-page h1 {
+    font-size: 2rem;
+  }
+
+  .card-title {
+    font-size: 1.3rem;
+  }
+
+  .card-text {
+    font-size: 1rem;
+  }
+
+  .card-body {
+    padding: 15px;
+  }
+}

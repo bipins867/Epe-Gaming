@@ -1,0 +1,48 @@
+.responsible-play-policy {
+    padding: 20px;
+  }
+  
+  .responsible-play-policy h2 {
+    color: #333;
+    font-size: 2rem;
+  }
+  
+  .responsible-play-policy p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .card {
+    border: 1px solid #ddd;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-body {
+    padding: 20px;
+  }
+  
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #444;
+  }
+  
+  .card-text {
+    font-size: 1rem;
+    color: #666;
+  }
+  
+  @media (max-width: 576px) {
+    .responsible-play-policy h2 {
+      font-size: 1.5rem;
+    }
+  
+    .card-title {
+      font-size: 1rem;
+    }
+  
+    .card-text {
+      font-size: 0.95rem;
+    }
+  }
+  
