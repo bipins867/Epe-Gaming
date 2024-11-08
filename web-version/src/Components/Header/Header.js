@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import "./Navbar.css"; // Importing CSS for styling
 
 export const Header = () => {
@@ -6,21 +7,27 @@ export const Header = () => {
     <nav className="navbar">
       <div className="navbar-logo">Pro Player League</div>
       <ul className="navbar-links">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#tournaments">Tournaments</a></li>
-        <li><a href="#leaderboard">Leaderboard</a></li>
-        <li><a href="#contact">Contact</a></li>
-        <li><a href="#highlights">Highlights</a></li>
-        <li><a href="#videos">Videos</a></li>
+        <li>
+          <Link to="/">Home</Link>
+        </li>
+        <li>
+          <Link to="/dashboard">Dashboard</Link>
+        </li>
+
+        <li>
+          <Link to="/legality">Legality</Link>
+        </li>
+        <li>
+          <Link to="/aboutUs">About Us</Link>
+        </li>
       </ul>
-      <div className="navbar-actions">
+
+      {/* <div className="navbar-actions">
         <button className="login-btn">Login</button>
         <button className="signup-btn">Sign Up</button>
-      </div>
+      </div> */}
     </nav>
   );
 };
-
-
 
 // export default Navbar;
