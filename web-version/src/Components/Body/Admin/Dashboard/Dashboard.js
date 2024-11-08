@@ -1,7 +1,6 @@
 import { Navigate, Route, Routes, Outlet } from "react-router-dom";
 import { Announcement } from "./Announcement/announcement";
 import { Categories } from "./Categories/categories";
-import { Games } from "../../Home/Games/Games";
 
 export const Dashboard = () => {
   return (
@@ -10,7 +9,6 @@ export const Dashboard = () => {
       {/* Render nested routes here */}
       <Routes>
         <Route path="categories" element={<Categories />} />
-        <Route path="games" element={<Games />} />
         <Route path="announcement" element={<Announcement />} />
         <Route path="categories" element={<Categories />} />
         <Route path="*" element={<Navigate to="announcement" replace />} />
