@@ -7,6 +7,7 @@ backend/firebase-cloud-messaging.json
 # Ignore for web-version (React.js)
 web-version/node_modules/
 web-version/.env
+web-version/.env.production
 
 # Ignore for epe_gaming_client (Flutter)
 epe_gaming_client/android/app/google-services.json
