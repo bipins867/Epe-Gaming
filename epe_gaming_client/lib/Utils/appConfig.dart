@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logger/logger.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppConfig {
@@ -10,14 +11,19 @@ class AppConfig {
   static late String baseUrl;
   static late String fileBaseUrl;
   static late String fcmToken;
-  static String appVersion = '1.0.0';
+
+  static late String appVersion;
+
   static String appUpdateDate = 'October 2024';
 
+  static PackageInfo? packageInfo;
   static SharedPreferences? preferences;
-  static CustomLogger? customLogger;
 
   // Static async initialization function
   static Future<void> initializeAppInformation() async {
+    packageInfo = await PackageInfo.fromPlatform();
+    appVersion = packageInfo!.version;
+
     // Load environment-dependent address
     remoteAddr = dotenv.env['REMOTE_ADDRESS']!;
 
@@ -30,7 +36,6 @@ class AppConfig {
     }
 
     fileBaseUrl = '${baseUrl}files/';
-    customLogger = CustomLogger();
 
     String? token = getLocalStorageItem('authToken');
 

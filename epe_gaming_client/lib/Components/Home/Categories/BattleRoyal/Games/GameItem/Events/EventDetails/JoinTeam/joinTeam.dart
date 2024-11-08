@@ -25,11 +25,12 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
   bool isAmountDistributed = true;
   double calculatedFee = 0.0;
   int squadType = 4;
+  bool isSwitchesEnabled = true;
 
   @override
   void initState() {
     _getJoinEventTeamInfo();
-
+    _updateSwitchesInitialState();
     super.initState();
   }
 
@@ -177,6 +178,15 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
       }
       _calculateFee();
     });
+  }
+
+  void _updateSwitchesInitialState() {
+    CustomLogger.logDebug('${widget.teamId != null}');
+    if (widget.teamId != null) {
+      setState(() {
+        isSwitchesEnabled = false;
+      });
+    }
   }
 
   @override
@@ -358,13 +368,13 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
                           purchaseFullSlot,
                           'purchaseFullSlot',
                           'User is aquiring a new team slot.',
-                          purchaseFullSlot || teamInfo == null),
+                          purchaseFullSlot || isSwitchesEnabled),
                       _buildSwitch(
                           'Is Public Team',
                           isPublicTeam,
                           'isPublicTeam',
                           'Yes :- Team Id will be publically visible to other members.\nNo :- It will be only visible to You.',
-                          teamInfo == null &&
+                          isSwitchesEnabled &&
                               purchaseFullSlot &&
                               isFreeForOthers),
                       _buildSwitch(
@@ -372,13 +382,13 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
                           isFreeForOthers,
                           'isFreeForOthers',
                           'You are paying your teammates fees. So for them the entry fee will be 🪙0.00 .',
-                          teamInfo == null && purchaseFullSlot),
+                          isSwitchesEnabled && purchaseFullSlot),
                       _buildSwitch(
                           'Is Amount Distributed',
                           isAmountDistributed,
                           'isAmountDistributed',
                           'Wheter the winning amount will be distributed among the teamates or not.',
-                          teamInfo == null &&
+                          isSwitchesEnabled &&
                               purchaseFullSlot &&
                               isFreeForOthers),
                       SizedBox(height: 10),
@@ -412,6 +422,9 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
 
   Widget _buildSwitch(String title, bool value, String switchName,
       String description, bool isEnabled) {
+    if (switchName == 'purchaseFullSlot') {
+      CustomLogger.logInfo(value.toString());
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

@@ -76,7 +76,7 @@ class _LoadingScreenPageState extends State<LoadingScreenPage>
                 if (showFirstImage) ...[
                   // First image with the "Win Exciting Rewards" text below
                   Image.asset(
-                    'assets/Home/ppl.png',
+                    'assets/Home/ppl-logo-half.png',
                     height: 200,
                   ),
                   const SizedBox(height: 20),
