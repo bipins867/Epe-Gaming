@@ -1,37 +1,28 @@
-import { Route, Routes } from "react-router-dom";
-import { Categories } from "./Categories/Categories";
-import { Games } from "./Games/Games";
-import { AboutUs } from "./AboutUs/AboutUs";
-import { AppDownload } from "./AppDownload/AppDownload";
-import { TournamentHighlights } from "./TournamentHighlights/TournamentHighlights";
-import { VideoGallery } from "./VideoGallery/VideoGallery";
+import { Navigate, Route, Routes } from "react-router-dom";
+
 import "./home.css";
-import { ShuffledBackground } from "../../ShuffledBackground/ShuffledBackground";
 import { Header } from "../../Header/Header";
 import { Footer } from "../../Footer/Footer";
+import { Legality } from "./Legality/Legality";
+import { Dashboard } from "../Admin/Dashboard/Dashboard";
 
 export const Home = () => {
   return (
     <>
-    <div className="app-container">
-        <ShuffledBackground />
+      <div className="app-container">
         <Header />
         <div>
-          <AppDownload />
-          <AboutUs />
-          <TournamentHighlights />
-          <VideoGallery />
           <div>
             <Routes>
-              <Route path="categories" element={<Categories />} />
-              <Route path="games" element={<Games />} />
+              <Route path="legality/*" element={<Legality />} />
+
+              <Route path="dashboard/*" element={<Dashboard />} />
+              <Route path="*" element={<Navigate to="dashboard/" replace />} />
             </Routes>
           </div>
         </div>
         <Footer />
       </div>
-     
     </>
   );
 };
- 
