@@ -39,7 +39,7 @@ export const Dashboard = () => {
             <Card.Body>
               <Card.Title>BGMI</Card.Title>
               <Card.Text>
-                PUBG Mobile India (BGMI) is a free-to-play battle royale game
+                Battle Ground Mobile India (BGMI) is a free-to-play battle royale game
                 where you fight for survival in a large open world.
               </Card.Text>
               <Button variant="primary" href="/bgmi-details">

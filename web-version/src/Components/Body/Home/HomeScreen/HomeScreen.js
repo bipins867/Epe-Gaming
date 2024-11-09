@@ -28,7 +28,7 @@ export const HomeScreen = () => {
             
             <h1 className="display-3 text-white">PPL Gaming</h1>
             <p className="lead text-white">
-              Welcome to the Pro Player League – a skill-based gaming platform where players compete and win rewards!
+              Welcome to the PRO PLAY LEAGUE – a skill-based gaming platform where players compete and win rewards!
             </p>
           </div>
 
