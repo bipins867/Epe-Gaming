@@ -16,7 +16,7 @@ export const Header = () => {
           className="me-2"  // Add margin-right class for spacing if needed
         />
         {/* Text for Logo */}
-        Pro Player League
+        PRO PLAY LEAGUE
       </div>
       <ul className="navbar-links">
         <li>

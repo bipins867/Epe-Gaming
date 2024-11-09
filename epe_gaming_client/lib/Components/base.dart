@@ -37,7 +37,7 @@ class _BaseScreenState extends State<BaseScreen> {
                     width: 30,
                   ),
                   const SizedBox(width: 8), // Add spacing between icon and text
-                  const Text("Pro Player League"),
+                  const Text("Pro Play League"),
                 ],
               ),
               actions: [

@@ -21,7 +21,7 @@ class AboutUsPage extends StatelessWidget {
               children: [
                 Center(
                   child: Text(
-                    'Pro Player League',
+                    'Pro Play League',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,

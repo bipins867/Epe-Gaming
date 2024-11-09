@@ -90,7 +90,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Pro Player League",
+      title: "Pro Play League",
       debugShowCheckedModeBanner: false,
       navigatorKey: navigatorKey, // Assign the global navigator key
 

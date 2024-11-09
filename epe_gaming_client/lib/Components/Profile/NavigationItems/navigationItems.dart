@@ -112,7 +112,7 @@ class NavigationItems extends StatelessWidget {
             const Icon(Icons.share, color: Colors.red),
             onClickFun: () {
               Share.share(
-                'Check out the Pro Player League app for tournaments and competitions! Download here: https://example.com',
+                'Check out the Pro Play League app for tournaments and competitions! Download here: https://example.com',
               );
             },
           ),
