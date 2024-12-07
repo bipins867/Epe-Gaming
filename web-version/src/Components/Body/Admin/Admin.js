@@ -1,13 +1,13 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-import { AdminLogin } from "./AdminLogin/Login";
-import { Dashboard } from "./Dashboard/Dashboard";
+import { Body } from "./Body/Body";
+import { Footer } from "./Footer/Footer";
+import { Header } from "./Header/Header";
 
 export const Admin = () => {
   return (
-    <Routes>
-      <Route path="login" element={<AdminLogin />} />
-      <Route path="dashboard/*" element={<Dashboard />} />
-      <Route path="*" element={<Navigate to="login" replace />} />
-    </Routes>
+    <>
+      <Header />
+      <Body />
+      <Footer />
+    </>
   );
 };

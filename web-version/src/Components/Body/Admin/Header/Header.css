@@ -1,0 +1,38 @@
+/* Navbar styles */
+.navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid #eaeaea;
+  }
+  
+  /* Brand Logo */
+  .brand-logo {
+    display: flex;
+    align-items: center;
+  }
+  
+  .brand-logo .logo {
+    height: 40px; /* Adjust height to fit design */
+    max-width: 100%;
+  }
+  
+  /* Profile dropdown alignment */
+  .navbar-collapse {
+    justify-content: flex-end; /* Ensures profile dropdown is at the extreme right */
+  }
+  
+  .dropdown-toggle {
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .dropdown-toggle:hover {
+    color: #007bff;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .brand-logo .logo {
+      height: 30px; /* Adjust logo size for smaller screens */
+    }
+  }
+  

@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import "./home.css";
-import { Header } from "../../Header/Header";
-import { Footer } from "../../Footer/Footer";
+import { Header } from "./Header/Header";
+import { Footer } from "./Footer/Footer";
 import { Legality } from "./Legality/Legality";
 import { AboutUs } from "./AboutUs/AboutUs";
 import { HomeScreen } from "./HomeScreen/HomeScreen";
