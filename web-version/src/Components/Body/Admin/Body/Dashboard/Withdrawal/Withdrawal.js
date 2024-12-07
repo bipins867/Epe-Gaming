@@ -1,7 +1,7 @@
 export const WithdrawalPage = () => {
   return (
     <>
-      <h1>Withdrawal Page</h1>
+      <h1>Withdrawal Page Checking</h1>
     </>
   );
 };
