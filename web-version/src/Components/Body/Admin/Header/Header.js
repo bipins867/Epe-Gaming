@@ -15,7 +15,7 @@ export const Header = () => {
     localStorage.removeItem("user");
 
     // Redirect to the logout page
-    navigate("/admin/auth");
+    navigate("/admin/login");
   };
 
   return (

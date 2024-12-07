@@ -9,24 +9,20 @@ export const Footer = () => {
         <Row className="py-3">
           <Col md={6} className="text-center text-md-start">
             <p className="mb-0">
-              &copy; {new Date().getFullYear()} <strong>PPL Gaming</strong>. All rights reserved.
+              &copy; {new Date().getFullYear()} <strong>PPL Gaming</strong>. All
+              rights reserved.
             </p>
           </Col>
           <Col md={6} className="text-center text-md-end">
             <ul className="footer-links">
               <li>
-                <a href="/privacy-policy" className="footer-link">
+                <a href="/legality/privacyPolicy" className="footer-link">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="/terms-conditions" className="footer-link">
+                <a href="/legality/termsAndConditions" className="footer-link">
                   Terms & Conditions
-                </a>
-              </li>
-              <li>
-                <a href="/contact-us" className="footer-link">
-                  Contact Us
                 </a>
               </li>
             </ul>
