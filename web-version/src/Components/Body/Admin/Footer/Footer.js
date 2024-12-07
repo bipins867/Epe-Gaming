@@ -1,6 +1,7 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
 import "./Footer.css";
+import { Link } from "react-router-dom";
 
 export const Footer = () => {
   return (
@@ -16,14 +17,14 @@ export const Footer = () => {
           <Col md={6} className="text-center text-md-end">
             <ul className="footer-links">
               <li>
-                <a href="/legality/privacyPolicy" className="footer-link">
+                <Link to="/legality/privacyPolicy" className="footer-link">
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/legality/termsAndConditions" className="footer-link">
+                <Link to="/legality/termsAndConditions" className="footer-link">
                   Terms & Conditions
-                </a>
+                </Link>
               </li>
             </ul>
           </Col>
