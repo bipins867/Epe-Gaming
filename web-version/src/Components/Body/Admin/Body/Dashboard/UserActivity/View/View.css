@@ -1,0 +1,37 @@
+.customer-view-page {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .customer-view-page h4 {
+    font-weight: bold;
+  }
+  
+  .card {
+    border: none;
+  }
+  
+  .card-header {
+    background-color: #f1f1f1;
+  }
+  
+  .table th,
+  .table td {
+    text-align: center;
+    vertical-align: middle;
+  }
+  
+  .btn-primary {
+    font-size: 0.9rem;
+  }
+  
+  .form-group label {
+    font-weight: bold;
+  }
+  
+  .form-select,
+  .form-control {
+    border-radius: 4px;
+  }
+  

@@ -1,0 +1,60 @@
+/* Global Container */
+.app-container {
+  font-family: 'Arial', sans-serif;
+  text-align: left;
+  background-color: #f4f4f9;
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column; /* Stack everything vertically */
+}
+
+/* Tab Navigation Styling */
+.tab-navigation {
+  display: flex;
+  justify-content: flex-start; /* Align tabs to the left */
+  gap: 10px; /* Space between buttons */
+  margin-bottom: 20px;
+}
+
+/* Tab Button Styling */
+.tab-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.tab-button:hover {
+  background-color: #d6d6d6;
+}
+
+.tab-button.active {
+  background-color: #007bff;
+  color: white;
+  box-shadow: 0px 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+/* Tab Content Styling */
+.tab-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  flex-grow: 1; /* Take up remaining space below the tabs */
+}
+
+/* Page 1 Content */
+.page1 {
+  color: #333;
+}
+
+/* Page 2 Content */
+.page2 {
+  color: #555;
+}

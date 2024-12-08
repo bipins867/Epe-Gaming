@@ -1,0 +1,40 @@
+/* Global styling for the entire page layout */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden; /* Prevent multiple scrollbars */
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Ensures the layout spans the full viewport height */
+}
+
+/* Header styles */
+header {
+  background-color: #343a40;
+  color: #fff;
+  padding: 10px 20px;
+  text-align: center;
+  flex-shrink: 0; /* Prevents shrinking */
+}
+
+/* Footer styles */
+footer {
+  background-color: #343a40;
+  color: #fff;
+  padding: 10px 20px;
+  text-align: center;
+  flex-shrink: 0; /* Prevents shrinking */
+}
+
+/* Body (dashboard) styles */
+.body {
+  flex-grow: 1; /* Fills the space between header and footer */
+  overflow-y: auto; /* Enables scrolling for the content */
+  display: flex; /* Flex layout for dashboard page content */
+  flex-direction: column;
+}

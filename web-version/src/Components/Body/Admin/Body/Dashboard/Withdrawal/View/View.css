@@ -1,0 +1,29 @@
+.customer-view-page {
+    padding: 20px;
+  }
+  
+  .customer-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+  }
+  
+  .customer-card-header {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  .customer-view-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+  }
+  
+  .customer-view-table td,
+  .customer-view-table th {
+    vertical-align: middle;
+  }
+  
+  .me-2 {
+    margin-right: 8px;
+  }
+  

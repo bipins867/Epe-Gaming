@@ -1,6 +1,7 @@
 .admin-page {
     display: flex;
     height: 100vh;
+    overflow: hidden;
   }
 
   
@@ -68,12 +69,12 @@
   
   /* Content section styles */
   .content {
-    flex-grow: 1;
+    flex-grow: 1; /* Ensures the content section takes the remaining space */
+    overflow-y: auto; /* Allows vertical scrolling if content overflows */
     padding: 20px;
     background-color: #f8f9fa;
+    box-sizing: border-box; /* Includes padding in the width calculation */
   }
-  
-
   
   /*66666666666666666666*/
 
@@ -85,6 +86,7 @@
     background-color: #343a40;
     height: 100vh;
     color: #fff;
+    flex-shrink: 0;
   }
   
 

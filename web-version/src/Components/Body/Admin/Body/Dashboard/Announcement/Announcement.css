@@ -1,0 +1,59 @@
+/* Announcements Section */
+.announcements {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .announcements-scroll {
+    display: flex;
+    gap: 15px;
+    animation: scroll-left 10s linear infinite;
+    white-space: nowrap;
+  }
+  
+  .announcement-item {
+    background: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+    white-space: nowrap;
+    display: inline-block;
+  }
+  
+  /* Marquee Animation */
+  @keyframes scroll-left {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
+  
+  /* Create Announcement Section */
+  .create-announcement {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  /* Announcement List Table */
+  .announcement-table {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .announcement-table-actions button {
+    margin-right: 5px;
+  }
+  

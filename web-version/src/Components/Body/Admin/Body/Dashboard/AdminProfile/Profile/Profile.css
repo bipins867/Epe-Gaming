@@ -1,0 +1,75 @@
+.profile-page-container {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-page-title {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .profile-info-card {
+    background-color: #ffffff;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .roles-title {
+    margin-top: 20px;
+    font-weight: 600;
+    color: #555;
+  }
+  
+  .roles-pill-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .role-pill {
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 50px;
+    background-color: #007bff !important;
+    color: #ffffff;
+    text-transform: capitalize;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+  }
+  
+  .role-pill:hover {
+    background-color: #0056b3 !important;
+    transform: scale(1.05);
+  }
+  
+  .reset-password-card {
+    background-color: #ffffff;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .reset-password-card .form-label {
+    font-weight: 600;
+    color: #555;
+  }
+  
+  .reset-password-card .form-control {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    padding: 8px;
+  }
+  
+  .reset-password-card .btn {
+    padding: 10px 15px;
+    font-size: 16px;
+  }
+  

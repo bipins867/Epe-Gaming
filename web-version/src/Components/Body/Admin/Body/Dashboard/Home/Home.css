@@ -1,0 +1,93 @@
+/* Global container styling */
+.admin-home {
+    padding: 20px;
+    background-color: #f8f9fa;
+  }
+  
+/* Announcements Section */
+.announcements {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .announcements-scroll {
+    display: flex;
+    gap: 15px;
+    animation: scroll-left 10s linear infinite;
+    white-space: nowrap;
+  }
+  
+  .announcement-item {
+    background: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-align: center;
+    white-space: nowrap;
+    display: inline-block;
+  }
+  
+  /* Marquee Animation */
+  @keyframes scroll-left {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
+  
+  /* Stats Section */
+  .stats-grid {
+    row-gap: 15px;
+  }
+  
+  .stat-card {
+    border: none;
+    border-radius: 8px;
+    background: #ffffff;
+    padding: 15px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .icon-wrapper {
+    font-size: 24px;
+    color: #007bff;
+  }
+  
+  .stat-title {
+    font-size: 14px;
+    color: #6c757d;
+    margin: 0;
+  }
+  
+  .stat-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* Recent Members Section */
+  .recent-members {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .recent-members h5 {
+    margin-bottom: 15px;
+  }
+  
+
+  

@@ -1,0 +1,52 @@
+.activity-page-container {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .activity-page-title {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .filters-row .form-label {
+    font-weight: 600;
+    color: #555;
+  }
+  
+  .custom-input,
+  .custom-select {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    padding: 8px;
+  }
+  
+  .custom-button {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 16px;
+  }
+  
+  .activity-table {
+    background-color: #ffffff;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .table-header {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .activity-table td,
+  .activity-table th {
+    text-align: center;
+    vertical-align: middle;
+    font-size: 14px;
+  }
+  
+  .activity-table tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+  

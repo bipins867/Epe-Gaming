@@ -1,0 +1,112 @@
+.container-fluid {
+    padding: 20px;
+  }
+  
+  h5, h6 {
+    font-weight: bold;
+  }
+  
+  .card {
+    border-radius: 8px;
+  }
+  
+  .table th {
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+  }
+  
+  .table td {
+    text-align: center;
+    vertical-align: middle;
+  }
+  
+  .input-group > button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .search-input,
+  .search-button {
+    height: 40px; /* Adjust the height to your desired size */
+  }
+  
+  .search-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;  /* Adjust padding for better icon alignment */
+  }
+  
+  .search-button svg {
+    font-size: 18px;  /* Adjust the icon size */
+  }
+  
+  /* Ensure buttons are properly aligned within the table */
+.btn-group {
+  display: flex;
+  justify-content: flex-end; /* Align buttons to the right */
+  gap: 8px; /* Add space between buttons */
+}
+
+/* Styling for the Approve and Reject buttons */
+.btn-sm {
+  padding: 4px 8px; /* Adjust button padding for consistency */
+  font-size: 14px; /* Make text and icons smaller for a compact design */
+  font-weight: bold;
+  text-align: center;
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+/* Button hover and focus effects */
+.btn-info:hover {
+  background-color: #17a2b8;
+}
+
+.btn-success:hover {
+  background-color: #28a745;
+}
+
+.btn-danger:hover {
+  background-color: #dc3545;
+}
+
+/* Styling for icons in the buttons */
+.btn i {
+  margin-right: 5px; /* Add space between icon and text */
+}
+
+/* Optional: Add a button focus effect to remove the outline */
+.btn:focus {
+  outline: none;
+}
+
+
+
+/* Styling for the download All Withdrawal Requests button */
+.download-withdrawal-requests-btn {
+  width: auto; /* Let the button grow based on content */
+  padding: 12px 24px; /* Increase padding for a better look */
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  background-color: #268619; /* Red color for security/download theme */
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  white-space: nowrap; /* Prevent text from wrapping */
+  transition: background-color 0.3s ease-in-out;
+}
+
+.download-withdrawal-requests-btn:hover {
+  background-color: #c82333; /* Darker red on hover */
+}
+
+.download-withdrawal-requests-btn:focus {
+  outline: none;
+}
+
+.download-withdrawal-requests-btn .me-2 {
+  margin-right: 8px; /* Adds space between the icon and text */
+}

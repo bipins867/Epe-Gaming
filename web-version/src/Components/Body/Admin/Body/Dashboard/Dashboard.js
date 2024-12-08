@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes, NavLink } from "react-router-dom";
-import { Announcement } from "./Announcement/announcement";
-import { Categories } from "./Categories/categories";
+import { AnnouncementPage } from "./Announcement/Announcement";
+import { Categories } from "./Categories/Categories";
 import "./Dashboard.css";
 import { useState } from "react";
 import { HomePage } from "./Home/Home";
@@ -10,7 +10,6 @@ import { ReferralPage } from "./Referral/Referral";
 import { WithdrawalPage } from "./Withdrawal/Withdrawal";
 import { WalletPage } from "./Wallet/Wallet";
 import { UserActivityPage } from "./UserActivity/UserActivity";
-import { AdminActivityPage } from "./AdminActivity/AdminActivity";
 
 export const DashboardPage = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -111,17 +110,6 @@ export const DashboardPage = () => {
               {!collapsed && <span>User Activity</span>}
             </NavLink>
           </li>
-          <li>
-            <NavLink
-              to="./adminActivity"
-              className={({ isActive }) =>
-                isActive ? "tab-link active-tab" : "tab-link"
-              }
-            >
-              <i className="tab-icon bi bi-gear"></i>
-              {!collapsed && <span>Admin Activity</span>}
-            </NavLink>
-          </li>
         </ul>
 
         <button className="toggle-button" onClick={toggleSidebar}>
@@ -131,15 +119,14 @@ export const DashboardPage = () => {
       <div className="content">
         <Routes>
           <Route path="" element={<HomePage />} />
-          <Route path="adminProfile" element={<AdminProfilePage />} />
-          <Route path="categories" element={<Categories />} />
-          <Route path="announcement" element={<Announcement />} />
-          <Route path="customers" element={<CustomerPage />} />
-          <Route path="referral" element={<ReferralPage />} />
-          <Route path="withdrawal" element={<WithdrawalPage />} />
-          <Route path="wallet" element={<WalletPage />} />
-          <Route path="userActivity" element={<UserActivityPage />} />
-          <Route path="adminActivity" element={<AdminActivityPage />} />
+          <Route path="adminProfile/*" element={<AdminProfilePage />} />
+          <Route path="categories/*" element={<Categories />} />
+          <Route path="announcement/*" element={<AnnouncementPage />} />
+          <Route path="customers/*" element={<CustomerPage />} />
+          <Route path="referral/*" element={<ReferralPage />} />
+          <Route path="withdrawal/*" element={<WithdrawalPage />} />
+          <Route path="wallet/*" element={<WalletPage />} />
+          <Route path="userActivity/*" element={<UserActivityPage />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Routes>
       </div>

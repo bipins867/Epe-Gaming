@@ -1,0 +1,103 @@
+
+
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  table th, table td {
+    text-align: left;
+    vertical-align: middle;
+    padding: 8px;
+  }
+  
+  table {
+    width: 100%;
+    border: 1px solid #ddd;
+  }
+
+  
+  
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+  
+  .card {
+    margin-bottom: 1rem;
+  }
+  /* CustomerPage.css */
+
+/* General Card Headers */
+.card-header {
+    font-weight: bold;
+    background-color: #f1f1f1; /* Lighter background color for header */
+    color: #007bff; /* Blue text color */
+    font-size: 1.2rem;
+    border-bottom: 2px solid #ddd; /* Divider below the header */
+  }
+  
+  /* Customer Details Section */
+  .card-header.customer-details {
+    background-color: #cce5ff; /* Light blue for Customer Details */
+    color: #004085; /* Dark blue text for Customer Details */
+  }
+  
+  /* Static Info Section */
+  .card-header.static-info {
+    background-color: #e2e3e5; /* Light gray for Static Info */
+    color: #6c757d; /* Dark gray text for Static Info */
+  }
+  
+  /* Blocked Status Section */
+  .card-header.block-status {
+    background-color: #f8d7da; /* Light red for Block Status */
+    color: #721c24; /* Dark red text for Block Status */
+  }
+  
+  /* PiggyBox Info Section */
+  .card-header.piggybox-info {
+    background-color: #d4edda; /* Light green for PiggyBox Info */
+    color: #155724; /* Dark green text for PiggyBox Info */
+  }
+  
+  /* Bank Details Section */
+  .card-header.bank-details {
+    background-color: #cce5ff; /* Light blue for Bank Details */
+    color: #004085; /* Dark blue text for Bank Details */
+  }
+  
+  /* Address Section */
+  .card-header.address-info {
+    background-color: #fff3cd; /* Light yellow for Address Info */
+    color: #856404; /* Dark yellow text for Address Info */
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  table th, table td {
+    text-align: left;
+    vertical-align: middle;
+    padding: 8px;
+  }
+  
+  table {
+    width: 100%;
+    border: 1px solid #ddd;
+  }
+  
+ 
+  .card {
+    margin-bottom: 1rem;
+  }
+  
+
+  /* Reset background color and styles for <th> */
+table th {
+  background-color: transparent; /* Remove the default background */
+  color: inherit; /* Inherit the text color from the parent */
+  text-align: left; /* Align text to the left */
+  font-weight: normal; /* Set the font weight to normal */
+}
+
