@@ -5,7 +5,7 @@ import { Footer } from "./Footer/Footer";
 import { Legality } from "./Legality/Legality";
 import { AboutUs } from "./AboutUs/AboutUs";
 import { HomeScreen } from "./HomeScreen/HomeScreen";
-import { Dashboard } from "./Dashboard/Dashboard";
+import {  DashboardPage } from "./Dashboard/Dashboard";
 
 export const Home = () => {
   return (
@@ -19,7 +19,7 @@ export const Home = () => {
           {/* Other routes */}
           <Route path="legality/*" element={<Legality />} />
           <Route path="aboutUs" element={<AboutUs />} />
-          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="categories/*" element={<DashboardPage />} />
 
           {/* Catch-all for invalid routes, redirecting to homepage */}
           <Route path="*" element={<Navigate to="/" replace />} />
