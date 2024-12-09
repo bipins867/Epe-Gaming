@@ -9,16 +9,19 @@ export const Header = () => {
       <div className="navbar-logo">
         {/* Logo Image */}
         <Image
-          src="/Assets/Logo/Brand/ppl-logo-half.png"  // Ensure this path is correct
+          src="/Assets/Logo/Brand/ppl-logo-half.png" // Ensure this path is correct
           alt="PPL Logo"
-          width={50}  // Adjust the width as needed
+          width={50} // Adjust the width as needed
           height={50} // Adjust the height to maintain aspect ratio
-          className="me-2"  // Add margin-right class for spacing if needed
+          className="me-2" // Add margin-right class for spacing if needed
         />
         {/* Text for Logo */}
         PRO PLAY LEAGUE
       </div>
       <ul className="navbar-links">
+        <li>
+          <Link to="/admin">Admin Panel</Link>
+        </li>
         <li>
           <Link to="/">Home</Link>
         </li>

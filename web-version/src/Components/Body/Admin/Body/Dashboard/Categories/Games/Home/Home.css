@@ -1,0 +1,81 @@
+/* Ensure the card background is set and text remains visible */
+
+/* General styling for the page */
+.games-home-page {
+    padding: 2rem;
+    background-color: #f8f9fa;
+  }
+  
+  /* Image Slider Section */
+  .image-slider {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  .slider-image {
+    height: 300px;
+    object-fit: cover;
+  }
+  
+  .update-image-btn {
+    font-size: 1.1rem;
+    padding: 0.5rem 1.5rem;
+  }
+  
+  /* Dashboard Section */
+  .dashboard-section {
+    margin-top: 2rem;
+  }
+  
+  .dashboard-card {
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+    color: #ffffff !important; /* Force text color to white */
+    background-color: inherit !important; /* Default background-color set here */
+  }
+  
+  .dashboard-card.ongoing-bg {
+    background-color: #28a745 !important;
+  }
+  
+  .dashboard-card.past-bg {
+    background-color: #6c757d !important;
+  }
+  
+  .dashboard-card.upcoming-bg {
+    background-color: #007bff !important;
+  }
+  
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .dashboard-icon {
+    font-size: 2.5rem;
+  }
+  
+  .dashboard-content {
+    text-align: left;
+  }
+  
+  .dashboard-count {
+    font-size: 2rem;
+    margin: 0;
+  }
+  
+  .dashboard-title {
+    font-size: 1rem;
+    margin: 0;
+  }
+  
+  /* View More Button */
+  .view-more-btn {
+    font-size: 1.2rem;
+    padding: 0.5rem 2rem;
+    border-radius: 5px;
+  }
+  

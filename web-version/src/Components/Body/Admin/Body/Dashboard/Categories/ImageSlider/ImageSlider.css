@@ -1,0 +1,74 @@
+/* ImageSliderPage.css */
+
+.image-slider-page {
+    padding: 2rem;
+    background-color: #f8f9fa;
+  }
+  
+  .add-image-btn {
+    font-size: 1.2rem;
+    padding: 0.5rem 1.5rem;
+  }
+  
+  .add-image-form {
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+    padding: 1.5rem;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .form-label {
+    font-size: 1rem;
+    font-weight: bold;
+  }
+  
+  .preview-image-container {
+    text-align: center;
+  }
+  
+  .preview-image {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ced4da;
+    border-radius: 10px;
+  }
+  
+  .image-list-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #343a40;
+  }
+  
+  .image-list-table {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .list-image {
+    height: 100px;
+    width: auto;
+    border-radius: 5px;
+  }
+  
+  .status-badge {
+    font-size: 0.9rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 5px;
+    color: #ffffff;
+  }
+  
+  .status-badge.active {
+    background-color: #28a745;
+  }
+  
+  .status-badge.inactive {
+    background-color: #dc3545;
+  }
+  
+  button {
+    font-weight: bold;
+  }
+  

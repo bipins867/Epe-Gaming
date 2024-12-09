@@ -1,14 +1,14 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { HomePage } from "./Home/Home";
-import { GamesPage } from "./Games/Games";
+import { EventsPage } from "./Events/Events";
 import { ImageSliderPage } from "./ImageSlider/ImageSlider";
 
-export const CategoriesPage = () => {
+export const GamesPage = () => {
   return (
     <>
       <Routes>
         <Route path="" element={<HomePage />} />
-        <Route path="type/:gameTitle/*" element={<GamesPage />} />
+        <Route path="events/*" element={<EventsPage />} />
         <Route path="imageSlider" element={<ImageSliderPage />} />
         <Route path="*" element={<Navigate to="./" replace />} />
       </Routes>

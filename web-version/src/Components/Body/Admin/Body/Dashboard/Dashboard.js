@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes, NavLink } from "react-router-dom";
 import { AnnouncementPage } from "./Announcement/Announcement";
-import { Categories } from "./Categories/Categories";
+import { CategoriesPage } from "./Categories/Categories";
 import "./Dashboard.css";
 import { useState } from "react";
 import { HomePage } from "./Home/Home";
@@ -120,7 +120,7 @@ export const DashboardPage = () => {
         <Routes>
           <Route path="" element={<HomePage />} />
           <Route path="adminProfile/*" element={<AdminProfilePage />} />
-          <Route path="categories/*" element={<Categories />} />
+          <Route path="categories/*" element={<CategoriesPage />} />
           <Route path="announcement/*" element={<AnnouncementPage />} />
           <Route path="customers/*" element={<CustomerPage />} />
           <Route path="referral/*" element={<ReferralPage />} />

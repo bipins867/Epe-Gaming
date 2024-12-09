@@ -1,0 +1,64 @@
+/* CategoriesPage.css */
+
+.admin-categories-page {
+    padding: 2rem;
+    background-color: #f9f9f9;
+  }
+  
+  .categories-slider {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .slider-image {
+    height: 400px;
+    object-fit: cover;
+  }
+  
+  .slider-title {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+  }
+  
+  .update-images-link {
+    font-size: 1.2rem;
+    text-decoration: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+  }
+  
+  .update-images-link:hover {
+    text-decoration: none;
+    background-color: #0056b3;
+  }
+  
+  .games-list {
+    margin-top: 2rem;
+  }
+  
+  .game-card {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  
+  .game-card-image {
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  
+  .game-card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  .game-view-more-btn {
+    width: 100%;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  
