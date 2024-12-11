@@ -179,7 +179,7 @@ export const InfoPage = () => {
       <Card className="mb-4">
         <Card.Body>
           <h5>Teams</h5>
-          <Accordion>
+          <Accordion alwaysOpen>
             {teams.map((team, teamIndex) => (
               <Accordion.Item eventKey={teamIndex.toString()} key={team.teamId}>
                 <Accordion.Header>

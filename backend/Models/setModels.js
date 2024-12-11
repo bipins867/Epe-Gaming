@@ -30,6 +30,7 @@ const Image = require("./Images/images");
 const Announcement = require("./Announcement/announcement");
 const AuthToken = require("./User/authToken");
 const EventUsers = require("./AndModels/EventUsers");
+const ImageSlider = require("./ImageSlider/ImageSlider");
 
 
 
@@ -102,6 +103,10 @@ const setupModels = () => {
   
     User.hasMany(AuthToken);
     AuthToken.belongsTo(User);
+
+
+    Games.hasMany(Image);
+    Image.belongsTo(Games);
   };
   
   module.exports = setupModels;

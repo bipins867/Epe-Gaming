@@ -144,3 +144,6 @@ exports.createEvent = async (req, res, next) => {
 
 
 exports.updateRoomCredentials=async(req,res,next)=>{}
+
+
+exports.getTeamAndMembersInfo=async(req,res,next)=>{}
