@@ -105,8 +105,8 @@ const setupModels = () => {
     AuthToken.belongsTo(User);
 
 
-    Games.hasMany(Image);
-    Image.belongsTo(Games);
+    Games.hasMany(ImageSlider);
+    ImageSlider.belongsTo(Games);
   };
   
   module.exports = setupModels;

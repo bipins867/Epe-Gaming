@@ -17,9 +17,6 @@ const ImageSlider = sequelize.define('ImageSlider', {
   imageUrl: {
     type: DataTypes.STRING,
     allowNull: false,
-    validate: {
-      isUrl: true,
-    },
     comment: 'URL of the image',
   },
   type: {
