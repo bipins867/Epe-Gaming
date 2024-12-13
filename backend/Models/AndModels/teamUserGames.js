@@ -46,7 +46,7 @@ const TeamUserGames = sequelize.define(
       type: DataTypes.STRING,
       allowNull: true,
     },
-    point: {
+    points: {
       type: DataTypes.FLOAT,
       allowNull: false,
       defaultValue: 0,

@@ -17,7 +17,7 @@ const UserGames = sequelize.define('UserGames', {
     allowNull: true,
     
   },
-  leaderBoardRank: {
+  totalPoints: {
     type: DataTypes.INTEGER,
     allowNull: true,
   },

@@ -542,6 +542,16 @@ exports.updateEventStatus = async (req, res, next) => {
         { transaction }
       );
 
+      // Log admin activity
+      await createAdminActivity(
+        req,
+        req.admin,
+        "event",
+        `Event status updated to:- ${status} of event :- ${event.eventId}`,
+        null,
+        transaction
+      );
+
       await transaction.commit();
 
       return res.status(200).json({
@@ -635,6 +645,16 @@ exports.updateTeamsAndMemberInfo = async (req, res, next) => {
           { transaction }
         );
       }
+
+      // Log admin activity
+      await createAdminActivity(
+        req,
+        req.admin,
+        "event",
+        `Teams and Member Info status and information updated:- ${teamInfo.teamId}`,
+        null,
+        transaction
+      );
 
       // Commit the transaction
       await transaction.commit();
@@ -768,6 +788,8 @@ exports.declareEventResult = async (req, res, next) => {
 
         // Update userGame total kills
         userGame.totalKills += teamUserGame.kills;
+        userGame.totalPoints += teamUserGame.points;
+
         await userGame.save({ transaction });
       }
     }
@@ -775,6 +797,16 @@ exports.declareEventResult = async (req, res, next) => {
     // Step 4: Update event status
     event.status = "declared";
     await event.save({ transaction });
+
+    // Log admin activity
+    await createAdminActivity(
+      req,
+      req.admin,
+      "event",
+      `Result Declared for event:- ${event.eventId}`,
+      null,
+      transaction
+    );
 
     // Commit the transaction
     await transaction.commit();
