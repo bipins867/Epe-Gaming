@@ -98,6 +98,9 @@ const Events = sequelize.define(
       allowNull: true,
       defaultValue:"upcoming"
     },
+    remark:{
+      type:Sequelize.STRING
+    },
     isResultDeclared: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

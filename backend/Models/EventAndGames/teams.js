@@ -9,6 +9,11 @@ const Teams = sequelize.define(
       primaryKey: true,
       autoIncrement: true,
     },
+    isChecked: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
     teamNumber: {
       type: DataTypes.STRING,
       allowNull: false,
