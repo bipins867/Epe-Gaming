@@ -625,30 +625,12 @@ exports.updateTeamsAndMemberInfo = async (req, res, next) => {
             message: `Team member with ID ${member.teamUserGameId} not found.`,
           });
         }
-        const prevKill = teamUserGame.prevKill;
 
         await teamUserGame.update(
           {
             status: member.status,
             remark: member.remark,
             kills: member.kills,
-          },
-          { transaction }
-        );
-
-        const userGames = await UserGames.findOne({
-          where: {
-            id: teamUserGame.UserGameId,
-          },
-        });
-
-        await userGames.update(
-          { totalKills: userGames.totalKills - prevKill },
-          { transaction }
-        );
-        await userGames.update(
-          {
-            totalKills: member.kills + userGames.totalKills,
           },
           { transaction }
         );
@@ -702,9 +684,7 @@ exports.declareEventResult = async (req, res, next) => {
     }
 
     // Step 2: Get all teams associated with the event
-    const teams = await Teams.findAll({
-      where: { EventId: event.id },
-    });
+    const teams = await Teams.findAll({ where: { EventId: event.id } });
 
     if (!teams || teams.length === 0) {
       return res
@@ -712,62 +692,87 @@ exports.declareEventResult = async (req, res, next) => {
         .json({ message: "No teams found for this event." });
     }
 
-    // Check if all teams have isChecked set to true
-    const uncheckedTeam = teams.find((team) => !team.isChecked);
-    if (uncheckedTeam) {
-      return res.status(400).json({
-        message:
-          "All teams must be verified (isChecked=true) before declaring results.",
-      });
-    }
-
-    // Step 3: Process each team and their members
+    // Step 3: Process each team
     for (let team of teams) {
       const teamUserGames = await TeamUserGames.findAll({
         where: { TeamId: team.id },
       });
 
+      let teamPoints = 0;
+      let rankReward = 0;
+
+      if (team.status === "joined") {
+        if (team.rank === 1) rankReward = event.prizePool_1;
+        else if (team.rank === 2) rankReward = event.prizePool_2;
+        else if (team.rank === 3) rankReward = event.prizePool_3;
+
+        if (event.matchType === "ranked") {
+          if (team.rank === 1) teamPoints += 100;
+          else if (team.rank === 2) teamPoints += 50;
+          else if (team.rank === 3) teamPoints += 25;
+        } else if (event.matchType === "unranked" && team.rank === 1) {
+          teamPoints += 20;
+        }
+      }
+
       for (let teamUserGame of teamUserGames) {
         const userGame = await UserGames.findOne({
           where: { id: teamUserGame.UserGameId },
         });
-
-        if (!userGame) continue;
-
-        const user = await User.findOne({
-          where: { id: userGame.UserId },
-        });
-
-        if (!user) continue;
-
-        const wallet = await Wallet.findOne({
-          where: { UserId: user.id },
-        });
+        const user = await User.findOne({ where: { id: userGame.UserId } });
+        const wallet = await Wallet.findOne({ where: { UserId: user.id } });
 
         if (!wallet) continue;
 
-        // Step 4: Update wallet balances
-        wallet.netWinning += teamUserGame.winningBalance;
+        let memberReward = 0;
+        let memberPoints = 0;
+
+        if (
+          team.status === "joined" &&
+          teamUserGame.status !== "disqualified"
+        ) {
+          // For teams with isAmountDistributed as false, give all rewards to the leader
+          if (team.isAmountDistributed) {
+            memberReward += rankReward / event.squadType;
+          } else if (teamUserGame.isLeader) {
+            memberReward += rankReward;
+          }
+
+          memberReward += teamUserGame.kills * event.perKill;
+
+          if (event.matchType === "ranked") {
+            memberPoints += teamPoints / event.squadType;
+            memberPoints += teamUserGame.kills * 5;
+          }
+        }
+
+        // Update wallet balances
+        wallet.netWinning += memberReward;
         wallet.unclearedDeposit -= teamUserGame.deposit;
         wallet.unclearedCashBonus -= teamUserGame.cashBonus;
         wallet.unclearedNetWinning -= teamUserGame.netWinning;
 
-        // Ensure no uncleared balances go negative
         wallet.unclearedDeposit = Math.max(wallet.unclearedDeposit, 0);
         wallet.unclearedCashBonus = Math.max(wallet.unclearedCashBonus, 0);
         wallet.unclearedNetWinning = Math.max(wallet.unclearedNetWinning, 0);
 
         await wallet.save({ transaction });
 
-        // Step 5: Reset teamUserGame fields
+        // Update teamUserGame
+        teamUserGame.winningBalance = memberReward;
+        teamUserGame.points = memberPoints;
         teamUserGame.deposit = 0;
         teamUserGame.cashBonus = 0;
         teamUserGame.netWinning = 0;
         await teamUserGame.save({ transaction });
+
+        // Update userGame total kills
+        userGame.totalKills += teamUserGame.kills;
+        await userGame.save({ transaction });
       }
     }
 
-    // Step 6: Update event status to 'declared'
+    // Step 4: Update event status
     event.status = "declared";
     await event.save({ transaction });
 
@@ -776,10 +781,9 @@ exports.declareEventResult = async (req, res, next) => {
 
     return res.status(200).json({
       success: true,
-      message: "Event results declared and balances updated.",
+      message: "Event results declared successfully.",
     });
   } catch (error) {
-    // Rollback transaction in case of an error
     await transaction.rollback();
 
     console.error("Error in declareEventResult:", error);
