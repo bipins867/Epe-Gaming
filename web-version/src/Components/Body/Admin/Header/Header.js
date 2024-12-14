@@ -3,19 +3,18 @@ import { Navbar, Container, Dropdown, Image } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { PersonCircle } from "react-bootstrap-icons";
 import "./Header.css";
+import { useDispatch } from "react-redux";
+import { adminLogOut, setAdminAuthToken } from "../../../../Store/Admin/auth";
 
 export const Header = () => {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const handleLogout = () => {
-    // Add your custom logout logic here
-    console.log("Performing logout actions...");
-    // Example: clearing user data from localStorage
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    localStorage.removeItem("adminToken");
 
-    // Redirect to the logout page
-    navigate("/admin/login");
+    dispatch(adminLogOut());
+    dispatch(setAdminAuthToken(""));
+    navigate("/admin");
   };
 
   return (
