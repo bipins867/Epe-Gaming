@@ -1,15 +1,47 @@
 import React, { useState } from "react";
-import { Form, Button, Container, Row, Col, Card } from "react-bootstrap";
+import {
+  Form,
+  Button,
+  Container,
+  Row,
+  Col,
+  Card,
+  Spinner,
+} from "react-bootstrap";
 import "./Login.css"; // Importing CSS for styling
+import { loginHandler } from "./apiHandler";
+import { useAlert } from "../../../../UI/Alert/AlertContext";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { adminLogin, setAdminAuthToken } from "../../../../../Store/Admin/auth";
 
 export const AdminLoginPage = () => {
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { showAlert } = useAlert();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission, e.g., API call or state update
-    console.log("User ID:", userId, "Password:", password);
+
+    const response = await loginHandler(
+      userId,
+      password,
+      setIsSubmitting,
+      showAlert
+    );
+
+    if (response) {
+      const { token } = response;
+
+      localStorage.setItem("adminToken", token);
+      dispatch(adminLogin());
+      dispatch(setAdminAuthToken(token));
+
+      navigate("/admin");
+    }
   };
 
   return (
@@ -43,8 +75,20 @@ export const AdminLoginPage = () => {
                   />
                 </Form.Group>
 
-                <Button variant="primary" type="submit" className="w-100">
-                  Login
+                <Button
+                  variant="primary"
+                  type="submit"
+                  className="w-100"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Spinner animation="border" size="sm" className="me-2" />{" "}
+                      Logging in...
+                    </>
+                  ) : (
+                    "Login"
+                  )}
                 </Button>
               </Form>
             </Card.Body>

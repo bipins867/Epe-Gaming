@@ -8,6 +8,7 @@ const Wallet = require("../../../Models/Wallet/wallet");
 const { createAdminActivity } = require("../../../Utils/activityUtils");
 const { generateRandomId } = require("../../../Utils/utils");
 const sequelize = require("../../../database");
+const { Op } = require("sequelize");
 
 exports.getEventsList = async (req, res, next) => {
   const { GameId } = req.body;
@@ -20,9 +21,20 @@ exports.getEventsList = async (req, res, next) => {
       });
     }
 
-    // Fetch the four categories of events filtered by GameId
+    const currentTime = new Date();
+
+    // Fetch events that are truly ongoing or have their start time passed (upcoming -> ongoing)
     const ongoingEvents = await Events.findAll({
-      where: { status: "ongoing", GameId },
+      where: {
+        [Op.or]: [
+          { status: "ongoing", GameId },
+          {
+            status: "upcoming",
+            GameId,
+            startTime: { [Op.lte]: currentTime }, // startTime <= current time
+          },
+        ],
+      },
       include: [{ model: Games }],
     });
 
@@ -33,15 +45,16 @@ exports.getEventsList = async (req, res, next) => {
 
     const upcomingOrRescheduledEvents = await Events.findAll({
       where: {
-        status: ["upcoming", "rescheduled"], // Handle both statuses
+        status: ["upcoming", "rescheduled"],
         GameId,
+        startTime: { [Op.gt]: currentTime }, // startTime > current time to filter future upcoming events
       },
       include: [{ model: Games }],
     });
 
     const canceledOrDeclaredEvents = await Events.findAll({
       where: {
-        status: ["canceled", "declared"], // Handle both statuses
+        status: ["canceled", "declared"],
         GameId,
       },
       include: [{ model: Games }],
@@ -87,7 +100,7 @@ exports.createEvent = async (req, res, next) => {
       perKill,
       regCloseTime,
       startTime,
-      status = "open", // Default value for status
+      status = "upcoming", // Default value for status
       entryFee,
       gameId,
     } = req.body;
@@ -395,7 +408,7 @@ exports.updateEventStatus = async (req, res, next) => {
 
     // Step 1: Fetch the event by eventId
     const event = await Events.findOne({
-      where: { id: eventId },
+      where: { eventId },
     });
 
     if (!event) {
@@ -409,16 +422,23 @@ exports.updateEventStatus = async (req, res, next) => {
 
     // Step 2: Handle status update based on current status and given conditions
     if (status === "rescheduled") {
-      // Reschedule is allowed only for "upcoming" events
-      if (currentStatus !== "upcoming") {
-        return res
-          .status(400)
-          .json({ message: "Only 'upcoming' events can be rescheduled." });
+      // Reschedule is allowed only for "upcoming" or "rescheduled" events
+      if (!["upcoming", "rescheduled"].includes(currentStatus)) {
+        return res.status(400).json({
+          message: "Only 'upcoming' or 'rescheduled' events can be cancelled.",
+        });
       }
       if (!rescheduledTime) {
         return res
           .status(400)
           .json({ message: "Rescheduled time is required for rescheduling." });
+      }
+
+      const rescheduledDateTime = new Date(rescheduledTime);
+      if (rescheduledDateTime <= currentTime) {
+        return res
+          .status(400)
+          .json({ message: "Rescheduled time must be in the future." });
       }
 
       await event.update(
@@ -430,18 +450,18 @@ exports.updateEventStatus = async (req, res, next) => {
         { transaction }
       );
 
-      transaction.commit();
+      await transaction.commit();
       return res.status(200).json({
         success: true,
         message: "Event status updated to 'rescheduled'.",
         event,
       });
     } else if (status === "cancelled") {
-      // Cancellation is allowed for "upcoming" events
-      if (currentStatus !== "upcoming") {
-        return res
-          .status(400)
-          .json({ message: "Only 'upcoming' events can be cancelled." });
+      // Cancellation is allowed for "upcoming" or "rescheduled" events
+      if (!["upcoming", "rescheduled"].includes(currentStatus)) {
+        return res.status(400).json({
+          message: "Only 'upcoming' or 'rescheduled' events can be cancelled.",
+        });
       }
       if (!remark) {
         return res
@@ -521,10 +541,11 @@ exports.updateEventStatus = async (req, res, next) => {
         event,
       });
     } else if (status === "inReview") {
-      // "inReview" is allowed only if the start time has passed and the event was "upcoming"
-      if (currentStatus !== "upcoming") {
+      // "inReview" is allowed only if the start time has passed and the event was "upcoming" or "rescheduled"
+      if (!["upcoming", "rescheduled"].includes(currentStatus)) {
         return res.status(400).json({
-          message: "Only 'upcoming' events can be moved to 'inReview'.",
+          message:
+            "Only 'upcoming' or 'rescheduled' events can be moved to 'inReview'.",
         });
       }
       if (new Date(event.startTime) > currentTime) {
@@ -576,6 +597,7 @@ exports.updateEventStatus = async (req, res, next) => {
       .json({ message: "Server error", error: error.message });
   }
 };
+
 //In the case of result declaration .....
 exports.updateTeamsAndMemberInfo = async (req, res, next) => {
   try {

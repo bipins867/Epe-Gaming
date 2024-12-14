@@ -5,10 +5,10 @@ const eventController = require("../../../Controller/Admin/Event/events");
 const router = express.Router();
 
 router.post("/getEvents", eventController.getEventsList);
-router.post("/create", eventController.createEvent);
+router.post("/createEvents", eventController.createEvent);
 router.post("/updateRoomCredentials", eventController.updateRoomCredentials);
 router.post("/getEventInfo", eventController.getEventInfo);
-router.post("/teamAndMemberInfo", eventController.getTeamsAndMemberInfo);
+router.post("/getTeamAndMemberInfo", eventController.getTeamsAndMemberInfo);
 router.post("/updateEventStatus", eventController.updateEventStatus);
 router.post(
   "/updateTeamAndMemberInfo",
