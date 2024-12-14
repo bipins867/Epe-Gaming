@@ -5,6 +5,7 @@ import { setUserAuthToken, userLogOut } from "../Store/User/auth";
 
 export const apiRequest = async (url, obj = {}, token = "", type = "get") => {
   const completeUrl = `${baseUrl}${url}`;
+
   const headers = {
     Authorization: token || "", // Fallback for optional token
     "Content-Type": "application/json", // Standard for API requests

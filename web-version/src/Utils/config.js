@@ -1,6 +1,1 @@
-export const baseUrl='http://localhost:3000'
-
-
-
-
-
+export const baseUrl = process.env.REACT_APP_REMOTE_ADDRESS;

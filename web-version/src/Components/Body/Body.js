@@ -3,6 +3,7 @@ import { Admin } from "./Admin/Admin";
 import { Home } from "./Home/Home";
 
 export const Body = () => {
+  
   return (
     <Routes>
       <Route path="/admin/*" element={<Admin />} />
