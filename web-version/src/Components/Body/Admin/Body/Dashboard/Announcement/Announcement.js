@@ -1,67 +1,106 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Form, Button, Table } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Table,
+  Spinner,
+} from "react-bootstrap";
 import "./Announcement.css";
+import { useAlert } from "../../../../../UI/Alert/AlertContext";
+import {
+  createAnnouncementHandler,
+  fetchAnnouncementHandler,
+  updateAnnouncementHandler,
+  deleteAnnouncementHandler,
+} from "./apiHandler";
 
 export const AnnouncementPage = () => {
+  const [isUpdated, setIsUpdated] = useState(0);
   const [newAnnouncement, setNewAnnouncement] = useState("");
-  const [announcements, setAnnouncements] = useState([
-    {
-      id: 1,
-      message: "System maintenance scheduled for Sunday.",
-      type: "General",
-      date: "2024-11-20",
-      time: "10:30 AM",
-      status: "Active",
-    },
-    {
-      id: 2,
-      message: "New feature: Bulk KYC approval is now live.",
-      type: "General",
-      date: "2024-11-19",
-      time: "02:15 PM",
-      status: "Active",
-    },
-    {
-      id: 3,
-      message: "Contact support for any issues!",
-      type: "General",
-      date: "2024-11-18",
-      time: "04:00 PM",
-      status: "Inactive",
-    },
-  ]);
+  const [announcements, setAnnouncements] = useState([]);
+  const [loadingAnnouncements, setLoadingAnnouncements] = useState(false); // For fetching announcements
+  const [creatingAnnouncement, setCreatingAnnouncement] = useState(false); // For creating announcements
+  const [updatingAnnouncements, setUpdatingAnnouncements] = useState({}); // For specific update actions
+  const [deletingAnnouncements, setDeletingAnnouncements] = useState({}); // For specific delete actions
+  const { showAlert } = useAlert();
 
-  const handleCreateAnnouncement = () => {
-    if (newAnnouncement.trim() === "") return;
-    const newId = announcements.length + 1;
-    const now = new Date();
-    const newAnnounce = {
-      id: newId,
-      message: newAnnouncement,
-      type: "General",
-      date: now.toISOString().split("T")[0],
-      time: now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      status: "Active",
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      const response = await fetchAnnouncementHandler(
+        setLoadingAnnouncements,
+        showAlert
+      );
+
+      if (response) {
+        const { announcements } = response;
+        setAnnouncements(announcements);
+      }
     };
-    setAnnouncements([newAnnounce, ...announcements]);
-    setNewAnnouncement("");
-  };
 
-  const handleAction = (id, action) => {
-    setAnnouncements((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              status: action === "deactivate" ? "Inactive" : "Active",
-            }
-          : item
-      )
+    fetchAnnouncements();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isUpdated]);
+
+  const handleCreateAnnouncement = async () => {
+    if (newAnnouncement.trim() === "") return;
+
+    const response = await createAnnouncementHandler(
+      newAnnouncement,
+      "normal",
+      setCreatingAnnouncement,
+      showAlert
     );
-    if (action === "delete") {
-      setAnnouncements((prev) => prev.filter((item) => item.id !== id));
+
+    if (response) {
+      setIsUpdated(isUpdated + 1);
     }
   };
+
+  const handleUpdateAnnouncement = async (id, isActive) => {
+    if (!id) return;
+
+    const response = await updateAnnouncementHandler(
+      id,
+      isActive,
+      setUpdatingAnnouncements,
+      showAlert
+    );
+
+    if (response) {
+      setIsUpdated(isUpdated + 1);
+    }
+  };
+
+  const handleDeleteAnnouncement = async (id) => {
+    if (!id) return;
+
+    const response = await deleteAnnouncementHandler(
+      id,
+      setDeletingAnnouncements,
+      showAlert
+    );
+
+    if (response) {
+      setIsUpdated(isUpdated + 1);
+    }
+  };
+
+  if (loadingAnnouncements) {
+    return (
+      <>
+        {" "}
+        <div className="loading-screen text-center">
+          <Spinner animation="border" role="status" className="loading-spinner">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+          <h4 className="loading-text">Fetching Announcement Details...</h4>
+        </div>
+      </>
+    );
+  }
 
   return (
     <Container fluid>
@@ -70,7 +109,7 @@ export const AnnouncementPage = () => {
         <h5>Announcements</h5>
         <div className="announcements-scroll">
           {announcements
-            .filter((announcement) => announcement.status === "Active")
+            .filter((announcement) => announcement.isActive)
             .map((announcement) => (
               <div key={announcement.id} className="announcement-item">
                 {announcement.message}
@@ -97,8 +136,13 @@ export const AnnouncementPage = () => {
                 variant="primary"
                 onClick={handleCreateAnnouncement}
                 block="true"
+                disabled={creatingAnnouncement}
               >
-                Create
+                {creatingAnnouncement ? (
+                  <Spinner as="span" animation="border" size="sm" />
+                ) : (
+                  "Create"
+                )}
               </Button>
             </Col>
           </Row>
@@ -126,30 +170,40 @@ export const AnnouncementPage = () => {
                 <td>{announcement.id}</td>
                 <td>{announcement.message}</td>
                 <td>{announcement.type}</td>
-                <td>{announcement.date}</td>
-                <td>{announcement.time}</td>
-                <td>{announcement.status}</td>
+                <td>{new Date(announcement.updatedAt).toLocaleDateString()}</td>
+                <td>{new Date(announcement.updatedAt).toLocaleTimeString()}</td>
+                <td>{announcement.isActive ? "Active" : "Inactive"}</td>
                 <td className="announcement-table-actions">
                   <Button
-                    variant={announcement.status === "Active" ? "warning" : "success"}
+                    variant={announcement.isActive ? "warning" : "success"}
                     size="sm"
                     onClick={() =>
-                      handleAction(
+                      handleUpdateAnnouncement(
                         announcement.id,
-                        announcement.status === "Active"
-                          ? "deactivate"
-                          : "activate"
+                        !announcement.isActive
                       )
                     }
+                    disabled={!!updatingAnnouncements[announcement.id]}
                   >
-                    {announcement.status === "Active" ? "Deactivate" : "Activate"}
+                    {updatingAnnouncements[announcement.id] ? (
+                      <Spinner as="span" animation="border" size="sm" />
+                    ) : announcement.isActive ? (
+                      "Deactivate"
+                    ) : (
+                      "Activate"
+                    )}
                   </Button>
                   <Button
                     variant="danger"
                     size="sm"
-                    onClick={() => handleAction(announcement.id, "delete")}
+                    onClick={() => handleDeleteAnnouncement(announcement.id)}
+                    disabled={!!deletingAnnouncements[announcement.id]}
                   >
-                    Delete
+                    {deletingAnnouncements[announcement.id] ? (
+                      <Spinner as="span" animation="border" size="sm" />
+                    ) : (
+                      "Delete"
+                    )}
                   </Button>
                 </td>
               </tr>
