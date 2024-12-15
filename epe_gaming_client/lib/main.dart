@@ -93,7 +93,11 @@ class MyApp extends StatelessWidget {
       title: "Pro Play League",
       debugShowCheckedModeBanner: false,
       navigatorKey: navigatorKey, // Assign the global navigator key
-
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        fontFamily: 'Roboto',
+        scaffoldBackgroundColor: Colors.white,
+      ),
       initialRoute: '/splash', // Sets the initial route to the splash screen
 
       // Defining routes for each screen

@@ -92,10 +92,8 @@ flutter:
     - assets/BGMI/
     - assets/Category/
     - assets/BattleRoyal/
-    - assets/BattleRoyal/BGMI/
-    - assets/BattleRoyal/COD/
-    - assets/BattleRoyal/FreeFire/
     - assets/Home/
+    - assets/Background/
 
   #   - images/a_dot_ham.jpeg
 

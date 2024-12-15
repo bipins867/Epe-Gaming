@@ -1,4 +1,4 @@
-import 'package:epe_gaming_client/Components/Home/Categories/BattleRoyal/Games/games.dart';
+import 'package:epe_gaming_client/Components/Home/Games/games.dart';
 import 'package:flutter/material.dart';
 
 class BattleRoyal extends StatelessWidget {

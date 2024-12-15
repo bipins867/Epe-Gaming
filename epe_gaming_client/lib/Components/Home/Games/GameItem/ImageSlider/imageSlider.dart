@@ -1,14 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
-class ImageSlider extends StatefulWidget {
-  const ImageSlider({super.key});
+class GameItemImageSlider extends StatefulWidget {
+  const GameItemImageSlider({super.key});
 
   @override
-  State<ImageSlider> createState() => _ImageSliderState();
+  State<GameItemImageSlider> createState() => _GameItemImageSliderState();
 }
 
-class _ImageSliderState extends State<ImageSlider> {
+class _GameItemImageSliderState extends State<GameItemImageSlider> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
 
@@ -16,11 +16,14 @@ class _ImageSliderState extends State<ImageSlider> {
   void initState() {
     super.initState();
     // Auto-scroll functionality
-    Future.delayed(Duration(seconds: 2), _autoScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(Duration(seconds: 2), _autoScroll);
+    });
   }
 
   void _autoScroll() {
     if (_pageController.hasClients) {
+      // Check if the controller is attached to a scroll view
       if (_currentIndex < 3) {
         _currentIndex++;
       } else {
@@ -31,9 +34,9 @@ class _ImageSliderState extends State<ImageSlider> {
         duration: Duration(milliseconds: 300),
         curve: Curves.easeIn,
       );
+      // Schedule next auto-scroll
+      Future.delayed(Duration(seconds: 2), _autoScroll);
     }
-    // Schedule next auto-scroll
-    Future.delayed(Duration(seconds: 2), _autoScroll);
   }
 
   @override

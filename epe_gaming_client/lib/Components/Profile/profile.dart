@@ -41,12 +41,21 @@ class _ProfileState extends State<Profile> {
             ? Center(
                 child: CircularProgressIndicator(),
               )
-            : Column(
-                children: [
-                  HeaderProfile(),
-                  Info(),
-                  NavigationItems(),
-                ],
+            : Container(
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(
+                        "assets/Background/background-v1.jpg"), // Background image
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    HeaderProfile(),
+                    Info(),
+                    NavigationItems(),
+                  ],
+                ),
               ),
       ),
     );
