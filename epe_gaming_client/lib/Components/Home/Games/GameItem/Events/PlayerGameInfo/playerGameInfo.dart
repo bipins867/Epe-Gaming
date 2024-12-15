@@ -169,11 +169,11 @@ class _PlayerGameInfoPageState extends State<PlayerGameInfoPage> {
               Center(
                 child: ElevatedButton(
                   onPressed: _updatePlayerInfo,
-                  child: Text("Update"),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blueAccent, // Button color
                     foregroundColor: Colors.white, // Text color
                   ),
+                  child: Text("Update"),
                 ),
               ),
             ],
