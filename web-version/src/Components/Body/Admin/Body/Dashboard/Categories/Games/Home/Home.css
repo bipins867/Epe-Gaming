@@ -6,18 +6,7 @@
     background-color: #f8f9fa;
   }
   
-  /* Image Slider Section */
-  .image-slider {
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  }
-  
-  .slider-image {
-    height: 300px;
-    object-fit: cover;
-  }
-  
+ 
   .update-image-btn {
     font-size: 1.1rem;
     padding: 0.5rem 1.5rem;

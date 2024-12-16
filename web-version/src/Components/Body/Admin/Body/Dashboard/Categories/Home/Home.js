@@ -1,9 +1,15 @@
-import React from "react";
-import { Container, Row, Col, Card,  Carousel } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Container, Row, Col, Card, Spinner } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "./Home.css"; // Custom CSS for styling
+import { ImageSliderPreview } from "../Utils/Utils";
+import { fetchImagesHandler } from "../apiImageHandler";
+import { useAlert } from "../../../../../../UI/Alert/AlertContext";
 
 export const HomePage = () => {
+  const [images, setImages] = useState([]);
+  const [isImageLoading, setIsImageLoading] = useState(false);
+  const { showAlert } = useAlert();
   const games = [
     {
       title: "BGMI",
@@ -22,25 +28,40 @@ export const HomePage = () => {
     },
   ];
 
+  useEffect(() => {
+    const fetchImages = async () => {
+      setIsImageLoading(true); // Start loading spinner
+      const response = await fetchImagesHandler(
+        "*",
+        true,
+        null,
+        setIsImageLoading,
+        showAlert
+      );
+
+      if (response) {
+        setImages(response.data);
+      }
+      setIsImageLoading(false); // Stop loading spinner
+    };
+    fetchImages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Container className="admin-categories-page mt-4">
       {/* Image Slider Section */}
       <Row className="mb-4">
         <Col>
-          <Carousel className="categories-slider">
-            {games.map((game, index) => (
-              <Carousel.Item key={index}>
-                <img
-                  className="d-block w-100 slider-image"
-                  src={game.image}
-                  alt={game.title}
-                />
-                <Carousel.Caption>
-                  <h3 className="slider-title">{game.title}</h3>
-                </Carousel.Caption>
-              </Carousel.Item>
-            ))}
-          </Carousel>
+          {isImageLoading ? (
+            <div className="text-center">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </div>
+          ) : (
+            <ImageSliderPreview images={images} />
+          )}
         </Col>
       </Row>
 

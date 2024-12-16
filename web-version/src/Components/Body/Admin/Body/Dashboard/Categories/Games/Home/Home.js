@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card,  Carousel } from "react-bootstrap";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import "./Home.css"; // Custom CSS for styling
 import { Link } from "react-router-dom";
+import { ImageSliderPreview } from "../../Utils/Utils";
 
 export const HomePage = () => {
   const [sliderImages, setSliderImages] = useState([
-    "/Assets/Dashboard/Category/BattleRoyal/BGMI/bgmi.jpg",
-    "/Assets/Dashboard/Category/BattleRoyal/BGMI/bgmi.jpg",
-    "/Assets/Dashboard/Category/BattleRoyal/BGMI/bgmi.jpg",
+    {
+      image: "/Assets/Dashboard/Category/BattleRoyal/BGMI/bgmi.jpg",
+      title: "something else",
+    },
+    {
+      image: "/Assets/Dashboard/Category/BattleRoyal/BGMI/bgmi.jpg",
+      title: "something else",
+    },
+    {
+      image: "/Assets/Dashboard/Category/BattleRoyal/BGMI/bgmi.jpg",
+      title: "something else",
+    },
   ]);
 
   useEffect(() => {
@@ -41,19 +51,12 @@ export const HomePage = () => {
       {/* Image Slider Section */}
       <Row className="mb-4">
         <Col>
-          <Carousel className="image-slider">
-            {sliderImages.map((image, index) => (
-              <Carousel.Item key={index}>
-                <img
-                  src={image}
-                  alt={`Slider ${index}`}
-                  className="d-block w-100 slider-image"
-                />
-              </Carousel.Item>
-            ))}
-          </Carousel>
-          <Link className="view-more-btn btn btn-primary update-image-btn mt-3" to="./imageSlider">
-            Update Images 
+          <ImageSliderPreview images={sliderImages} />
+          <Link
+            className="view-more-btn btn btn-primary update-image-btn mt-3"
+            to="./imageSlider"
+          >
+            Update Images
           </Link>
         </Col>
       </Row>

@@ -4,11 +4,12 @@ const { createAdminActivity } = require("../../../Utils/activityUtils");
 const path = require("path");
 const sequelize = require("../../../database");
 const { baseDir } = require("../../../importantInfo");
-const fs=require('fs');
+const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const { saveFile } = require("../../../Utils/fileHandler");
 
 exports.addImage = async (req, res, next) => {
+  console.log("IS IMGA");
   let transaction;
   const admin = req.admin;
   try {
@@ -37,7 +38,7 @@ exports.addImage = async (req, res, next) => {
     // Save the file and get the URL
 
     transaction = await sequelize.transaction();
-    
+
     // Save data to the database
     const imageSlider = await ImageSlider.create(
       {
@@ -179,9 +180,9 @@ exports.getAllImages = async (req, res, next) => {
     // Build query filter
     const where = {};
     if (type) where.type = type;
-    if (isActive !== undefined) where.isActive = isActive === "true";
+    if (isActive !== undefined && isActive != null) where.isActive = isActive;
 
-    if (gameId !== undefined) where.GameId = gameId;
+    if (gameId !== undefined && gameId !== null) where.GameId = gameId;
 
     // Fetch all images with optional filters
     const images = await ImageSlider.findAll({ where });
