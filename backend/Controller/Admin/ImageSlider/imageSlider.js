@@ -9,7 +9,7 @@ const { v4: uuidv4 } = require("uuid");
 const { saveFile } = require("../../../Utils/fileHandler");
 
 exports.addImage = async (req, res, next) => {
-  console.log("IS IMGA");
+  
   let transaction;
   const admin = req.admin;
   try {
