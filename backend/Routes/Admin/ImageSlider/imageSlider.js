@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post(
   "/addImage",
-  fileHandlerRouter("image", 0.5),
+  fileHandlerRouter("image", 5),
   imageSlidersController.addImage
 );
 router.post("/deleteImage", imageSlidersController.deleteImage);

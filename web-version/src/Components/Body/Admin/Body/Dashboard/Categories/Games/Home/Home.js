@@ -1,30 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card } from "react-bootstrap";
+import { Container, Row, Col, Card, Spinner } from "react-bootstrap";
 import "./Home.css"; // Custom CSS for styling
 import { Link } from "react-router-dom";
 import { ImageSliderPreview } from "../../Utils/Utils";
+import { fetchImagesHandler } from "../../apiImageHandler";
+import { useAlert } from "../../../../../../../UI/Alert/AlertContext";
 
 export const HomePage = () => {
-  const [sliderImages, setSliderImages] = useState([
-    {
-      image: "/Assets/Dashboard/Category/BattleRoyal/BGMI/bgmi.jpg",
-      title: "something else",
-    },
-    {
-      image: "/Assets/Dashboard/Category/BattleRoyal/BGMI/bgmi.jpg",
-      title: "something else",
-    },
-    {
-      image: "/Assets/Dashboard/Category/BattleRoyal/BGMI/bgmi.jpg",
-      title: "something else",
-    },
-  ]);
+  const [images, setImages] = useState([]);
+  const [isImageLoading, setIsImageLoading] = useState(false);
+  const { showAlert } = useAlert();
 
   useEffect(() => {
-    if (false) {
-      setSliderImages(null);
-    }
+    const fetchImages = async () => {
+      setIsImageLoading(true); // Start loading spinner
+      const response = await fetchImagesHandler(
+        "bgmi",
+        true,
+        null,
+        setIsImageLoading,
+        showAlert
+      );
+
+      if (response) {
+        setImages(response.data);
+      }
+      setIsImageLoading(false); // Stop loading spinner
+    };
+    fetchImages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   const dashboardData = [
     {
       title: "Ongoing Matches",
@@ -51,10 +57,24 @@ export const HomePage = () => {
       {/* Image Slider Section */}
       <Row className="mb-4">
         <Col>
-          <ImageSliderPreview images={sliderImages} />
+          {isImageLoading ? (
+            <div className="text-center">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </div>
+          ) : (
+            <ImageSliderPreview images={images} />
+          )}
+        </Col>
+      </Row>
+
+      {/* Update Images Link */}
+      <Row className="mb-5 text-center">
+        <Col>
           <Link
-            className="view-more-btn btn btn-primary update-image-btn mt-3"
             to="./imageSlider"
+            className="btn btn-primary update-images-link"
           >
             Update Images
           </Link>

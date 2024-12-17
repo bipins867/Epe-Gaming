@@ -52,11 +52,11 @@ export const ImageSliderPage = () => {
 
   const handleUpload = async () => {
     if (selectedImage) {
-      const formData =new FormData();
+      const formData = new FormData();
 
       formData.append("image", selectedImage);
       formData.append("title", "Image");
-      formData.append("type","*");
+      formData.append("type", "*");
 
       const response = await addImagesHandler(
         formData,
@@ -83,7 +83,6 @@ export const ImageSliderPage = () => {
           showAlert
         );
 
-        console.log(response.data);
         if (response) {
           setImages(response.data);
         }
