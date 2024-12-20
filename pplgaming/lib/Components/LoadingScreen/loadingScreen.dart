@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:pplgaming/Utils/apiRequestHandler.dart';
 import 'package:pplgaming/Utils/appConfig.dart';
 
 class LoadingScreenPage extends StatefulWidget {
@@ -61,10 +62,16 @@ class _LoadingScreenPageState extends State<LoadingScreenPage>
     await Future.delayed(const Duration(seconds: 2));
 
     // Navigate to the next screen after the splash
-    _changeScreen();
+    await _changeScreen();
   }
 
-  _changeScreen() {
+  _changeScreen() async {
+    dynamic cond = await _fetchAppInfo();
+
+    if (cond != null) {
+      return;
+    }
+
     String path = '/login';
 
     if (AppConfig.authToken != null) {
@@ -73,6 +80,35 @@ class _LoadingScreenPageState extends State<LoadingScreenPage>
 
     Navigator.pushNamedAndRemoveUntil(
         context, path, (Route<dynamic> route) => false);
+  }
+
+  _fetchAppInfo() async {
+    try {
+      dynamic response = await getRequest(
+        'app/getAppInfo',
+      );
+
+      if (response['statusCode'] == 200) {
+        String version = response['body']['version'];
+
+        if (AppConfig.appVersion != version) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/updateAvailable', (Route<dynamic> route) => false);
+
+          return true;
+        }
+      } else {
+        handleErrors(context, response);
+      }
+    } catch (e) {
+      // Handle exceptions
+      String error = 'System Error: ${e.toString()}';
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error)),
+      );
+      CustomLogger.logError(error);
+    } finally {}
   }
 
   @override
