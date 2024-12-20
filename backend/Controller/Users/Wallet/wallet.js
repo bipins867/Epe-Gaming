@@ -1,9 +1,14 @@
 const sequelize = require("../../../database");
+const { MINIMUM_AMOUNT_IN_ACCOUNT } = require("../../../importantInfo");
+const User = require("../../../Models/User/users");
 const BankDetails = require("../../../Models/Wallet/bankDetails");
 const Kyc = require("../../../Models/Wallet/kyc");
+const Referrals = require("../../../Models/Wallet/referrals");
+const Transaction = require("../../../Models/Wallet/transaction");
 const TransactionHistory = require("../../../Models/Wallet/transactionHistory");
 const Wallet = require("../../../Models/Wallet/wallet");
 const { createUserActivity } = require("../../../Utils/activityUtils");
+
 
 exports.getWalletInfo = async (req, res) => {
   try {
@@ -65,7 +70,7 @@ exports.getTransactionHistory = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Transaction history retrieved successfully",
-       transactions,
+      transactions,
     });
   } catch (error) {
     console.error("Error fetching transaction history:", error);
@@ -76,3 +81,4 @@ exports.getTransactionHistory = async (req, res) => {
     });
   }
 };
+

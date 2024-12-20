@@ -10,6 +10,55 @@ const { generateRandomId } = require("../../../Utils/utils");
 const sequelize = require("../../../database");
 const { Op } = require("sequelize");
 
+exports.getEventCountInfo = async (req, res, next) => {
+  try {
+    const { gameId } = req.body;
+    if (!gameId) {
+      return res.status(404).json({ message: "GameId not found!" });
+    }
+    // Get the current date and time
+    const currentTime = new Date();
+
+    // Count Ongoing Events
+    const ongoingEventsCount = await Events.count({
+      where: {
+        GameId: gameId,
+        startTime: { [Op.lte]: currentTime }, // Event start time has passed
+        status: { [Op.or]: ["upcoming", "inReview", "rescheduled"] }, // Status is either 'upcoming' or 'inReview'
+      },
+    });
+
+    // Count Past Events
+    const pastEventsCount = await Events.count({
+      where: {
+        GameId: gameId,
+        status: { [Op.or]: ["declared", "cancelled"] }, // Status is either 'declared' or 'cancelled'
+      },
+    });
+
+    // Count Upcoming Events
+    const upcomingEventsCount = await Events.count({
+      where: {
+        GameId: gameId,
+        status: { [Op.or]: ["upcoming", "rescheduled"] }, // Status is either 'upcoming' or 'rescheduled'
+        startTime: { [Op.gt]: currentTime }, // Event start time is in the future
+      },
+    });
+
+    // Send the response with all counts
+    res.status(200).json({
+      ongoing: ongoingEventsCount,
+      past: pastEventsCount,
+      upcoming: upcomingEventsCount,
+    });
+  } catch (error) {
+    console.error("Error fetching event counts: ", error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while fetching event counts." });
+  }
+};
+
 exports.getEventsList = async (req, res, next) => {
   const { GameId } = req.body;
 

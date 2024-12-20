@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  userType: "user", //Admin can also
+  userType: "admin", //Admin can also
 };
 
 export const commonInfoSlice = createSlice({

@@ -5,10 +5,17 @@ import { Link } from "react-router-dom";
 import { ImageSliderPreview } from "../../Utils/Utils";
 import { fetchImagesHandler } from "../../apiImageHandler";
 import { useAlert } from "../../../../../../../UI/Alert/AlertContext";
+import { getEventsCountHandler } from "../apiHandler";
 
 export const HomePage = () => {
   const [images, setImages] = useState([]);
   const [isImageLoading, setIsImageLoading] = useState(false);
+  const [isDataLoading, setIsDataLoading] = useState(false);
+  const [evetCount, setEventCount] = useState({
+    ongoing: 0,
+    upcoming: 0,
+    past: 0,
+  });
   const { showAlert } = useAlert();
 
   useEffect(() => {
@@ -28,25 +35,39 @@ export const HomePage = () => {
       setIsImageLoading(false); // Stop loading spinner
     };
     fetchImages();
+
+    const fetchEventDetails = async () => {
+      const response = await getEventsCountHandler(
+        1,
+        setIsDataLoading,
+        showAlert
+      );
+
+      if (response) {
+        setEventCount(response);
+      }
+    };
+
+    fetchEventDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const dashboardData = [
     {
       title: "Ongoing Matches",
-      count: 12,
+      count: evetCount.ongoing,
       icon: "fa-solid fa-gamepad",
       bgClass: "ongoing-bg",
     },
     {
       title: "Past Matches",
-      count: 45,
+      count: evetCount.past,
       icon: "fa-solid fa-history",
       bgClass: "past-bg",
     },
     {
       title: "Upcoming Matches",
-      count: 8,
+      count: evetCount.upcoming,
       icon: "fa-solid fa-clock",
       bgClass: "upcoming-bg",
     },
@@ -81,31 +102,40 @@ export const HomePage = () => {
         </Col>
       </Row>
 
-      {/* Dashboard Section */}
-      <Row className="dashboard-section mb-4">
-        {dashboardData.map((item, index) => (
-          <Col key={index} md={4} sm={6} className="mb-4">
-            <Card className={`dashboard-card ${item.bgClass} text-white`}>
-              <Card.Body className="d-flex align-items-center">
-                <i className={`${item.icon} dashboard-icon`}></i>
-                <div className="dashboard-content ms-3">
-                  <h4 className="dashboard-count">{item.count}</h4>
-                  <p className="dashboard-title">{item.title}</p>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+      {isDataLoading ? (
+        <div className="text-center">
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
+      ) : (
+        <>
+          <Row className="dashboard-section mb-4">
+            {dashboardData.map((item, index) => (
+              <Col key={index} md={4} sm={6} className="mb-4">
+                <Card className={`dashboard-card ${item.bgClass} text-white`}>
+                  <Card.Body className="d-flex align-items-center">
+                    <i className={`${item.icon} dashboard-icon`}></i>
+                    <div className="dashboard-content ms-3">
+                      <h4 className="dashboard-count">{item.count}</h4>
+                      <p className="dashboard-title">{item.title}</p>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
 
-      {/* View More Events Link */}
-      <Row className="justify-content-center">
-        <Col md="auto">
-          <Link className="view-more-btn btn btn-primary" to="./events">
-            View More Events
-          </Link>
-        </Col>
-      </Row>
+          {/* View More Events Link */}
+          <Row className="justify-content-center">
+            <Col md="auto">
+              <Link className="view-more-btn btn btn-primary" to="./events">
+                View More Events
+              </Link>
+            </Col>
+          </Row>
+        </>
+      )}
     </Container>
   );
 };

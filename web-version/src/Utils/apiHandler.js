@@ -2,6 +2,7 @@ import axios from "axios";
 import { baseUrl } from "./config";
 import { Store } from "../Store";
 import { setUserAuthToken, userLogOut } from "../Store/User/auth";
+import { adminLogOut, setAdminAuthToken } from "../Store/Admin/auth";
 
 export const apiRequest = async (url, obj = {}, token = "", type = "get") => {
   const completeUrl = `${baseUrl}${url}`;
@@ -92,7 +93,8 @@ export const handleErrors = async (err, showAlert) => {
       Store.dispatch(setUserAuthToken(null));
       //window.location='/user/auth/login'
     } else if (userType === "admin") {
-      //Admin Dispact options will be here
+      Store.dispatch(adminLogOut());
+      Store.dispatch(setAdminAuthToken(null));
     } else {
       showAlert(
         "error",

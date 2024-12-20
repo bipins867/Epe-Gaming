@@ -4,6 +4,7 @@ const eventController = require("../../../Controller/Admin/Event/events");
 
 const router = express.Router();
 
+router.post('/getEventsCount',eventController.getEventCountInfo)
 router.post("/getEvents", eventController.getEventsList);
 router.post("/createEvents", eventController.createEvent);
 router.post("/updateRoomCredentials", eventController.updateRoomCredentials);

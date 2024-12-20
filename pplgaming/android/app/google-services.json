@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "40362874341",
+    "project_id": "epe-gaming",
+    "storage_bucket": "epe-gaming.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:40362874341:android:a759472dadd952be378b0c",
+        "android_client_info": {
+          "package_name": "com.pplgaming.pplgaming"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDKsGKZAFQYk20ZLU2k_upO4fgIV_eLleA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -14,6 +14,7 @@ import { useAlert } from "../../../../UI/Alert/AlertContext";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { adminLogin, setAdminAuthToken } from "../../../../../Store/Admin/auth";
+import { setAdminType } from "../../../../../Store/CommonInfo/commonInfo";
 
 export const AdminLoginPage = () => {
   const [userId, setUserId] = useState("");
@@ -39,6 +40,7 @@ export const AdminLoginPage = () => {
       localStorage.setItem("adminToken", token);
       dispatch(adminLogin());
       dispatch(setAdminAuthToken(token));
+      dispatch(setAdminType())
 
       navigate("/admin");
     }

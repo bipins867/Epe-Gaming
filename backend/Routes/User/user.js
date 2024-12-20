@@ -11,12 +11,14 @@ const authRouter=require('./Auth/auth');
 const infoRouter=require('./Info/info')
 const notificationRouter=require('./Notifications/notifications')
 const walletRouter=require('./Wallet/wallet')
+const paymentRouter=require('./Payment/payment')
 
 const { userAuthentication } = require('../../Middleware/auth')
 
 
 const router=express.Router();
 
+router.use('/payment',paymentRouter);
 router.use('/wallet',userAuthentication,walletRouter)
 router.use('/notifications',userAuthentication,notificationRouter)
 router.use('/info',userAuthentication,infoRouter)
