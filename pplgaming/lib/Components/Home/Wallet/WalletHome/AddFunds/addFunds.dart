@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pplgaming/Utils/appConfig.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Addfunds extends StatefulWidget {
   const Addfunds({super.key});
@@ -12,8 +14,13 @@ class _AddfundsState extends State<Addfunds> {
   // Function handler for Add Funds
   Future<void> _handleAddFunds() async {
     String amount = _amountController.text;
-    // Add logic to handle add funds request here
-    print('Add Coin: $amount');
+    Uri url = Uri.parse("https://pplgaming.com");
+    if (await canLaunchUrl(url)) {
+      CustomLogger.logInfo("Url launched");
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      CustomLogger.logError("Can't launch the url!");
+    }
   }
 
   @override

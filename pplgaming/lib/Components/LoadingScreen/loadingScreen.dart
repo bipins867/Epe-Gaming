@@ -1,5 +1,6 @@
-import 'package:pplgaming/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:pplgaming/Utils/appConfig.dart';
 
 class LoadingScreenPage extends StatefulWidget {
   const LoadingScreenPage({super.key});
@@ -13,6 +14,7 @@ class _LoadingScreenPageState extends State<LoadingScreenPage>
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
   bool showFirstImage = true;
+  final Connectivity _connectivity = Connectivity();
 
   @override
   void initState() {
@@ -24,7 +26,23 @@ class _LoadingScreenPageState extends State<LoadingScreenPage>
     _fadeAnimation =
         CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut);
 
-    _startAnimationSequence();
+    _checkConnectivityAndStartAnimation();
+  }
+
+  Future<void> _checkConnectivityAndStartAnimation() async {
+    final List<ConnectivityResult> result =
+        await _connectivity.checkConnectivity();
+
+    if (!(result.contains(ConnectivityResult.mobile) ||
+        result.contains(ConnectivityResult.wifi) ||
+        result.contains(ConnectivityResult.ethernet))) {
+      // Redirect to noInternet page if there's no connection
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/noInternet', (Route<dynamic> route) => false);
+    } else {
+      // Start animation sequence if internet is available
+      _startAnimationSequence();
+    }
   }
 
   void _startAnimationSequence() async {

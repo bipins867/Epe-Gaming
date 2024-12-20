@@ -1,5 +1,6 @@
 import 'package:pplgaming/Components/Auth/Login/login.dart';
 import 'package:pplgaming/Components/LoadingScreen/loadingScreen.dart';
+import 'package:pplgaming/Components/Others/noInternet.dart';
 import 'package:pplgaming/Components/base.dart';
 import 'package:pplgaming/Store/baseStoreProvider.dart';
 import 'package:pplgaming/Utils/appConfig.dart';
@@ -106,6 +107,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => BaseScreen(), // Home route
         '/login': (context) => LoginPage(), // Login route
         '/splash': (context) => LoadingScreenPage(), // Splash route
+        '/noInternet': (context) => NoInternetPage(),
       },
     );
   }
