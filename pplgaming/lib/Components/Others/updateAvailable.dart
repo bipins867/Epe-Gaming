@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UpdateAvailablePage extends StatelessWidget {
   @override
@@ -34,8 +35,11 @@ class UpdateAvailablePage extends StatelessWidget {
             ),
             SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () {
-                // Logic to handle the update action (e.g., download the update)
+              onPressed: () async {
+                Uri url = Uri.parse("https://pplgaming.com");
+                if (await canLaunchUrl(url)) {
+                  await launchUrl(url, mode: LaunchMode.externalApplication);
+                }
               },
               child: Text("Download Update"),
               style: ElevatedButton.styleFrom(

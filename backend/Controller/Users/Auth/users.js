@@ -53,7 +53,7 @@ exports.userSignUp = async (req, res, next) => {
       // Create a new ReferredUser associated with the valid referral
       await ReferredUser.create(
         {
-          candidateId: newCustomerId,
+          customerId: newCustomerId,
           name,
           status: "pending",
           dateOfJoining: new Date(),
@@ -323,9 +323,10 @@ exports.userResendOtp = async (req, res, next) => {
     const newOtp = crypto.randomInt(100000, 999999).toString();
     otpStore[phone] = { otp: newOtp, count: otpStore[phone].count - 1 };
 
-    if (otpType === "forgetCandidateId" || otpType === "resetPassword") {
-      sendOtpAccountVerifyMessage(phone, newOtp);
-    } else if (otpType === "login") {
+    if (process.env.NODE_ENV === "testing") {
+      console.log(otpStore);
+    }
+    if (otpType === "login") {
       sendLoginOtpMessage(phone, newOtp);
     } else if (otpType === "signUp") {
       sendSignUpOtpMessage(phone, newOtp);

@@ -5,6 +5,7 @@ import 'package:pplgaming/Components/Profile/NavigationItems/BankDetails/bankDet
 import 'package:pplgaming/Components/Profile/NavigationItems/Kyc/kyc.dart';
 import 'package:pplgaming/Components/Profile/NavigationItems/Legality/legalityItems.dart';
 import 'package:pplgaming/Components/Profile/NavigationItems/MyProfile/myProfile.dart';
+import 'package:pplgaming/Components/Profile/NavigationItems/Refer/referral.dart';
 import 'package:pplgaming/Store/baseStoreProvider.dart';
 import 'package:pplgaming/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
@@ -111,8 +112,8 @@ class NavigationItems extends StatelessWidget {
             "Share App",
             const Icon(Icons.share, color: Colors.red),
             onClickFun: () {
-              Share.share(
-                'Check out the Pro Play League app for tournaments and competitions! Download here: https://example.com',
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => ReferralPage()),
               );
             },
           ),

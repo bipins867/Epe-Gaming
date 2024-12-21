@@ -1,3 +1,4 @@
+import 'package:pplgaming/Components/Auth/OtpVerify/otpVerify.dart';
 import 'package:pplgaming/Components/Auth/SignUp/signUp.dart';
 import 'package:pplgaming/Utils/alertHandler.dart';
 import 'package:pplgaming/Utils/apiRequestHandler.dart';
@@ -44,17 +45,25 @@ class _LoginPageState extends State<LoginPage> {
         "phone": _mobileController.text,
         "password": _passwordController.text,
         "fcmToken": AppConfig.fcmToken,
+        "otpType": "login",
       };
+      String url = 'user/auth/login';
       dynamic response = await postRequest(
-        'user/auth/login',
+        url,
         body,
       );
 
       if (response['statusCode'] == 200) {
-        AppConfig.setLocalStorageItem('authToken', response['body']['token']);
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          '/',
-          (Route<dynamic> route) => false,
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => OtpVerifyPage(
+                    otpType: "login",
+                    url: url,
+                    phone: _mobileController.text,
+                    otpAuthenticationToken: response['body']
+                        ['otpAuthenticationToken'],
+                  )),
         );
       } else {
         handleErrors(context, response);

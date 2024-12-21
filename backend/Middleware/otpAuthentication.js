@@ -1,5 +1,6 @@
 const {
   otpStore,
+  sendOtpAccountVerifyMessage,
   sendLoginOtpMessage,
   sendSignUpOtpMessage,
 } = require("../Utils/MailService");
@@ -31,7 +32,7 @@ exports.middlewareSendOtp = async (req, res, next) => {
 
       const phoneOtp = crypto.randomInt(100000, 999999).toString();
 
-      otpStore[phone] = { otp:phoneOtp,count:3 };
+      otpStore[phone] = { otp:phoneOtp,count:6 };
 
       setTimeout(() => {
         delete otpStore[phone];

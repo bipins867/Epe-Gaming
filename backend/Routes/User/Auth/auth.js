@@ -2,15 +2,18 @@ const express = require("express");
 const {
   initialLoginUserAuthentication,
   initialSignuUserAuthentication,
-  initialResetPasswordUserAuthentication,
   userAuthentication,
 } = require("../../../Middleware/auth");
-const { validateLogin, validateSignUp, validateChangePassword, checkValidationErrors } = require("../../../Middleware/validator");
-const { middlewareSendOtp, middlewareVerifyOtp } = require("../../../Middleware/otpAuthentication");
-const userAuthenticationController=require('../../../Controller/Users/Auth/users')
+const {
+  validateLogin,
+  validateSignUp,
+  validateChangePassword,
+  checkValidationErrors,
+} = require("../../../Middleware/validator");
 
 
-
+const userAuthenticationController = require("../../../Controller/Users/Auth/users");
+const { middlewareSendOtp,middlewareVerifyOtp } = require("../../../Middleware/otpAuthentication");
 
 //----------Changes take time ---
 
@@ -18,22 +21,26 @@ const router = express.Router();
 
 router.post(
   "/login",
-  // initialLoginUserAuthentication,
-  // middlewareSendOtp,
-  // middlewareVerifyOtp,
+  initialLoginUserAuthentication,
+  middlewareSendOtp,
+  middlewareVerifyOtp,
   userAuthenticationController.userLogin
 );
 router.post(
   "/signUp",
   validateSignUp,
   checkValidationErrors,
-  // initialSignuUserAuthentication,
-  // middlewareSendOtp,
-  // middlewareVerifyOtp,
+  initialSignuUserAuthentication,
+  middlewareSendOtp,
+  middlewareVerifyOtp,
   userAuthenticationController.userSignUp
 );
 
-router.post('/verify',userAuthentication,userAuthenticationController.verifyUser);
+router.post(
+  "/verify",
+  userAuthentication,
+  userAuthenticationController.verifyUser
+);
 
 router.post(
   "/changePassword",

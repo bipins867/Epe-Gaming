@@ -17,7 +17,8 @@ class UserProfileApiHandler {
       if (response['statusCode'] == 200) {
         Map<String, dynamic> responseBody = {
           "userProfile": response['body']['profileInfo'],
-          "statusInfo": response['body']['statusInfo']
+          "statusInfo": response['body']['statusInfo'],
+          "referralInfo": response['body']['referralInfo']
         };
 
         // Use the captured provider

@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../Models/User/users");
 const Admin = require("../Models/User/admins");
+const Referrals = require("../Models/Wallet/referrals");
 
 
 // Middleware for login user authentication
@@ -11,7 +12,9 @@ exports.initialLoginUserAuthentication = async (req, res, next) => {
     if (otpAuthenticationToken) {
       return next();
     }
-
+    if(!phone){
+      return res.status(404).json({error:"Invalid Phone number!"});
+    }
     // Check if the user exists based on phone number
     const user = await User.findOne({ where: { phone } });
 
@@ -28,13 +31,7 @@ exports.initialLoginUserAuthentication = async (req, res, next) => {
         .json({ success: false, message: "User account is blocked" });
     }
 
-    // Check if the user account is active
-    if (!user.isActive) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User account is inactive" });
-    }
-
+    
     // Proceed to next middleware or controller if checks are passed
     req.user = user; // Add user to request for further usage if necessary
     next();
@@ -126,7 +123,7 @@ exports.initialResetPasswordUserAuthentication = async (req, res, next) => {
 
 // Middleware for signup user authentication
 exports.initialSignuUserAuthentication = async (req, res, next) => {
-  const { phone, email, otpAuthenticationToken } = req.body;
+  const { phone, email, otpAuthenticationToken,byReferallId } = req.body;
 
   try {
     if (otpAuthenticationToken) {
@@ -150,6 +147,19 @@ exports.initialSignuUserAuthentication = async (req, res, next) => {
           .status(409)
           .json({ success: false, message: "Email already registered" });
       }
+    }
+
+    if(byReferallId && byReferallId.trim() !== ""){
+      const referral = await Referrals.findOne({
+        where: { referralId: byReferallId },
+        // transaction,
+      });
+
+      if (!referral) {
+        // await transaction.rollback(); // Rollback transaction
+        return res.status(400).send({ message: "Invalid referral ID." });
+      }
+
     }
 
     // Proceed to next middleware or controller if checks are passed

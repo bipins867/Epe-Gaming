@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pplgaming/Components/Auth/OtpVerify/otpVerify.dart';
 import 'package:pplgaming/Utils/alertHandler.dart';
 import 'package:pplgaming/Utils/apiRequestHandler.dart';
 import 'package:pplgaming/Utils/appConfig.dart';
@@ -18,12 +17,10 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
-  final TextEditingController _referralController = TextEditingController();
 
   bool _isLoading = false;
-  bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
-  bool _hasReferral = false; // Tracks if the referral field is visible
+  bool _isPasswordVisible = false; // Track password visibility
+  bool _isConfirmPasswordVisible = false; // Track confirm password visibility
 
   AppConfig? appConfig;
 
@@ -55,41 +52,30 @@ class _SignUpPageState extends State<SignUpPage> {
           type: "Error!");
     }
 
-    if (_referralController.text.isNotEmpty) {
-      _hasReferral = true;
-    }
-
     setState(() {
       _isLoading = true;
     });
 
     try {
       Map<String, String> body = {
-        "otpType": "signUp",
         "name": _nameController.text,
         "email": _emailController.text,
         "phone": _phoneController.text,
-        "password": _passwordController.text,
-        if (_hasReferral) "byReferallId": _referralController.text
+        "password": _passwordController.text
       };
-      String url = 'user/auth/signUp';
 
       dynamic response = await postRequest(
-        url,
+        'user/auth/signUp',
         body,
       );
 
       if (response['statusCode'] == 200) {
-        Navigator.push(
+        showInfoAlertDialog(
           context,
-          MaterialPageRoute(
-              builder: (context) => OtpVerifyPage(
-                    otpType: "signUp",
-                    url: url,
-                    phone: _phoneController.text,
-                    otpAuthenticationToken: response['body']
-                        ['otpAuthenticationToken'],
-                  )),
+          "SignUp Successful!",
+          callbackFunction: () {
+            Navigator.pop(context);
+          },
         );
       } else {
         handleErrors(context, response);
@@ -99,6 +85,7 @@ class _SignUpPageState extends State<SignUpPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error)),
       );
+      CustomLogger.logError(error);
     } finally {
       setState(() {
         _isLoading = false;
@@ -112,15 +99,17 @@ class _SignUpPageState extends State<SignUpPage> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/Background/bgmi-event.jpg'),
+            image: AssetImage(
+                'assets/Background/bgmi-event.jpg'), // Replace with your image path
             fit: BoxFit.cover,
           ),
         ),
         child: Center(
           child: SingleChildScrollView(
+            // Makes the entire widget scrollable
             padding: const EdgeInsets.all(16.0),
             child: Card(
-              elevation: 10,
+              elevation: 8,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.0),
               ),
@@ -128,13 +117,14 @@ class _SignUpPageState extends State<SignUpPage> {
                 padding: const EdgeInsets.all(24.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CircleAvatar(
                       radius: 50,
                       backgroundImage:
                           AssetImage('assets/Home/ppl-logo-half.png'),
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
                     TextField(
                       controller: _nameController,
                       decoration: InputDecoration(
@@ -142,7 +132,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         border: OutlineInputBorder(),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     TextField(
                       controller: _emailController,
                       decoration: InputDecoration(
@@ -151,7 +141,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       keyboardType: TextInputType.emailAddress,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     TextField(
                       controller: _phoneController,
                       decoration: InputDecoration(
@@ -160,7 +150,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       keyboardType: TextInputType.phone,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
+                    // Password Field with Eye Icon
                     TextField(
                       controller: _passwordController,
                       decoration: InputDecoration(
@@ -181,7 +172,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       obscureText: !_isPasswordVisible,
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
+                    // Confirm Password Field with Eye Icon
                     TextField(
                       controller: _confirmPasswordController,
                       decoration: InputDecoration(
@@ -203,31 +195,23 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       obscureText: !_isConfirmPasswordVisible,
                     ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: _referralController,
-                      decoration: InputDecoration(
-                        labelText: 'Referral Id (Optional)',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: _isLoading ? null : signUpHandler,
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
+                        padding: EdgeInsets.symmetric(
                             vertical: 12.0, horizontal: 40.0),
                       ),
                       child: _isLoading
                           ? CircularProgressIndicator(color: Colors.white)
-                          : const Text('Sign Up'),
+                          : Text('Sign Up'),
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const Text("Already have an account? Login"),
+                      child: Text("Already have an account? Login"),
                     ),
                   ],
                 ),
