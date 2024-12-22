@@ -23,8 +23,6 @@ class ReferralPage extends StatelessWidget {
             ? userProfileInfo['referralInfo']
             : null;
 
-    print(referralInfo);
-
     String referralId =
         referralInfo != null && referralInfo.containsKey('referralId')
             ? referralInfo['referralId']

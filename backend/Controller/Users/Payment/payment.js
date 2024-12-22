@@ -5,10 +5,12 @@ const Referrals = require("../../../Models/Wallet/referrals");
 const Transaction = require("../../../Models/Wallet/transaction");
 const TransactionHistory = require("../../../Models/Wallet/transactionHistory");
 const Wallet = require("../../../Models/Wallet/wallet");
+const { savePaymentRequest, verifyPaymentRequest } = require("./phonePayUtils");
+const jwt = require("jsonwebtoken");
 
 exports.addFunds = async (req, res, next) => {
   const { amount } = req.body; // Get amount from request body
-  const { candidateId, phone, id: userId } = req.user; // Get candidate ID, mobile, and userId from req.user
+  const { customerId, phone, id: userId } = req.user; // Get candidate ID, mobile, and userId from req.user
 
   // Start a Sequelize transaction
   let t;
@@ -42,7 +44,7 @@ exports.addFunds = async (req, res, next) => {
 
     // Call savePaymentRequest function
     const { paymentResult, merchantTransactionId, merchantUserId } =
-      await savePaymentRequest(candidateId, phone, amount);
+      await savePaymentRequest(customerId, phone, amount);
 
     if (
       paymentResult &&
@@ -85,8 +87,16 @@ exports.addFunds = async (req, res, next) => {
       // Commit the transaction if all operations succeed
       await t.commit();
 
+      const expiresIn = "5m";
+      const token = jwt.sign(
+        { redirectInfo, transactionId: merchantTransactionId, amount },
+        process.env.JWT_SECRET_KEY,
+        {
+          expiresIn,
+        }
+      );
       // Return the redirect URL to the user
-      return res.status(200).json({ redirectInfo });
+      return res.status(200).json({ redirectInfo, token });
     } else {
       // If savePaymentRequest fails, rollback the transaction
       //await t.rollback();
@@ -137,7 +147,7 @@ exports.verifyPaymentStatus = async (req, res, next) => {
 
     // Get the user's Wallet and update the balance
     const wallet = await Wallet.findOne({
-      where: { UserId: user.id },
+      where: { UserId: transaction.UserId },
     });
 
     if (!wallet) {
@@ -163,7 +173,7 @@ exports.verifyPaymentStatus = async (req, res, next) => {
         await wallet.save({ transaction: t });
 
         // Referral processing
-        const user = await User.findByPk(req.user.id);
+        const user = await User.findByPk(transaction.UserId);
         if (user.byReferallId && !user.isByReferralUsed) {
           const referral = await Referrals.findOne({
             where: { referralId: user.byReferallId },
@@ -234,7 +244,7 @@ exports.verifyPaymentStatus = async (req, res, next) => {
           credit: transaction.amount,
           debit: 0,
           balance: newBalance,
-          UserId: req.user.id,
+          UserId: transaction.UserId,
         },
         { transaction: t }
       );

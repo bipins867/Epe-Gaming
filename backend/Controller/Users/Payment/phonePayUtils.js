@@ -53,13 +53,13 @@ exports.savePaymentRequest = async function savePaymentRequest(
     saltKey = process.env.PHONE_PAY_TEST_SALT_KEY;
     merchantId = process.env.PHONE_PAY_TEST_MERCHANT_ID;
     saltIndex = process.env.PHONE_PAY_TEST_SALT_INDEX;
-    baseUrl = `http://localhost:4000`;
+    baseUrl = `http://localhost:8181`;
   } else {
     apiUrl = process.env.PHONE_PAY_PRODUCTION_URL;
     saltKey = process.env.PHONE_PAY_PRODUCTION_SALT_KEY;
     merchantId = process.env.PHONE_PAY_PRODUCTION_MERCHANT_ID;
     saltIndex = process.env.PHONE_PAY_PRODUCTION_SALT_INDEX;
-    baseUrl = "https://pplgaming.com";
+    baseUrl = "https://epeindia.in";
   }
 
   merchantUserId = generateMerchantUserId();
@@ -69,7 +69,7 @@ exports.savePaymentRequest = async function savePaymentRequest(
     merchantUserId,
     merchantTransactionId,
     amount: amount * 100,
-    redirectUrl: `${baseUrl}/payment/verifyTransaction/${merchantTransactionId}`,
+    redirectUrl: `${baseUrl}/paymentStatus/${merchantTransactionId}`,
     redirectMode: "REDIRECT",
     callbackUrl: `${baseUrl}/payment/callbackPaymentInfo/${merchantTransactionId}`,
     mobileNumber: mobile,

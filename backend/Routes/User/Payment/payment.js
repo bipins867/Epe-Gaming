@@ -8,7 +8,7 @@ const { userAuthentication } = require("../../../Middleware/auth");
 
 const router = express.Router();
 
-router.get('/addPayment',userAuthentication,paymentController.addFunds)
-router.get('/verifyPayment',paymentController.verifyPaymentStatus)
+router.post('/addPayment',userAuthentication,paymentController.addFunds)
+router.post('/verifyPayment',paymentController.verifyPaymentStatus)
 
 module.exports = router;

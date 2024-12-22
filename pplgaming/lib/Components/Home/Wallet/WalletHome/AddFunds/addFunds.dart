@@ -1,4 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:pplgaming/Utils/alertHandler.dart';
+import 'package:pplgaming/Utils/apiRequestHandler.dart';
 import 'package:pplgaming/Utils/appConfig.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,13 +18,39 @@ class _AddfundsState extends State<Addfunds> {
   // Function handler for Add Funds
   Future<void> _handleAddFunds() async {
     String amount = _amountController.text;
-    Uri url = Uri.parse("https://pplgaming.com");
-    if (await canLaunchUrl(url)) {
-      CustomLogger.logInfo("Url launched");
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
-      CustomLogger.logError("Can't launch the url!");
-    }
+    try {
+      dynamic response = await postRequestWithToken(
+          'user/payment/addPayment', {"amount": amount});
+
+      if (response['statusCode'] == 200) {
+        String token = response['body']['token'];
+        String baseUrl = '';
+        if (kDebugMode) {
+          baseUrl = "http://192.168.31.4:8181/transaction/${token}";
+        }
+        Uri url = Uri.parse(baseUrl);
+        if (await canLaunchUrl(url)) {
+          CustomLogger.logInfo("Url launched");
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+        } else {
+          showInfoAlertDialog(context,
+              "Problem in opening the Redirect Url! The url is copied to the clipboard now you can manually paste the url to proceed the transaction!",
+              callbackFunction: () {
+            Clipboard.setData(ClipboardData(text: baseUrl));
+          });
+        }
+      } else {
+        handleErrors(context, response);
+      }
+    } catch (e) {
+      // Handle exceptions
+      String error = 'System Error: ${e.toString()}';
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error)),
+      );
+      CustomLogger.logError(error);
+    } finally {}
   }
 
   @override
