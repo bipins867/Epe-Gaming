@@ -27,6 +27,8 @@ class _AddfundsState extends State<Addfunds> {
         String baseUrl = '';
         if (kDebugMode) {
           baseUrl = "http://192.168.31.4:8181/transaction/${token}";
+        } else {
+          baseUrl = "https://epeindia.in/transaction/${token}";
         }
         Uri url = Uri.parse(baseUrl);
         if (await canLaunchUrl(url)) {
@@ -36,6 +38,7 @@ class _AddfundsState extends State<Addfunds> {
           showInfoAlertDialog(context,
               "Problem in opening the Redirect Url! The url is copied to the clipboard now you can manually paste the url to proceed the transaction!",
               callbackFunction: () {
+            CustomLogger.logInfo(baseUrl);
             Clipboard.setData(ClipboardData(text: baseUrl));
           });
         }

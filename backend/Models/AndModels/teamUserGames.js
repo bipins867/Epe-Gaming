@@ -51,6 +51,19 @@ const TeamUserGames = sequelize.define(
       allowNull: false,
       defaultValue: 0,
     },
+    isChallengeCreated: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
+    playerId: {
+      type: DataTypes.STRING, // Assuming playerId corresponds to User id
+      allowNull: true,
+    },
+    playerName: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   },
   {
     tableName: "teamUserGames",

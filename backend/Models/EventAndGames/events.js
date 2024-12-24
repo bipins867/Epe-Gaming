@@ -57,20 +57,24 @@ const Events = sequelize.define(
       allowNull: true,
     },
     prizePool_1: {
-      type: DataTypes.STRING,
+      type: DataTypes.FLOAT,
       allowNull: true,
+      defaultValue:0
     },
     prizePool_2: {
-      type: DataTypes.STRING,
+      type: DataTypes.FLOAT,
       allowNull: true,
+      defaultValue:0
     },
     prizePool_3: {
-      type: DataTypes.STRING,
+      type: DataTypes.FLOAT,
       allowNull: true,
+      defaultValue:0
     },
     perKill: {
       type: DataTypes.FLOAT,
       allowNull: true,
+      defaultValue:0
     },
     regStartTime:{
       type: DataTypes.DATE,
