@@ -33,8 +33,6 @@ exports.getEventList = async (req, res) => {
     const currentDateTime = new Date();
 
     // Retrieve events and determine if the user has joined each event
-   
-    
 
     const fetchEvents = async (condition) => {
       const events = await Events.findAll({
@@ -47,7 +45,6 @@ exports.getEventList = async (req, res) => {
         },
       });
 
-      
       // Check if the user is joined in each event
       return await Promise.all(
         events.map(async (event) => {
@@ -300,6 +297,8 @@ exports.joinEventPublicTeam = async (req, res) => {
           {
             TeamId: lastTeam.id,
             UserGameId: userGames.id,
+            playerId:userGames.playerId,
+          playerName:userGames.playerName,
             isLeader: false, // Adjust based on business logic
             ...amountMap,
           },
@@ -323,6 +322,8 @@ exports.joinEventPublicTeam = async (req, res) => {
           {
             TeamId: newTeam.id,
             UserGameId: userGames.id,
+            playerId: userGames.playerId,
+            playerName: userGames.playerName,
             isLeader: false, // Adjust based on business logic
             ...amountMap,
           },
@@ -347,6 +348,8 @@ exports.joinEventPublicTeam = async (req, res) => {
         {
           TeamId: newTeam.id,
           UserGameId: userGames.id,
+          playerId: userGames.playerId,
+          playerName: userGames.playerName,
           isLeader: false, // Adjust based on business logic
           ...amountMap,
         },
@@ -460,6 +463,8 @@ exports.joinEventSoloTeam = async (req, res) => {
         {
           TeamId: newTeam.id,
           UserGameId: userGames.id,
+          playerId:userGames.playerId,
+          playerName:userGames.playerName,
           isLeader: true, // Adjust based on your logic
           deposit: amountMap.deposit,
           cashBonus: amountMap.cashBonus,
@@ -472,6 +477,8 @@ exports.joinEventSoloTeam = async (req, res) => {
         {
           TeamId: newTeam.id,
           UserGameId: userGames.id,
+          playerId:userGames.playerId,
+          playerName:userGames.playerName,
           isLeader: true, // Adjust based on your logic
         },
         { transaction: t }
@@ -545,6 +552,8 @@ exports.joinEventPrivateTeam = async (req, res) => {
         {
           TeamId: newTeam.id,
           UserGameId: userGames.id,
+          playerId:userGames.playerId,
+          playerName:userGames.playerName,
           isLeader: true, // Adjust based on your logic
           deposit: amountMap.deposit,
           cashBonus: amountMap.cashBonus,
@@ -557,6 +566,8 @@ exports.joinEventPrivateTeam = async (req, res) => {
         {
           TeamId: newTeam.id,
           UserGameId: userGames.id,
+          playerId:userGames.playerId,
+          playerName:userGames.playerName,
           isLeader: true, // Adjust based on your logic
         },
         { transaction: t }
@@ -688,7 +699,7 @@ exports.createChallengeEvent = async (req, res) => {
         prizePool_1: prizePool_1_calculated,
         regCloseTime,
         startTime,
-        GameId:gameId
+        GameId: gameId,
       },
       { transaction: t }
     );
@@ -699,7 +710,7 @@ exports.createChallengeEvent = async (req, res) => {
         teamId: generateRandomId(), // Generate a random team ID
         EventId: event.id,
         teamNumber: 1,
-        isTeamPublic,
+        isPublic: isTeamPublic,
         isJoinnersPaid,
         isAmountDistributed,
       },
@@ -712,6 +723,14 @@ exports.createChallengeEvent = async (req, res) => {
         TeamId: team.id,
         UserGameId: userGames.id,
         isLeader: true, // The creator is the leader of the team
+      },
+      { transaction: t }
+    );
+
+    await EventUsers.create(
+      {
+        UserId: req.user.id,
+        EventId: event.id,
       },
       { transaction: t }
     );
@@ -770,7 +789,7 @@ function verifyJoinInfo(
       throw Error("Team can't be private");
     }
 
-    if (!isJoinnersPaid) {
+    if (isJoinnersPaid) {
       throw Error("Joinners have to pay here");
     }
 

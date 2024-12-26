@@ -33,28 +33,47 @@ class _CreateEventState extends State<CreateEvent> {
   String? _selectedMap = "TDM (Team Death Match)";
 
   void _pickDateTime() async {
+    DateTime now = DateTime.now();
+    DateTime minimumTime = now.add(Duration(hours: 1)); // Current time + 1 hour
+
+    // Show date picker
     DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      initialDate: minimumTime,
+      firstDate: now,
       lastDate: DateTime(2101),
     );
 
     if (pickedDate != null) {
+      // Show time picker
       TimeOfDay? pickedTime = await showTimePicker(
         context: context,
-        initialTime: TimeOfDay.now(),
+        initialTime: TimeOfDay.fromDateTime(minimumTime),
       );
 
       if (pickedTime != null) {
-        setState(() {
-          _selectedDateTime = DateTime(
-            pickedDate.year,
-            pickedDate.month,
-            pickedDate.day,
-            pickedTime.hour,
-            pickedTime.minute,
+        // Combine picked date and time
+        DateTime pickedDateTime = DateTime(
+          pickedDate.year,
+          pickedDate.month,
+          pickedDate.day,
+          pickedTime.hour,
+          pickedTime.minute,
+        );
+
+        // Validate if picked time is at least 1 hour ahead
+        if (pickedDateTime.isBefore(minimumTime)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content:
+                    Text('Selected time must be at least 1 hour from now')),
           );
+          return;
+        }
+
+        // Update the selected time and text controller
+        setState(() {
+          _selectedDateTime = pickedDateTime;
           _startTimeController.text =
               DateFormat('yyyy-MM-dd HH:mm').format(_selectedDateTime!);
         });
@@ -95,6 +114,9 @@ class _CreateEventState extends State<CreateEvent> {
           squadType: _selectedSquadType!,
           startTime: _selectedDateTime!,
           isPurchasedFullSlot: purchaseFullSlot,
+          isAmountDistributed: isAmountDistributed,
+          isJoinnersPaid: isJoinnersPaid,
+          isTeamPublic: isTeamPublic,
           calculatedFee: entryFee,
           feeDescription: calcuatedDescriptionText,
           gameId: widget.gameId,

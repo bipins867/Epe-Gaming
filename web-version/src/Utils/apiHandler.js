@@ -87,12 +87,15 @@ export const handleErrors = async (err, showAlert) => {
   if (response && response.status === 503) {
     const state = Store.getState();
     const userType = state.commonInfo.userType;
-    localStorage.removeItem("userToken");
+    
+    
     if (userType === "user") {
+      localStorage.removeItem("userToken");
       Store.dispatch(userLogOut());
       Store.dispatch(setUserAuthToken(null));
       //window.location='/user/auth/login'
     } else if (userType === "admin") {
+      localStorage.removeItem('adminToken');
       Store.dispatch(adminLogOut());
       Store.dispatch(setAdminAuthToken(null));
     } else {

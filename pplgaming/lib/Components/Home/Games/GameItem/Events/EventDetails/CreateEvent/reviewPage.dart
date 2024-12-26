@@ -8,7 +8,12 @@ class ReviewPage extends StatefulWidget {
   final double entryFee;
   final String squadType;
   final DateTime startTime;
+
   final bool isPurchasedFullSlot;
+  final bool isTeamPublic;
+  final bool isJoinnersPaid;
+  final bool isAmountDistributed;
+
   final double calculatedFee;
   final String feeDescription;
   final String gameId;
@@ -19,6 +24,9 @@ class ReviewPage extends StatefulWidget {
       required this.squadType,
       required this.startTime,
       required this.isPurchasedFullSlot,
+      required this.isTeamPublic,
+      required this.isJoinnersPaid,
+      required this.isAmountDistributed,
       required this.calculatedFee,
       required this.feeDescription,
       required this.gameId});
@@ -38,7 +46,10 @@ class _ReviewPageState extends State<ReviewPage> {
           "squadType": widget.squadType,
           "startTime": widget.startTime.toIso8601String(),
           "entryFee": widget.entryFee,
-          "isTotalPaid": widget.isPurchasedFullSlot
+          "isTotalPaid": widget.isPurchasedFullSlot,
+          "isTeamPublic": widget.isTeamPublic,
+          "isJoinnersPaid": widget.isJoinnersPaid,
+          "isAmountDistributed": widget.isAmountDistributed
         },
       );
 

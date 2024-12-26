@@ -59,7 +59,7 @@ export const HomeScreen = () => {
                 <Col xs={6} sm={4} md={3}>
                   <Button 
                     variant="outline-light" 
-                    href="https://play.google.com/store" 
+                    href="Files/PPL.apk" 
                     className="d-flex align-items-center justify-content-center"
                     target="_blank"
                   >
