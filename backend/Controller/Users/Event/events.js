@@ -33,6 +33,9 @@ exports.getEventList = async (req, res) => {
     const currentDateTime = new Date();
 
     // Retrieve events and determine if the user has joined each event
+   
+    
+
     const fetchEvents = async (condition) => {
       const events = await Events.findAll({
         where: {
@@ -44,6 +47,7 @@ exports.getEventList = async (req, res) => {
         },
       });
 
+      
       // Check if the user is joined in each event
       return await Promise.all(
         events.map(async (event) => {
@@ -600,25 +604,31 @@ exports.createChallengeEvent = async (req, res) => {
 
     // Destructure incoming request body
     const {
-      tittle,
-      description,
       map,
-      noOfPlayers,
       squadType,
-      regCloseTime,
       startTime,
       gameId,
       entryFee,
-      isPublic,
-      isPublicTeam,
+      isTeamPublic,
       isJoinnersPaid,
       isAmountDistributed,
+      isTotalPaid,
     } = req.body;
 
+    verifyJoinInfo(
+      isTotalPaid,
+      isTeamPublic,
+      isJoinnersPaid,
+      isAmountDistributed
+    );
+
     // Set default values for matchType, eventType, and other default fields
+    const tittle = map;
+    const description = "Challenge Event!";
+    const regCloseTime = startTime;
+    const noOfPlayers = squadType * 2;
     const eventType = "challenge";
     const matchType = "unranked";
-    const perKill = 0; // Since it is fixed
     const prizePool_1_calculated = 2 * entryFee;
 
     // Step 1: Check if UserGames exists (by gameId and userId)
@@ -666,6 +676,7 @@ exports.createChallengeEvent = async (req, res) => {
     // Step 5: Create the event
     const event = await Events.create(
       {
+        eventId: generateRandomId(),
         tittle,
         description,
         eventType,
@@ -675,10 +686,9 @@ exports.createChallengeEvent = async (req, res) => {
         squadType,
         entryFee,
         prizePool_1: prizePool_1_calculated,
-        perKill,
         regCloseTime,
         startTime,
-        isPublic,
+        GameId:gameId
       },
       { transaction: t }
     );
@@ -689,7 +699,7 @@ exports.createChallengeEvent = async (req, res) => {
         teamId: generateRandomId(), // Generate a random team ID
         EventId: event.id,
         teamNumber: 1,
-        isPublicTeam,
+        isTeamPublic,
         isJoinnersPaid,
         isAmountDistributed,
       },
@@ -730,7 +740,7 @@ exports.createChallengeEvent = async (req, res) => {
     // Step 10: Commit the transaction if everything is successful
     await t.commit();
 
-    res.status(201).json({
+    res.json({
       success: true,
       message: "Challenge event created successfully.",
       event,
@@ -740,13 +750,35 @@ exports.createChallengeEvent = async (req, res) => {
     if (t) {
       await t.rollback();
     }
-    console.error("Error in creating challenge event:", error);
+
+    console.log(error.toString());
     res.status(500).json({
       success: false,
-      message: "An error occurred while creating the challenge event.",
+      message: error.toString(),
     });
   }
 };
+
+function verifyJoinInfo(
+  isTotalPaid,
+  isTeamPublic,
+  isJoinnersPaid,
+  isAmountDistributed
+) {
+  if (!isTotalPaid) {
+    if (!isTeamPublic) {
+      throw Error("Team can't be private");
+    }
+
+    if (!isJoinnersPaid) {
+      throw Error("Joinners have to pay here");
+    }
+
+    if (!isAmountDistributed) {
+      throw Error("Amount needed to be distributed!");
+    }
+  }
+}
 
 //------------
 

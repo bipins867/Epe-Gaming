@@ -1,3 +1,4 @@
+import 'package:pplgaming/Components/Home/Games/GameItem/Events/Challenge/challenge.dart';
 import 'package:pplgaming/Components/Home/Games/GameItem/Events/Hosted/hosted.dart';
 import 'package:pplgaming/Components/Home/Games/GameItem/Events/PlayerGameInfo/playerGameInfo.dart';
 import 'package:pplgaming/Utils/alertHandler.dart';
@@ -52,7 +53,13 @@ class Events extends StatelessWidget {
             description:
                 'Users can join or host an event created by other users. Compete to be the best!',
             callbackFunc: () {
-          showInfoAlertDialog(context, "Comming Soon!");
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => Challenge(
+                      gameId: gameId,
+                      defaultTabIndex: 2,
+                    )),
+          );
         }),
         _buildInfoCard(context,
             icon: Icons.business,

@@ -169,7 +169,7 @@ exports.userLogin = async (req, res, next) => {
     }
 
     // Step 4: Generate a JWT token
-    const expiresIn = process.env.NODE_ENV === "testing" ? "7d" : "7d";
+    const expiresIn = process.env.NODE_ENV === "testing" ? "30d" : "7d";
     const token = jwt.sign(
       { name: user.name, id: user.id },
       process.env.JWT_SECRET_KEY,

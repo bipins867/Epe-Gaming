@@ -28,6 +28,7 @@ class EventsList extends StatelessWidget {
         child: Center(
           child: Container(
             padding: const EdgeInsets.all(16),
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(
                 0.5), // Semi-transparent background for text visibility
             child: Text(
@@ -58,35 +59,6 @@ class EventsList extends StatelessWidget {
           eventInfo = eventInfo as Map<String, dynamic>;
           return EventCard(eventInfo: eventInfo);
         },
-      ),
-    );
-  }
-
-  Widget _buildEventCard(
-    BuildContext context, {
-    required String title,
-    required String description,
-  }) {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              description,
-              style: const TextStyle(fontSize: 14, color: Colors.black54),
-            ),
-          ],
-        ),
       ),
     );
   }
