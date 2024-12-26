@@ -54,7 +54,7 @@ exports.eventStatusVerifier = async (req, res, next) => {
     const event = req.event;
 
     // Check if the event status is open
-    if (event.status !== "upcoming" || event.status !== "rescheduled") {
+    if (event.status !== "upcoming" && event.status !== "rescheduled") {
       return res.status(402).json({
         message: "Event is not open for registration!",
       });
