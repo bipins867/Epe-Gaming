@@ -1,23 +1,19 @@
-import 'package:pplgaming/Components/Auth/ForgetPassword/forgetPassword.dart';
 import 'package:pplgaming/Components/Auth/OtpVerify/otpVerify.dart';
-import 'package:pplgaming/Components/Auth/SignUp/signUp.dart';
 import 'package:pplgaming/Utils/alertHandler.dart';
 import 'package:pplgaming/Utils/apiRequestHandler.dart';
 import 'package:pplgaming/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class ForgetPasswordPage extends StatefulWidget {
+  const ForgetPasswordPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _ForgetPasswordPageState createState() => _ForgetPasswordPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   final TextEditingController _mobileController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false; // State variable for loading
-  bool _isPasswordVisible = false; // State variable for password visibility
+  bool _isLoading = false;
 
   AppConfig? appConfig;
 
@@ -27,14 +23,13 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
-  void loginHandler() async {
+  void forgotPasswordHandler() async {
     if (_mobileController.text == '') {
-      return showInfoAlertDialog(context, "Please enter the mobile Number!",
-          type: "Required!");
-    }
-    if (_passwordController.text == '') {
-      return showInfoAlertDialog(context, "Please enter the password!",
-          type: "Required!");
+      return showInfoAlertDialog(
+        context,
+        "Please enter the mobile Number for OTP!",
+        type: "Required!",
+      );
     }
 
     setState(() {
@@ -44,11 +39,9 @@ class _LoginPageState extends State<LoginPage> {
     try {
       Map<String, String> body = {
         "phone": _mobileController.text,
-        "password": _passwordController.text,
-        "fcmToken": AppConfig.fcmToken,
-        "otpType": "login",
+        "otpType": "forgetPassword", // Pass "forgetPassword" type
       };
-      String url = 'user/auth/login';
+      String url = 'user/auth/forgetPassword';
       dynamic response = await postRequest(
         url,
         body,
@@ -58,13 +51,14 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => OtpVerifyPage(
-                    otpType: "login",
-                    url: url,
-                    phone: _mobileController.text,
-                    otpAuthenticationToken: response['body']
-                        ['otpAuthenticationToken'],
-                  )),
+            builder: (context) => OtpVerifyPage(
+              otpType: "forgetPassword",
+              url: url,
+              phone: _mobileController.text,
+              otpAuthenticationToken: response['body']
+                  ['otpAuthenticationToken'],
+            ),
+          ),
         );
       } else {
         handleErrors(context, response);
@@ -115,6 +109,7 @@ class _LoginPageState extends State<LoginPage> {
                             AssetImage('assets/Home/ppl-logo-half.png'),
                       ),
                       SizedBox(height: 24),
+                      // Mobile number input field
                       TextField(
                         controller: _mobileController,
                         decoration: InputDecoration(
@@ -124,58 +119,24 @@ class _LoginPageState extends State<LoginPage> {
                         keyboardType: TextInputType.phone,
                       ),
                       SizedBox(height: 16),
-                      TextField(
-                        controller: _passwordController,
-                        obscureText: !_isPasswordVisible,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          border: OutlineInputBorder(),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _isPasswordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _isPasswordVisible = !_isPasswordVisible;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 16),
+                      // Button to submit for OTP
                       ElevatedButton(
-                        onPressed: _isLoading ? null : loginHandler,
+                        onPressed: _isLoading ? null : forgotPasswordHandler,
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(
                               vertical: 12.0, horizontal: 40.0),
                         ),
                         child: _isLoading
                             ? CircularProgressIndicator(color: Colors.white)
-                            : Text('Login'),
+                            : Text('Request OTP'),
                       ),
                       SizedBox(height: 8),
+                      // Link to go to Login page if needed
                       TextButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SignUpPage()),
-                          );
+                          Navigator.pop(context);
                         },
-                        child: Text("Don't have an account? Sign Up"),
-                      ),
-                      SizedBox(height: 8),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ForgetPasswordPage()),
-                          );
-                        },
-                        child: Text("Forget Password? Reset Now"),
+                        child: Text("Back to Login"),
                       ),
                     ],
                   ),

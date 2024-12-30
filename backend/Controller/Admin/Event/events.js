@@ -176,8 +176,8 @@ exports.createEvent = async (req, res, next) => {
       return res.status(400).json({ error: "Invalid match type" });
     }
 
-    noOfPlayers=parseInt(noOfPlayers);
-    if ( noOfPlayers <= 0) {
+    noOfPlayers = parseInt(noOfPlayers);
+    if (noOfPlayers <= 0) {
       return res.status(400).json({ error: "Invalid number of players" });
     }
 
@@ -435,14 +435,12 @@ exports.getTeamsAndMemberInfo = async (req, res, next) => {
       teamsInfo.push(teamInfo);
     }
 
-    
     // Step 6: Respond with the teams and member information
     return res.status(200).json({
       success: true,
       eventId,
       teams: teamsInfo,
     });
-    
   } catch (error) {
     console.error("Error in getTeamsAndMemberInfo:", error);
     return res
@@ -654,7 +652,7 @@ exports.updateEventStatus = async (req, res, next) => {
 exports.updateTeamsAndMemberInfo = async (req, res, next) => {
   try {
     const { teamInfo } = req.body;
-    const membersInfo=teamInfo.teamMembers;
+    const membersInfo = teamInfo.teamMembers;
 
     // Validate input data
     if (!teamInfo || !teamInfo.teamId) {
@@ -796,7 +794,7 @@ exports.declareEventResult = async (req, res, next) => {
       let teamPoints = 0;
       let rankReward = 0;
 
-      if (team.status === "joined") {
+      if (team.status === "Joined") {
         if (team.rank === 1) rankReward = event.prizePool_1;
         else if (team.rank === 2) rankReward = event.prizePool_2;
         else if (team.rank === 3) rankReward = event.prizePool_3;
@@ -823,8 +821,8 @@ exports.declareEventResult = async (req, res, next) => {
         let memberPoints = 0;
 
         if (
-          team.status === "joined" &&
-          teamUserGame.status !== "disqualified"
+          team.status === "Joined" &&
+          teamUserGame.status !== "Disqualified"
         ) {
           // For teams with isAmountDistributed as false, give all rewards to the leader
           if (team.isAmountDistributed) {
@@ -842,6 +840,7 @@ exports.declareEventResult = async (req, res, next) => {
         }
 
         // Update wallet balances
+        wallet.totalWinnings+=memberReward;
         wallet.netWinning += memberReward;
         wallet.unclearedDeposit -= teamUserGame.deposit;
         wallet.unclearedCashBonus -= teamUserGame.cashBonus;
@@ -862,6 +861,7 @@ exports.declareEventResult = async (req, res, next) => {
         await teamUserGame.save({ transaction });
 
         // Update userGame total kills
+        userGame.matchPlayed+=1;
         userGame.totalKills += teamUserGame.kills;
         userGame.totalPoints += teamUserGame.points;
 

@@ -81,8 +81,8 @@ exports.initialForgetCustomerIdUserAuthentication = async (req, res, next) => {
   }
 };
 
-exports.initialResetPasswordUserAuthentication = async (req, res, next) => {
-  const { phone,candidateId, otpAuthenticationToken } = req.body;
+exports.initialForgetPasswordAuthentication = async (req, res, next) => {
+  const { phone, otpAuthenticationToken } = req.body;
 
   try {
     if (otpAuthenticationToken) {
@@ -90,7 +90,7 @@ exports.initialResetPasswordUserAuthentication = async (req, res, next) => {
     }
 
     // Check if the user exists based on phone number
-    const user = await User.findOne({ where: { phone,candidateId } });
+    const user = await User.findOne({ where: { phone } });
 
     if (!user) {
       return res
@@ -105,12 +105,8 @@ exports.initialResetPasswordUserAuthentication = async (req, res, next) => {
         .json({ success: false, message: "User account is blocked" });
     }
 
-    // Check if the user account is active
-    if (!user.isActive) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User account is inactive" });
-    }
+
+    
 
     // Proceed to next middleware or controller if checks are passed
     req.user = user; // Add user to request for further usage if necessary

@@ -12,14 +12,15 @@ export const EventDetailsPage = ({
   eventId,
   isInfoUpdated,
   setIsInfoUpdated,
-  eventInfo,setEventInfo
+  eventInfo,
+  setEventInfo,
 }) => {
   const [isEventDataLoading, setIsEventDataLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isStatusUpdating, setIsStatusUpdating] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [roomPassword, setRoomPassword] = useState("");
- 
+
   const [newStatus, setNewStatus] = useState("");
   const [rescheduleTime, setRescheduleTime] = useState("");
   const [remark, setRemark] = useState("");
@@ -131,6 +132,7 @@ export const EventDetailsPage = ({
       </>
     );
   }
+  console.log(eventInfo);
 
   return (
     <>
@@ -282,79 +284,81 @@ export const EventDetailsPage = ({
       </Card>
 
       {/* Update Status Section */}
-      <Card className="mb-4">
-        <Card.Body>
-          <h5>Update Event Status</h5>
-          <Form>
-            <Row>
-              <Col md={6}>
-                <Form.Group controlId="statusSelect">
-                  <Form.Label>Status</Form.Label>
-                  <Form.Select
-                    value={newStatus}
-                    onChange={(e) => setNewStatus(e.target.value)}
-                  >
-                    <option value="">Select New Status</option>
-                    {getStatusOptions().map((status) => (
-                      <option key={status} value={status}>
-                        {status}
-                      </option>
-                    ))}
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-              {(newStatus === "rescheduled" || newStatus === "cancelled") && (
+      {(eventInfo.status !== "declayred" && eventInfo.status !== "cancelled") &&(
+        <Card className="mb-4">
+          <Card.Body>
+            <h5>Update Event Status</h5>
+            <Form>
+              <Row>
                 <Col md={6}>
-                  <Form.Group controlId="remark">
-                    <Form.Label>Remark</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter Remark"
-                      value={remark}
-                      onChange={(e) => setRemark(e.target.value)}
-                    />
+                  <Form.Group controlId="statusSelect">
+                    <Form.Label>Status</Form.Label>
+                    <Form.Select
+                      value={newStatus}
+                      onChange={(e) => setNewStatus(e.target.value)}
+                    >
+                      <option value="">Select New Status</option>
+                      {getStatusOptions().map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
+                    </Form.Select>
                   </Form.Group>
                 </Col>
+                {(newStatus === "rescheduled" || newStatus === "cancelled") && (
+                  <Col md={6}>
+                    <Form.Group controlId="remark">
+                      <Form.Label>Remark</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter Remark"
+                        value={remark}
+                        onChange={(e) => setRemark(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+                )}
+              </Row>
+              {newStatus === "rescheduled" && (
+                <Row className="mt-3">
+                  <Col md={6}>
+                    <Form.Group controlId="rescheduleTime">
+                      <Form.Label>Rescheduled Time</Form.Label>
+                      <Form.Control
+                        type="datetime-local"
+                        value={rescheduleTime}
+                        onChange={(e) => setRescheduleTime(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
               )}
-            </Row>
-            {newStatus === "rescheduled" && (
               <Row className="mt-3">
-                <Col md={6}>
-                  <Form.Group controlId="rescheduleTime">
-                    <Form.Label>Rescheduled Time</Form.Label>
-                    <Form.Control
-                      type="datetime-local"
-                      value={rescheduleTime}
-                      onChange={(e) => setRescheduleTime(e.target.value)}
-                    />
-                  </Form.Group>
+                <Col>
+                  <Button
+                    variant="primary"
+                    onClick={handleUpdateEventStatus}
+                    disabled={isStatusUpdating}
+                  >
+                    {isStatusUpdating ? (
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      "Update Status"
+                    )}
+                  </Button>
                 </Col>
               </Row>
-            )}
-            <Row className="mt-3">
-              <Col>
-                <Button
-                  variant="primary"
-                  onClick={handleUpdateEventStatus}
-                  disabled={isStatusUpdating}
-                >
-                  {isStatusUpdating ? (
-                    <Spinner
-                      as="span"
-                      animation="border"
-                      size="sm"
-                      role="status"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    "Update Status"
-                  )}
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        </Card.Body>
-      </Card>
+            </Form>
+          </Card.Body>
+        </Card>
+      )}
     </>
   );
 };

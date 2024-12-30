@@ -5,8 +5,11 @@ import 'package:pplgaming/Utils/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+// ignore: must_be_immutable
 class ReferralPage extends StatelessWidget {
   late String referralId;
+
+  ReferralPage({super.key});
   void _copyToClipboard(BuildContext context, String text) {
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(

@@ -385,3 +385,58 @@ exports.getUserInfo = async (req, res, next) => {
       .json({ message: "Internal server error. Please try again later." });
   }
 };
+
+exports.forgetPassword = async (req, res, next) => {
+  const { password, phone } = req.body;
+
+  let transaction;
+
+  try {
+    // Find the user by phone number
+    const user = await User.findOne({
+      where: { phone },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+
+    if (!password) {
+      return res.status(400).send({ message: "Invalid Password!" });
+    }
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update the user's password
+    user.password = hashedPassword; // Assuming 'password' is a field in your User model
+
+    transaction = await sequelize.transaction();
+
+    await user.save({ transaction }); // Save the updated user record
+
+    await createUserActivity(
+      req,
+      user,
+      "auth",
+      "Password reset successfull!",
+      transaction
+    );
+
+    transaction.commit();
+    // Optionally, you can return a success message
+    return res.status(200).json({ message: "Password changed successfully." });
+  } catch (err) {
+    console.error("Error during password change:", err);
+    if (transaction) {
+      await transaction.rollback();
+    }
+    // Handle specific error cases
+    if (err instanceof jwt.JsonWebTokenError) {
+      return res.status(400).json({ message: "Invalid or expired token." });
+    }
+
+    return res
+      .status(500)
+      .json({ message: "Internal server error. Please try again later." });
+  }
+};

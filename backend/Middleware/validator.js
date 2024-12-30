@@ -53,6 +53,18 @@ const validateChangePassword = [
     .withMessage("New Password must contain at least one special character"),
 ];
 
+const validateForgetPassword = [
+  body("password")
+    .isLength({ min: 8 })
+    .withMessage("New Password must be at least 8 characters long")
+    .matches(/[A-Za-z]/)
+    .withMessage("New Password must contain at least one letter")
+    .matches(/\d/)
+    .withMessage("New Password must contain at least one number")
+    .matches(/[!@#$%^&*(),.?":{}|<>]/)
+    .withMessage("New Password must contain at least one special character"),
+];
+
 // Function to check validation errors and format response
 const checkValidationErrors = (req, res, next) => {
   if (req.body.otpAuthenticationToken) {
@@ -83,5 +95,6 @@ module.exports = {
   validateLogin,
   validateSignUp,
   validateChangePassword,
+  validateForgetPassword,
   checkValidationErrors,
 };

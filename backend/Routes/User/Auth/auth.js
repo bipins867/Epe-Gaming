@@ -3,17 +3,21 @@ const {
   initialLoginUserAuthentication,
   initialSignuUserAuthentication,
   userAuthentication,
+  initialForgetPasswordAuthentication,
 } = require("../../../Middleware/auth");
 const {
   validateLogin,
   validateSignUp,
   validateChangePassword,
   checkValidationErrors,
+  validateForgetPassword,
 } = require("../../../Middleware/validator");
 
-
 const userAuthenticationController = require("../../../Controller/Users/Auth/users");
-const { middlewareSendOtp,middlewareVerifyOtp } = require("../../../Middleware/otpAuthentication");
+const {
+  middlewareSendOtp,
+  middlewareVerifyOtp,
+} = require("../../../Middleware/otpAuthentication");
 
 //----------Changes take time ---
 
@@ -34,6 +38,16 @@ router.post(
   middlewareSendOtp,
   middlewareVerifyOtp,
   userAuthenticationController.userSignUp
+);
+
+router.post(
+  "/forgetPassword",
+  initialForgetPasswordAuthentication,
+  middlewareSendOtp,
+  validateForgetPassword,
+  checkValidationErrors,
+  middlewareVerifyOtp,
+  userAuthenticationController.forgetPassword
 );
 
 router.post(

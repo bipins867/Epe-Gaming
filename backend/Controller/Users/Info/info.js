@@ -13,6 +13,7 @@ const User = require("../../../Models/User/users");
 const fs = require("fs");
 const Referrals = require("../../../Models/Wallet/referrals");
 const ReferredUser = require("../../../Models/Wallet/referredUsers");
+const EventUsers = require("../../../Models/AndModels/EventUsers");
 
 exports.getUserProfileInfo = async (req, res, next) => {
   try {
@@ -58,10 +59,11 @@ exports.getUserProfileInfo = async (req, res, next) => {
       attributes: ["matchPlayed", "totalKills"],
     });
 
-    const matchesPlayed = userGames.reduce(
-      (total, game) => total + game.matchPlayed,
-      0
-    );
+    const matchesPlayed = await EventUsers.count({
+      where: {
+        UserId: userId, // Replace with the specific UserId
+      },
+    });
     const totalKills = userGames.reduce(
       (total, game) => total + game.totalKills,
       0

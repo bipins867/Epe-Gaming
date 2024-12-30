@@ -46,7 +46,10 @@ exports.middlewareSendOtp = async (req, res, next) => {
         sendLoginOtpMessage(phone, phoneOtp);
       } else if (otpType === "signUp") {
         sendSignUpOtpMessage(phone, phoneOtp);
-      } else {
+      }else if(otpType==='forgetPassword'){
+        sendOtpAccountVerifyMessage(phone,phoneOtp);
+      } 
+      else {
         return res.status(404).json({ message: "Invalid Otp Type!" });
       }
 

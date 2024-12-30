@@ -10,6 +10,7 @@ class OtpVerifyPage extends StatefulWidget {
   final String phone;
   final String otpAuthenticationToken;
   final String url;
+
   const OtpVerifyPage(
       {super.key,
       required this.url,
@@ -28,6 +29,9 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
   bool _isResendLoading = false;
   bool _isVerifyLoading = false;
   final TextEditingController _otpController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -95,6 +99,25 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
         "userPhoneOtp": _otpController.text, // OTP passed from input
       };
 
+      // If OTP type is forgetPassword, add password and confirm password to the body
+      if (widget.otpType == 'forgetPassword') {
+        String password = body['password'] = _passwordController.text;
+        String confimPassword =
+            body['confirmPassword'] = _confirmPasswordController.text;
+
+        if (password != confimPassword) {
+          showErrorAlertDialog(context, "Password don't Match!");
+          return;
+        }
+
+        // Check if password meets strength requirements (optional)
+        if (password.length < 6) {
+          showErrorAlertDialog(
+              context, "Password must be at least 6 characters long.");
+          return;
+        }
+      }
+
       dynamic response = await postRequest(
         widget.url,
         body,
@@ -111,6 +134,17 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
           showInfoAlertDialog(
             context,
             "SignUp Successful!",
+            callbackFunction: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginPage()),
+              );
+            },
+          );
+        } else if (widget.otpType == 'forgetPassword') {
+          showInfoAlertDialog(
+            context,
+            "Password reset successful!",
             callbackFunction: () {
               Navigator.pushReplacement(
                 context,
@@ -138,6 +172,8 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
   void dispose() {
     _timer.cancel();
     _otpController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -184,6 +220,27 @@ class _OtpVerifyPageState extends State<OtpVerifyPage> {
                         ),
                         keyboardType: TextInputType.number,
                       ),
+                      const SizedBox(height: 16),
+                      // Password and Confirm Password Fields for 'forgetPassword' otpType
+                      if (widget.otpType == 'forgetPassword') ...[
+                        TextField(
+                          controller: _passwordController,
+                          decoration: const InputDecoration(
+                            labelText: 'New Password',
+                            border: OutlineInputBorder(),
+                          ),
+                          obscureText: true,
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: _confirmPasswordController,
+                          decoration: const InputDecoration(
+                            labelText: 'Confirm Password',
+                            border: OutlineInputBorder(),
+                          ),
+                          obscureText: true,
+                        ),
+                      ],
                       const SizedBox(height: 16),
                       // Resend Button with Spinner
                       ElevatedButton(

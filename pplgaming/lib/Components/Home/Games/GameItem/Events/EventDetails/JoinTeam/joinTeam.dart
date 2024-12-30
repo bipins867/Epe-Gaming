@@ -1,3 +1,4 @@
+import 'package:pplgaming/Components/Home/Games/GameItem/Events/PlayerGameInfo/playerGameInfo.dart';
 import 'package:pplgaming/Utils/apiRequestHandler.dart';
 import 'package:pplgaming/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
@@ -103,7 +104,21 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
           //customLogger!.logInfo('${response['body']}');
           Navigator.pop(context);
         } else {
-          handleErrors(context, response);
+          if (response['statusCode'] == 400) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return PlayerGameInfoPage(
+                    gameTitle: "BGMI",
+                    gameId: "1",
+                    error: "Please update Game Profile first!",
+                  );
+                },
+              ),
+            );
+          } else {
+            handleErrors(context, response);
+          }
         }
       } catch (e) {
         // Handle exceptions
@@ -136,7 +151,7 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
             ? 0.0
             : (eventInfo!['entryFee'] as num).toDouble();
       } else {
-        calculatedFee = isFreeForOthers
+        calculatedFee = isFreeForOthers || !isPublicTeam
             ? (eventInfo!['squadType'] * (eventInfo!['entryFee'] as num))
                 .toDouble()
             : (eventInfo!['entryFee'] as num).toDouble();
@@ -374,9 +389,7 @@ class _JoinTeamPageState extends State<JoinTeamPage> {
                           isPublicTeam,
                           'isPublicTeam',
                           'Yes :- Team Id will be publically visible to other members.\nNo :- It will be only visible to You.',
-                          isSwitchesEnabled &&
-                              purchaseFullSlot &&
-                              isFreeForOthers),
+                          isSwitchesEnabled && purchaseFullSlot),
                       _buildSwitch(
                           'Is Free for Others',
                           isFreeForOthers,

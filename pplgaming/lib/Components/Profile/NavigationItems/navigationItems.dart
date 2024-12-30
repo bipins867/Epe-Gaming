@@ -10,7 +10,6 @@ import 'package:pplgaming/Store/baseStoreProvider.dart';
 import 'package:pplgaming/Utils/appConfig.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 class NavigationItems extends StatelessWidget {
   const NavigationItems({super.key});

@@ -6,9 +6,13 @@ import 'package:flutter/material.dart';
 class PlayerGameInfoPage extends StatefulWidget {
   final String gameTitle;
   final String gameId; // Example: "BGMI"
+  final String error;
 
   const PlayerGameInfoPage(
-      {super.key, required this.gameTitle, required this.gameId});
+      {super.key,
+      required this.gameTitle,
+      required this.gameId,
+      this.error = ""});
 
   @override
   _PlayerGameInfoPageState createState() => _PlayerGameInfoPageState();
@@ -111,6 +115,23 @@ class _PlayerGameInfoPageState extends State<PlayerGameInfoPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (widget.error.isNotEmpty)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 16.0),
+                  padding: const EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Text(
+                    widget.error,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               Container(
                 padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(

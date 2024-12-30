@@ -61,13 +61,22 @@ exports.getEventList = async (req, res) => {
 
     // Retrieve upcoming, ongoing, and past events with isUserJoined flag
     const [upcomingEvents, ongoingEvents, pastEvents] = await Promise.all([
-      fetchEvents({ startTime: { [Op.gt]: currentDateTime } }),
+      fetchEvents({
+        startTime: { [Op.gt]: currentDateTime },
+        status: {
+          [Op.or]: ["upcoming", "rescheduled"],
+        },
+      }),
       fetchEvents({
         startTime: { [Op.lte]: currentDateTime },
+        status: {
+          [Op.notIn]: ["declayred", "cancelled"],
+        },
       }),
       fetchEvents({ status: "declayred" }),
     ]);
 
+    
     // Return categorized events in response
     return res.status(200).json({
       success: true,
@@ -297,8 +306,8 @@ exports.joinEventPublicTeam = async (req, res) => {
           {
             TeamId: lastTeam.id,
             UserGameId: userGames.id,
-            playerId:userGames.playerId,
-          playerName:userGames.playerName,
+            playerId: userGames.playerId,
+            playerName: userGames.playerName,
             isLeader: false, // Adjust based on business logic
             ...amountMap,
           },
@@ -463,8 +472,8 @@ exports.joinEventSoloTeam = async (req, res) => {
         {
           TeamId: newTeam.id,
           UserGameId: userGames.id,
-          playerId:userGames.playerId,
-          playerName:userGames.playerName,
+          playerId: userGames.playerId,
+          playerName: userGames.playerName,
           isLeader: true, // Adjust based on your logic
           deposit: amountMap.deposit,
           cashBonus: amountMap.cashBonus,
@@ -477,8 +486,8 @@ exports.joinEventSoloTeam = async (req, res) => {
         {
           TeamId: newTeam.id,
           UserGameId: userGames.id,
-          playerId:userGames.playerId,
-          playerName:userGames.playerName,
+          playerId: userGames.playerId,
+          playerName: userGames.playerName,
           isLeader: true, // Adjust based on your logic
         },
         { transaction: t }
@@ -552,8 +561,8 @@ exports.joinEventPrivateTeam = async (req, res) => {
         {
           TeamId: newTeam.id,
           UserGameId: userGames.id,
-          playerId:userGames.playerId,
-          playerName:userGames.playerName,
+          playerId: userGames.playerId,
+          playerName: userGames.playerName,
           isLeader: true, // Adjust based on your logic
           deposit: amountMap.deposit,
           cashBonus: amountMap.cashBonus,
@@ -566,8 +575,8 @@ exports.joinEventPrivateTeam = async (req, res) => {
         {
           TeamId: newTeam.id,
           UserGameId: userGames.id,
-          playerId:userGames.playerId,
-          playerName:userGames.playerName,
+          playerId: userGames.playerId,
+          playerName: userGames.playerName,
           isLeader: true, // Adjust based on your logic
         },
         { transaction: t }
@@ -1071,3 +1080,5 @@ exports.getJoinEventTeamInfo = async (req, res) => {
     });
   }
 };
+
+//----------------------------
