@@ -103,7 +103,7 @@ exports.getEventsList = async (req, res, next) => {
 
     const canceledOrDeclaredEvents = await Events.findAll({
       where: {
-        status: ["canceled", "declared"],
+        status: ["cancelled", "declayred"],
         GameId,
       },
       include: [{ model: Games }],
@@ -176,12 +176,13 @@ exports.createEvent = async (req, res, next) => {
       return res.status(400).json({ error: "Invalid match type" });
     }
 
-    if (!Number.isInteger(noOfPlayers) || noOfPlayers <= 0) {
+    noOfPlayers=parseInt(noOfPlayers);
+    if ( noOfPlayers <= 0) {
       return res.status(400).json({ error: "Invalid number of players" });
     }
 
     const validSquadTypes = [1, 2, 3, 4]; // solo, duo, squad
-    if (!validSquadTypes.includes(squadType)) {
+    if (!validSquadTypes.includes(parseInt(squadType))) {
       return res.status(400).json({ error: "Invalid squad type" });
     }
 
@@ -211,7 +212,7 @@ exports.createEvent = async (req, res, next) => {
     }
 
     // Validate gameId and check for the associated game
-    const game = await Games.findByPk(gameId);
+    const game = await Games.findByPk(parseInt(gameId));
     if (!game) {
       return res.status(404).json({ error: "Game not found" });
     }
@@ -393,7 +394,7 @@ exports.getTeamsAndMemberInfo = async (req, res, next) => {
 
     for (let team of teams) {
       const teamInfo = {
-        team,
+        ...team.dataValues,
         teamMembers: [],
       };
 
@@ -434,12 +435,14 @@ exports.getTeamsAndMemberInfo = async (req, res, next) => {
       teamsInfo.push(teamInfo);
     }
 
+    
     // Step 6: Respond with the teams and member information
     return res.status(200).json({
       success: true,
       eventId,
       teams: teamsInfo,
     });
+    
   } catch (error) {
     console.error("Error in getTeamsAndMemberInfo:", error);
     return res
@@ -650,7 +653,8 @@ exports.updateEventStatus = async (req, res, next) => {
 //In the case of result declaration .....
 exports.updateTeamsAndMemberInfo = async (req, res, next) => {
   try {
-    const { teamInfo, membersInfo } = req.body;
+    const { teamInfo } = req.body;
+    const membersInfo=teamInfo.teamMembers;
 
     // Validate input data
     if (!teamInfo || !teamInfo.teamId) {
@@ -669,7 +673,7 @@ exports.updateTeamsAndMemberInfo = async (req, res, next) => {
     try {
       // Step 1: Update the team information
       const team = await Teams.findOne({
-        where: { id: teamInfo.teamId },
+        where: { teamId: teamInfo.teamId },
       });
 
       if (!team) {
@@ -689,7 +693,7 @@ exports.updateTeamsAndMemberInfo = async (req, res, next) => {
 
       // Step 2: Update the team members' information
       for (const member of membersInfo) {
-        if (!member.teamUserGameId) {
+        if (!member.teamUserGamesId) {
           await transaction.rollback();
           return res
             .status(400)
@@ -697,7 +701,7 @@ exports.updateTeamsAndMemberInfo = async (req, res, next) => {
         }
 
         const teamUserGame = await TeamUserGames.findOne({
-          where: { id: member.teamUserGameId },
+          where: { id: member.teamUserGamesId },
         });
 
         if (!teamUserGame) {
@@ -760,7 +764,7 @@ exports.declareEventResult = async (req, res, next) => {
 
     // Step 1: Fetch the event info
     const event = await Events.findOne({
-      where: { id: eventId },
+      where: { eventId: eventId },
     });
 
     if (!event) {
@@ -768,9 +772,9 @@ exports.declareEventResult = async (req, res, next) => {
     }
 
     // Check if the event status allows result declaration
-    if (!["ongoing", "rescheduled", "upcoming"].includes(event.status)) {
+    if (!["inReview"].includes(event.status)) {
       return res.status(400).json({
-        message: `Event status must be 'ongoing', 'rescheduled', or 'upcoming' to declare results.`,
+        message: `Event status must be 'inReview' to declare results.`,
       });
     }
 
@@ -866,7 +870,7 @@ exports.declareEventResult = async (req, res, next) => {
     }
 
     // Step 4: Update event status
-    event.status = "declared";
+    event.status = "declayred";
     await event.save({ transaction });
 
     // Log admin activity

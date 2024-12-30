@@ -1,0 +1,17 @@
+.info-page {
+    padding: 20px;
+  }
+  
+  .info-title {
+    font-size: 2rem;
+    color: #333;
+  }
+
+  .card {
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .list-unstyled li {
+    margin-bottom: 8px;
+  }

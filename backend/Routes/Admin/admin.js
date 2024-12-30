@@ -9,12 +9,13 @@ const announcementRouter = require("./Announcement/announcement");
 const imagesRotuer = require("./Images/images");
 const notificationRouter = require("./Notifications/notifications");
 const imageSliderRouter=require('./ImageSlider/imageSlider')
-
+const withdrawalRouter=require('./Withdrawal/withdrawal')
 
 const { adminAuthentication } = require("../../Middleware/auth");
 
 const router = express.Router();
 
+router.use('/withdrawal',adminAuthentication,withdrawalRouter);
 router.use('/imageSlider',adminAuthentication,imageSliderRouter);
 router.use("/notifications", adminAuthentication, notificationRouter);
 router.use("/images", adminAuthentication, imagesRotuer);

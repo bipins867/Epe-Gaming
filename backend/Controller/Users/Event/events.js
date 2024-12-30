@@ -65,7 +65,7 @@ exports.getEventList = async (req, res) => {
       fetchEvents({
         startTime: { [Op.lte]: currentDateTime },
       }),
-      fetchEvents({ status: "past" }),
+      fetchEvents({ status: "declayred" }),
     ]);
 
     // Return categorized events in response

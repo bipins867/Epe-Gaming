@@ -1,5 +1,5 @@
 const sequelize = require("../../../database");
-const { MINIMUM_AMOUNT_IN_ACCOUNT } = require("../../../importantInfo");
+const { MINIMUM_AMOUNT_IN_ACCOUNT, MINIMUM_FIRST_TIME_DEPOSIT_AMOUNT } = require("../../../importantInfo");
 const User = require("../../../Models/User/users");
 const Referrals = require("../../../Models/Wallet/referrals");
 const Transaction = require("../../../Models/Wallet/transaction");
@@ -31,7 +31,7 @@ exports.addFunds = async (req, res, next) => {
       throw new Error("Wallet not found for the user.");
     }
 
-    const minimumAmount = MINIMUM_AMOUNT_IN_ACCOUNT;
+    const minimumAmount = MINIMUM_FIRST_TIME_DEPOSIT_AMOUNT;
     if (!userWallet.isFundedFirst) {
       if (amount < minimumAmount) {
         return res.status(403).json({

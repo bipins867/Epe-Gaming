@@ -1,9 +1,8 @@
-const UserKyc = require("../../../Models/Kyc/userKyc");
-const BankDetails = require("../../../Models/PiggyBox/bankDetails");
-const Piggybox = require("../../../Models/PiggyBox/piggyBox");
-const RequestWithdrawal = require("../../../Models/PiggyBox/requestWithdrawal");
-const TransactionHistory = require("../../../Models/PiggyBox/transactionHistory");
 const User = require("../../../Models/User/users");
+const BankDetails = require("../../../Models/Wallet/bankDetails");
+const Kyc = require("../../../Models/Wallet/kyc");
+const TransactionHistory = require("../../../Models/Wallet/transactionHistory");
+const Wallet = require("../../../Models/Wallet/wallet");
 const { sendDebitMessage } = require("../../../Utils/MailService");
 const {
   createAdminActivity,
@@ -47,7 +46,7 @@ exports.getWithdrawalRequestList = async (req, res, next) => {
       include: [
         {
           model: User,
-          attributes: ["id", "name", "candidateId", "email", "phone"],
+          attributes: ["id", "name", "customerId", "email", "phone"],
           where: { isRequestedClouser: false }, // Filter users whose isRequestedClouser is false
         },
       ],
@@ -79,15 +78,15 @@ exports.getWithdrawalRequestList = async (req, res, next) => {
 //Get request withdrwal related user information
 exports.getCustomerInformation = async (req, res, next) => {
   try {
-    // Extract candidateId from the request body or params
-    const { candidateId } = req.body;
+    // Extract customerId from the request body or params
+    const { customerId } = req.body;
 
-    // Fetch the user based on the candidateId
+    // Fetch the user based on the customerId
     const user = await User.findOne({
-      where: { candidateId },
+      where: { customerId },
       attributes: [
         "id",
-        "candidateId",
+        "customerId",
         "name",
         "email",
         "phone",
@@ -104,12 +103,12 @@ exports.getCustomerInformation = async (req, res, next) => {
     }
 
     // Fetch PiggyBox details for the user
-    const piggyBox = await Piggybox.findOne({
+    const wallet = await Wallet.findOne({
       where: { UserId: user.id },
-      attributes: ["piggyBalance", "unclearedBalance", "interestBalance"], // Return relevant piggyBox details
+      attributes: ["netWinning", "unclearedNetWinning"], // Return relevant wallet details
     });
 
-    const userKyc = await UserKyc.findOne({ where: { UserId: user.id } });
+    const userKyc = await Kyc.findOne({ where: { UserId: user.id } });
     // Fetch BankDetails for the user
     const bankDetails = await BankDetails.findOne({
       where: { UserId: user.id },
@@ -154,13 +153,13 @@ exports.getCustomerInformation = async (req, res, next) => {
     const response = {
       success: true,
       user: {
-        candidateId: user.candidateId,
+        customerId: user.customerId,
         name: user.name,
         email: user.email,
         phone: user.phone,
         kycStatus: userKyc ? userKyc.userAggreementAccepted : false,
       },
-      piggyBox, // Return PiggyBox info
+      wallet, // Return PiggyBox info
       bankDetails, // Return BankDetails info
       withdrawals: {
         pending: pendingWithdrawals, // Return pending withdrawal requests (if applicable)
@@ -181,14 +180,13 @@ exports.getCustomerInformation = async (req, res, next) => {
 
 //Status update --
 exports.updateCustomerWithdrawalStatus = async (req, res, next) => {
-  
-  const { candidateId, status, adminRemark, requestId } = req.body;
+  const { customerId, status, adminRemark, requestId } = req.body;
 
   let transaction; // Start a new transaction
 
   try {
-    // Fetch the user based on candidateId
-    const user = await User.findOne({ where: { candidateId } });
+    // Fetch the user based on customerId
+    const user = await User.findOne({ where: { customerId } });
 
     // Check if the user exists
     if (!user) {
@@ -239,7 +237,7 @@ exports.updateCustomerWithdrawalStatus = async (req, res, next) => {
     }
 
     // Fetch the PiggyBox associated with the user
-    const piggyBox = await Piggybox.findOne({
+    const wallet = await Wallet.findOne({
       where: { UserId: user.id },
     });
 
@@ -248,7 +246,7 @@ exports.updateCustomerWithdrawalStatus = async (req, res, next) => {
     // Proceed based on the request status (Approved, Rejected, or Locked)
     if (status === "Approved") {
       const amount = parseFloat(withdrawalRequest.amount);
-      piggyBox.unclearedBalance -= amount;
+      wallet.unclearedNetWinning -= amount;
 
       withdrawalRequest.status = "Approved";
 
@@ -269,9 +267,9 @@ exports.updateCustomerWithdrawalStatus = async (req, res, next) => {
         req.admin,
         "requestWithdrawal",
         `Approved withdrawal request for user ${
-          user.candidateId
+          user.customerId
         }. Amount: ${amount.toFixed(2)}. Admin Remark: ${adminRemark}`,
-        user.candidateId,
+        user.customerId,
         transaction
       );
 
@@ -284,18 +282,10 @@ exports.updateCustomerWithdrawalStatus = async (req, res, next) => {
         }`,
         transaction
       );
-
-      sendDebitMessage(
-        user.phone,
-        amount.toFixed(2),
-        user.candidateId,
-        `WID-35${recentWithdrawalTransaction?.id}`,
-        piggyBox.piggyBalance.toFixed(2)
-      );
     } else if (status === "Rejected") {
       const amount = parseFloat(withdrawalRequest.amount);
-      piggyBox.unclearedBalance -= amount;
-      piggyBox.piggyBalance += amount;
+      wallet.unclearedNetWinning -= amount;
+      wallet.netWinning += amount;
 
       await TransactionHistory.create(
         {
@@ -303,7 +293,7 @@ exports.updateCustomerWithdrawalStatus = async (req, res, next) => {
           remark: "User withdrawal rejected",
           debit: 0,
           credit: amount,
-          balance: piggyBox.piggyBalance,
+          balance: wallet.piggyBalance,
           UserId: user.id,
         },
         { transaction }
@@ -318,9 +308,9 @@ exports.updateCustomerWithdrawalStatus = async (req, res, next) => {
         req.admin,
         "requestWithdrawal",
         `Rejected withdrawal request for user ${
-          user.candidateId
+          user.customerId
         }. Amount: ${amount.toFixed(2)}. Admin Remark: ${adminRemark}`,
-        user.candidateId,
+        user.customerId,
         transaction
       );
 
@@ -341,8 +331,8 @@ exports.updateCustomerWithdrawalStatus = async (req, res, next) => {
         req,
         req.admin,
         "requestWithdrawal",
-        `Locked withdrawal request for user ${user.candidateId}. Admin Remark: ${adminRemark}`,
-        user.candidateId,
+        `Locked withdrawal request for user ${user.customerId}. Admin Remark: ${adminRemark}`,
+        user.customerId,
         transaction
       );
     }
@@ -350,7 +340,7 @@ exports.updateCustomerWithdrawalStatus = async (req, res, next) => {
     // Save changes to the database
     await Promise.all([
       withdrawalRequest.save({ transaction }),
-      piggyBox.save({ transaction }),
+      wallet.save({ transaction }),
     ]);
 
     // Commit the transaction

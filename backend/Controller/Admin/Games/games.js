@@ -10,7 +10,7 @@ const { saveFile } = require("../../../Utils/fileHandler");
 
 exports.createGames = async (req, res, next) => {
   
-  const { tittle, description, categorieId } = req.body;
+  const { tittle, description } = req.body;
   const admin = req.admin;
 
   // Validation for tittle and description
@@ -43,15 +43,15 @@ exports.createGames = async (req, res, next) => {
   
 
   try {
-    // Find the associated category by ID
-    const category = await Categories.findByPk(categorieId);
+    // // Find the associated category by ID
+    // const category = await Categories.findByPk(categorieId);
 
-    if (!category) {
-      return res.status(404).json({
-        success: false,
-        message: "Category not found",
-      });
-    }
+    // if (!category) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     message: "Category not found",
+    //   });
+    // }
     const commonPath='CustomFiles'
     const pathCategory='GameImages'
 
@@ -73,7 +73,7 @@ exports.createGames = async (req, res, next) => {
       {
         tittle,
         description,
-        CategoryId: category.id, // Ensure the game is associated with the category
+        //CategoryId: category.id, // Ensure the game is associated with the category
         urlImage: url, // Save the URL of the uploaded image
 
       },
@@ -85,7 +85,7 @@ exports.createGames = async (req, res, next) => {
       req,
       admin,
       "games",
-      `Created a new game in category: ${category.tittle}`, // Log with category title
+      `Created a new game : ${newGame.tittle}`, // Log with category title
       null,
       transaction
     );
