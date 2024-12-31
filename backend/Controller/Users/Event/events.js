@@ -76,7 +76,6 @@ exports.getEventList = async (req, res) => {
       fetchEvents({ status: "declayred" }),
     ]);
 
-    
     // Return categorized events in response
     return res.status(200).json({
       success: true,
@@ -726,16 +725,6 @@ exports.createChallengeEvent = async (req, res) => {
       { transaction: t }
     );
 
-    // Step 7: Create TeamUserGames entry, marking the creator as the leader
-    await TeamUserGames.create(
-      {
-        TeamId: team.id,
-        UserGameId: userGames.id,
-        isLeader: true, // The creator is the leader of the team
-      },
-      { transaction: t }
-    );
-
     await EventUsers.create(
       {
         UserId: req.user.id,
@@ -746,7 +735,28 @@ exports.createChallengeEvent = async (req, res) => {
 
     // Step 8: Deduct the required amount from the user's wallet
     try {
-      await deductAmountForEventJoin(req.user, totalAmount, t);
+      console.log("Amount Deducted", totalAmount);
+      const amountMap = await deductAmountForEventJoin(
+        req.user,
+        totalAmount,
+        t
+      );
+
+      if (amountMap) {
+        await TeamUserGames.create(
+          {
+            TeamId: team.id,
+            UserGameId: userGames.id,
+            playerId: userGames.playerId,
+            playerName: userGames.playerName,
+            isLeader: true, // Adjust based on your logic
+            deposit: amountMap.deposit,
+            cashBonus: amountMap.cashBonus,
+            netWinning: amountMap.netWinning,
+          },
+          { transaction: t }
+        );
+      }
     } catch (error) {
       await t.rollback();
       return res.status(403).json({

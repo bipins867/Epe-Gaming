@@ -88,3 +88,20 @@
     }
   }
   
+
+/* Wrapper for each image in the slider */
+.slider-image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 900px; /* Limit width of slider */
+  aspect-ratio: 16 / 9; /* Maintain 16:9 aspect ratio */
+  overflow: hidden;
+}
+
+/* Image styling */
+.slider-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures image doesn't stretch */
+  border-radius: 10px; /* Optional: Rounded edges */
+}

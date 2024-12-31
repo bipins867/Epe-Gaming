@@ -84,9 +84,10 @@ exports.getTransactionHistory = async (req, res) => {
 };
 
 exports.requestForWithdrawal = async (req, res) => {
-  const { amount, userRemark } = req.body; // Extract amount and user remark from the request body
+  const { amount } = req.body; // Extract amount and user remark from the request body
   const userId = req.user.id; // Get the user ID from the request
   const user = req.user;
+  const userRemark="";
   // Start a Sequelize transaction
   let transaction;
 

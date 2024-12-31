@@ -30,6 +30,11 @@ const UserGames = sequelize.define('UserGames', {
     type:DataTypes.INTEGER,
     allowNull:false,
     defaultValue:0
+  },
+  totalWinning:{
+    type:DataTypes.INTEGER,
+    allowNull:false,
+    defaultValue:0
   }
 }, {
   tableName: 'userGames', // Specify the table name in camelCase

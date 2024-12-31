@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pplgaming/Utils/alertHandler.dart';
+import 'package:pplgaming/Utils/apiRequestHandler.dart';
+import 'package:pplgaming/Utils/appConfig.dart';
 
 class Withdrawal extends StatefulWidget {
   const Withdrawal({super.key});
@@ -8,27 +11,62 @@ class Withdrawal extends StatefulWidget {
 }
 
 class _WithdrawalState extends State<Withdrawal> {
-  String? selectedType;
   final TextEditingController _amountController = TextEditingController();
 
   // Function handler for Withdrawal with validation
-  void _handleWithdrawal() {
+  void _handleWithdrawal() async {
     String amount = _amountController.text;
-
-    // Check if a type is selected
-    if (selectedType == null) {
-      print('Error: Please select a type.');
-      return;
-    }
 
     // Check if the amount is not empty
     if (amount.isEmpty) {
-      print('Error: Please enter an amount.');
+      showErrorAlertDialog(context, 'Please enter an amount.');
       return;
     }
 
-    // Proceed with the withdrawal request if validations pass
-    print('Requesting withdrawal of $amount from $selectedType.');
+    if (double.parse(amount) <= 0) {
+      showErrorAlertDialog(context, 'Please enter a valid amount.');
+      return;
+    }
+
+    try {
+      dynamic response = await postRequestWithToken(
+          'user/wallet/requestWithdrawal', {"amount": amount});
+
+      if (response['statusCode'] == 200) {
+        showInfoAlertDialog(context, "Reedem Request Successfully Created!");
+      } else {
+        handleErrors(context, response);
+      }
+    } catch (e) {
+      // Handle exceptions
+      String error = 'System Error: ${e.toString()}';
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error)),
+      );
+      CustomLogger.logError(error);
+    } finally {}
+  }
+
+  _handleCancelwithdrawal() async {
+    try {
+      dynamic response =
+          await postRequestWithToken('user/wallet/cancelWithdrawal', {});
+
+      if (response['statusCode'] == 200) {
+        showInfoAlertDialog(context, "Cancel Reedeem Request Successfull!");
+      } else {
+        handleErrors(context, response);
+      }
+    } catch (e) {
+      // Handle exceptions
+      String error = 'System Error: ${e.toString()}';
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error)),
+      );
+      CustomLogger.logError(error);
+    } finally {}
   }
 
   @override
@@ -49,27 +87,6 @@ class _WithdrawalState extends State<Withdrawal> {
               ),
             ),
             SizedBox(height: 16),
-            DropdownButton<String>(
-              isExpanded: true,
-              hint: Text('Select Type'),
-              value: selectedType,
-              items: [
-                DropdownMenuItem(
-                  value: 'Deposit',
-                  child: Text('Deposit'),
-                ),
-                DropdownMenuItem(
-                  value: 'Net Winning',
-                  child: Text('Net Winning'),
-                ),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  selectedType = value;
-                });
-              },
-            ),
-            SizedBox(height: 16),
             TextField(
               controller: _amountController,
               decoration: InputDecoration(
@@ -83,6 +100,13 @@ class _WithdrawalState extends State<Withdrawal> {
               onPressed: _handleWithdrawal,
               child: Text('Reedeem Coins'),
             ),
+            SizedBox(
+              height: 16,
+            ),
+            ElevatedButton(
+              onPressed: _handleCancelwithdrawal,
+              child: Text("Cancel Pending Reedeem Requst"),
+            )
           ],
         ),
       ),

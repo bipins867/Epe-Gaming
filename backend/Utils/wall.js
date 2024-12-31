@@ -28,35 +28,36 @@ exports.deductAmountForEventJoin = async (user, amount, transaction) => {
     // Deduct from netWinning
     let remainingAmount = amount - 0.1 * cashBonus;
     amountMap.cashBonus = 0.1 * cashBonus;
-    wallet.unclearedCashBonus += parseFloat(0.1 * cashBonus);
-
-    if (deposit > 0) {
-      let unclearedDeposit = 0;
-      if (deposit >= remainingAmount) {
-        unclearedDeposit = remainingAmount;
+    wallet.unclearedCashBonus += parseFloat(0.1*cashBonus);
+    if (netWinning > 0) {
+      let unclearedNetWinning = 0;
+      if (netWinning >= remainingAmount) {
+        unclearedNetWinning = remainingAmount;
       } else {
-        unclearedDeposit = deposit;
+        unclearedNetWinning = netWinning;
       }
-      amountMap.deposit = unclearedDeposit;
+      amountMap.netWinning = unclearedNetWinning;
 
-      wallet.unclearedDeposit += unclearedDeposit;
-      remainingAmount -= unclearedDeposit;
-      wallet.deposit -= unclearedDeposit;
+      wallet.unclearedNetWinning += unclearedNetWinning;
+      remainingAmount -= unclearedNetWinning;
+      wallet.netWinning -= unclearedNetWinning;
     }
 
     if (remainingAmount > 0) {
-      if (netWinning >= remainingAmount) {
-        const unclearedNetWinning = remainingAmount;
-        amountMap.netWinning = unclearedNetWinning;
 
-        wallet.unclearedNetWinning += unclearedNetWinning;
-        wallet.netWinning -= unclearedNetWinning;
+      if(deposit>=remainingAmount){
+      
+        const unclearedDeposit=remainingAmount;
+        amountMap.deposit=unclearedDeposit;
+
+        wallet.unclearedDeposit+=unclearedDeposit;
+        wallet.deposit-=unclearedDeposit;
       } else {
         throw new Error("Insufficient funds");
       }
     }
   }
-  //console.log(wallet);
+
   // Update the wallet
   await wallet.save({ transaction });
 

@@ -864,6 +864,7 @@ exports.declareEventResult = async (req, res, next) => {
         userGame.matchPlayed+=1;
         userGame.totalKills += teamUserGame.kills;
         userGame.totalPoints += teamUserGame.points;
+        userGame.totalWinnings+=memberReward;
 
         await userGame.save({ transaction });
       }
